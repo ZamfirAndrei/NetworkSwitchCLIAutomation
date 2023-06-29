@@ -1,5 +1,5 @@
 import re
-from Management import ssh,telnet
+from Management import ssh, telnet
 
 
 
@@ -33,13 +33,14 @@ class VLAN:
 
     #session = ssh.SSH("10.2.109.178") # Creez obiectul session prin care ma conectez la DUT. Apoi il utiliez in functiile de VLAN
 
-    def __init__(self, ip):
+    def __init__(self, ip_session="10.2.109.178"):
 
         print("Clasa VLAN")
-        self.ip = ip
-        self.session = ssh.SSH(ip)  # Creez obiectul session prin care ma conectez la DUT. Apoi il utiliez in functiile de VLAN
+        self.ip_session = ip_session
+        self.session = ssh.SSH(ip_session)  # Creez obiectul session prin care ma conectez la DUT. Apoi il utiliez in functiile de VLAN
                                     # ssh --> folderul unde am creat functiile de ssh,
                                     # .SSH --> apelez clasa din interiorul folderului ssh
+        self.tn = telnet.Telnet(ip_session)
 
     def create_vlan(self, vlan):
 
@@ -76,9 +77,9 @@ class VLAN:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd(f"no vlan {vlan}\r\n")
         output = self.session.read()
-        #print(output)
+        # print(output)
         error = re.findall("% Vlan does not exist", output)
-        #print(error)
+        # print(error)
         if "% Vlan does not exist" in error:
             print("The VLAN does not exist")
         else:
@@ -89,7 +90,7 @@ class VLAN:
         return output
 
 
-    #remove_vlan(vlan="10")
+    # remove_vlan(vlan="10")
 
     def add_ports_to_vlan(self, ports, vlan):
 
@@ -170,6 +171,8 @@ class VLAN:
             "Status": "",
             "Egress Ethertype": ""
         }
+        all_out = ""
+
         if vlan is not None:
             self.session.send_cmd(f"show vlan id {vlan}\r\n")
             output = self.session.read()
@@ -177,9 +180,9 @@ class VLAN:
                                r"PBA Ports\s+:\s+([\w/,\s]+)\S+Name\s+:([\s\w]+)\S+Status\s+:\s+(\w+)\S+"
                                r"Egress Ethertype\s+:\s+([\dx]+)\S", output)
 
-            print(output)
-            print(match)
-            #print(len(match))
+            # print(output)
+            # print(match)
+            # print(len(match))
 
             # Creez o lista cu cheile din dictionar
 
@@ -192,9 +195,10 @@ class VLAN:
             # Varianta mai frumoasa
 
             for attribute in range(len(match)):
-                print(match[attribute])
+                # print(match[attribute])
+
                 for key, value in zip(d.keys(), match[attribute]):
-                    print(key ,value)
+                    # print(key ,value)
                     d[key] = value.replace(" ","")
 
             # Variantele mai de la tara
@@ -210,46 +214,41 @@ class VLAN:
             #         d[key] = match[0][i]
             #         i += 1
 
-            #print(d)
-
             print(d)
 
         else:
             #all_output = list()
-            all_out = ""
             print("Facem print")
             self.session.send_cmd("show vlan \r\n")
             output = self.session.read()
-            #all_output.append(output)
+            # all_output.append(output)
             all_out = output
-            print(output)
+            # print(output)
             while output:
                 if "--More" in output:
                     print("Trb sa dam space-uri")
                     self.session.send_cmd(" \r\n")
-                    print(output)
+                    # print(output)
 
                 else:
                     print("Iesim din bucla")
                     break
                 output = self.session.read()
-                #all_output.append(output)
+                # all_output.append(output)
                 all_out += output
-            #print(output)
-            #print("###########################")
+            # print(output)
+            # print("###########################")
 
-            #output = session.read()
-            #print(all_output)
+            # output = session.read()
+            # print(all_output)
             print("############################")
             print(all_out)
 
-
-        return output
+        return d, all_out
 
 
     #show_vlan(vlan="2000")
     #show_vlan()
-
 
     def show_vlan_port(self,port):
 
@@ -265,7 +264,7 @@ class VLAN:
         }
         self.session.send_cmd(f"show vlan port {port}")
         output = self.session.read()
-        print(output)
+        # print(output)
 
         match = re.findall(r"Port\s+(\w+\d/\d+)\S+\s+Port\s+VLAN\s+ID\s+:\s+(\d+)\S+"
                            r"\s+Port\s+Acceptable\s+Frame\s+Type\s+:\s+([\w\s]+)\S+"
@@ -273,16 +272,16 @@ class VLAN:
                            r"\s+Port-and-Protocol\s+Based\s+Support\s+:\s+(\w+)\S+"
                            r"\s+Default\s+Priority\s+:\s+(\d+)\S+"
                            r"\s+Port\s+Protected\s+Status\s+:\s+(\w+)", output)
-        #match1 = re.findall(r"Port\s+(\w+\d/\d+).*?Port\sVLAN\sID\s+:\s+(\d+)", output) # E buna si varianta asta cu .*?
-        print(match)
+        # match1 = re.findall(r"Port\s+(\w+\d/\d+).*?Port\sVLAN\sID\s+:\s+(\d+)", output) # E buna si varianta asta cu .*?
+        # print(match)
 
         for key, value in zip(d.keys(), match[0]):
-            #print(key, value)
+            # print(key, value)
             d[key] = value
 
         print(d)
 
-        return output
+        return d
 
 
 # vlan = VLAN("10.2.109.178")
@@ -291,4 +290,5 @@ class VLAN:
 # vlan.add_ports_to_vlan(ports="ex 0/5",vlan="330")
 # vlan.remove_ports_from_vlan(ports="gi 0/4", vlan="2000")
 # vlan.show_vlan_port(port="gi 0/13")
+# print("###########################")
 # vlan.show_vlan(vlan="2000")
