@@ -1,12 +1,12 @@
 import telnetlib
 import time
 
+
 class Telnet:
 
     def __init__(self,ip):
 
         self.telnet = telnetlib.Telnet(ip)
-
 
     def connect(self, username, password):
 

@@ -1,20 +1,22 @@
 import re
 
 from config import vlan
-from Management import ssh,telnet
+from Management import ssh, telnet
 
+# ip_session = "10.2.109.198"
 
 class IP:
 
-    def __init__(self, ip):
+    def __init__(self, ip_session="10.2.109.178"):
 
         print("Clasa IP")
 
-        self.ip = ip
-        self.session = ssh.SSH(ip)
-        self.vlan_obj = vlan.VLAN(ip) # Creez obiectul prin care ma voi folosii de metodele/functiile specifice vlan
+        self.ip_session = ip_session
+        self.session = ssh.SSH(ip_session)
+        self.vlan_obj = vlan.VLAN(ip_session) # Creez obiectul prin care ma voi folosii de metodele/functiile specifice vlan
                                       # vlan --> folderul unde am creat functiile de vlan,
                                       # .VLAN --> apelez clasa din interiorul folderului vlan
+        self.tn = telnet.Telnet(ip_session)
 
     def create_int_vlan(self, int_vlan=None):
 
@@ -34,6 +36,7 @@ class IP:
             print(output)
             print("The interface VLAN was created succesfully")
             self.session.close()
+
 
         return output
 
@@ -59,7 +62,6 @@ class IP:
                 output = self.session.read()
                 print(output)
                 print(f"The inteface vlan {int_vlan} has been removed succesfully")
-
 
             elif "% Invalid Interface Index" in output:
 
@@ -115,7 +117,7 @@ class IP:
 
         self.session.close()
 
-        return output
+        return d
 
     def add_ip_interface(self, int_vlan=None, ip=None, mask=None, dhcp="No"):
 
@@ -229,10 +231,10 @@ class IP:
             "Metric":"",
             "Next Hop":""
         }
-
         self.session.connect()
 
         networks = list()
+        networks_connected = list()
         ip_route = {}
 
         if network is None:
@@ -265,7 +267,6 @@ class IP:
             match2 = re.findall(r"(C)\s(\d+.\d+.\d+.\d+)/(\d+)\s+is (directly connected), ([\w/\d]+)", output)
             # print(match2)
 
-            networks_connected = list()
 
             # Varianta de populare a unui dictionar nu pre-made ca mai sus.
 
@@ -322,11 +323,11 @@ class IP:
 
         self.session.close()
 
-        return output
+        return ip_route, networks, networks_connected
 
 
-
-obj = IP("10.2.109.178")
+# obj = IP(ip_session="10.2.109.178")
+# obj1 = IP(ip_session="10.2.109.198")
 # obj.create_int_vlan()
 # obj.create_int_vlan(int_vlan="200")
 # obj.remove_int_vlan(int_vlan="1000")
@@ -344,12 +345,15 @@ obj = IP("10.2.109.178")
 #obj.add_static_route(network_dest="220.0.0.0", mask_dest="255.0.0.0", next_hop="14.0.0.1")
 # obj.remove_static_route(network_dest="220.0.0.0", mask_dest="255.0.0.0", next_hop="14.0.0.1")
 # obj.remove_static_route(network_dest="100.0.0.0", mask_dest="255.0.0.0", next_hop="14.0.0.1")
-obj.show_ip_route()
-print("#######################")
-obj.show_ip_route("15.0.0.0")
-print("#######################")
-obj.show_ip_route("14.0.0.0")
-print("#######################")
-obj.show_ip_route("111.0.0.0")
-print("#######################")
-obj.show_ip_route("66.0.0.0")
+# obj.show_ip_route()
+# print("#######################")
+# obj.show_ip_route(network="15.0.0.0")
+# print("#######################")
+# obj.show_ip_route(network="14.0.0.0")
+# print("#######################")
+# obj.show_ip_route(network="111.0.0.0")
+# print("#######################")
+# obj.show_ip_route(network="66.0.0.0")
+# print("#######################")
+# obj1.show_ip_route(network="66.0.0.0")
+# obj1.remove_static_route(network_dest="111.0.0.0", mask_dest="255.255.0.0", next_hop="15.0.0.100")

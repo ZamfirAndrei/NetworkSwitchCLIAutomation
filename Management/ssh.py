@@ -12,8 +12,6 @@ class SSH:
     # Functia de initializare in care  initializez variabilele ssh si ip. Pe acestea le voi utilia in
     # functiile de mai jos
 
-
-
     def __init__(self, ip):
 
         # Create the ssh client
@@ -23,17 +21,14 @@ class SSH:
         self.ipSSH = ip
         self.shell = None
 
-
-
     def connect(self, username="admin", password="Admin1234!"):
 
         # Connect to the device
         try:
 
-            self.ssh.connect(self.ipSSH, username=username, password=password, timeout=10)
+            self.ssh.connect(self.ipSSH, username=username, password=password, timeout=15)
             self.shell = self.ssh.invoke_shell()
             time.sleep(1)
-
 
         except Exception as e:
             return e
