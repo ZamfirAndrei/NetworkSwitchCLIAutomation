@@ -4,7 +4,7 @@ import time
 
 class Telnet:
 
-    def __init__(self,ip):
+    def __init__(self, ip):
 
         self.telnet = telnetlib.Telnet(ip)
 

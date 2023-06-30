@@ -2,7 +2,7 @@ import paramiko
 import time
 
 
-def connection(ip="10.2.109.198", username="admin", password="Admin1234!"):
+def connection(ip="10.2.109.178", username="admin", password="Admin1234!"):
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 

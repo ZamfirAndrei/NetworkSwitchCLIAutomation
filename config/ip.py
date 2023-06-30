@@ -5,6 +5,7 @@ from Management import ssh, telnet
 
 # ip_session = "10.2.109.198"
 
+
 class IP:
 
     def __init__(self, ip_session="10.2.109.178"):
