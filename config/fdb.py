@@ -111,6 +111,7 @@ class FDB:
 
 obj = FDB("10.2.109.198")
 
+
 obj.clear_mac_addr_table()
 obj.show_mac_addr_table()
 obj.show_mac_addr_table_vlan(vlan="1")

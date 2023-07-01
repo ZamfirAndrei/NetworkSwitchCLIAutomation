@@ -63,7 +63,7 @@ class VLAN:
                 self.session.send_cmd("!\r\n")
                 self.session.send_cmd(f"vlan {vlan}\r\n")
                 print("2")
-            print("The VLAN was created")
+            print(f"The VLAN {vlan} was created")
 
         self.session.close()
 
@@ -83,7 +83,7 @@ class VLAN:
         if "% Vlan does not exist" in error:
             print("The VLAN does not exist")
         else:
-            print("The VLAN was been removed succesfully")
+            print("The VLAN has been removed succesfully")
 
         self.session.close()
 
@@ -113,9 +113,7 @@ class VLAN:
     #print(add_ports_to_vlan(ports="gi 0/100", vlan="2000"))
     #add_ports_to_vlan(ports="gi 0/6", vlan="2000")
 
-
-
-    def remove_ports_from_vlan(self,ports, vlan):
+    def remove_ports_from_vlan(self, ports, vlan):
 
         self.session.connect("admin","Admin1234!")
         self.session.send_cmd("conf t\r\n")
@@ -147,7 +145,7 @@ class VLAN:
             self.session.send_cmd("!\r\n")
 
         else:
-            print(f"The port {ports} was been removed from the VLAN {vlan}")
+            print(f"The port {ports} has been removed from the VLAN {vlan}")
 
         self.session.close()
         return output
@@ -159,7 +157,7 @@ class VLAN:
     # remove_ports_from_vlan(ports="gi 0/6", vlan="2000")
 
 
-    def show_vlan(self,vlan=None):
+    def show_vlan(self, vlan=None):
 
         self.session.connect("admin", "Admin1234!")
         d = {
@@ -250,7 +248,7 @@ class VLAN:
     #show_vlan(vlan="2000")
     #show_vlan()
 
-    def show_vlan_port(self,port):
+    def show_vlan_port(self, port):
 
         self.session.connect()
         d = {
