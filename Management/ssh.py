@@ -28,7 +28,7 @@ class SSH:
 
             self.ssh.connect(self.ipSSH, username=username, password=password, timeout=15)
             self.shell = self.ssh.invoke_shell()
-            time.sleep(1)
+            time.sleep(2)
 
         except Exception as e:
             return e

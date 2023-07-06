@@ -67,7 +67,7 @@ class OSPF:
         else:
             self.session.send_cmd(f"redistribute connected metric-type {metric_type}\r\n")
 
-        print("The connected networks have been redistributed in ospf process")
+        print("The connected networks have been redistributed into ospf process")
         # time.sleep(2)
         # output = self.session.read()
         # print(output)
@@ -84,7 +84,7 @@ class OSPF:
         else:
             self.session.send_cmd(f"redistribute static metric-type {metric_type}\r\n")
 
-        print("The static routes have been redistributed in ospf process")
+        print("The static routes have been redistributed into ospf process")
         # output = self.session.read()
         # print(output)
         self.session.close()
@@ -99,7 +99,7 @@ class OSPF:
         else:
             self.session.send_cmd(f"redistribute all metric-type {metric_type}\r\n")
 
-        print("All routes have been redistributed in ospf process")
+        print("All routes have been redistributed into ospf process")
         # output = self.session.read()
         # print(output)
         self.session.close()
@@ -115,7 +115,7 @@ class OSPF:
         else:
             self.session.send_cmd(f"redistribute rip metric-type {metric_type}\r\n")
 
-        print("RIP routes have been redistributed in ospf process")
+        print("RIP routes have been redistributed into ospf process")
         # output = self.session.read()
         # print(output)
         self.session.close()
@@ -247,6 +247,28 @@ class OSPF:
         # print(output)
         self.session.close()
 
+    def redist_config(self, network, network_mask, metric_type=None, metric_value=None, tag =None):
+
+        self.session.connect()
+        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd("router ospf\r\n")
+        self.session.send_cmd(f"redist-config {network} {network_mask} tag {tag}\r\n")
+        print(f"The network {network} has been redistributed with the tag {tag}")
+        # output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def remove_redist_config(self, network, network_mask, metric_type=None, metric_value=None, tag=None):
+
+        self.session.connect()
+        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd("router ospf\r\n")
+        self.session.send_cmd(f"no redist-config {network} {network_mask}\r\n")
+        print(f"The network {network} with the tag {tag} has been removed from redistribution")
+        # output = self.session.read()
+        # print(output)
+        self.session.close()
+
 
 ospf_obj = OSPF(ip_session="10.2.109.178")
 # ospf_obj.enable_ospf()
@@ -262,10 +284,12 @@ ospf_obj = OSPF(ip_session="10.2.109.178")
 # ospf_obj.remove_redistribute_connected()
 # ospf_obj.remove_redistribute_static()
 # ospf_obj.add_router_id(router_id="1.1.1.1")
-ospf_obj.remove_router_id()
+# ospf_obj.remove_router_id()
 # ospf_obj.remove_passive_interface(vlan="30")
 # ospf_obj.add_passive_interface(vlan="30")
 # ospf_obj.add_passive_interface(interface="gi 0/3")
 # ospf_obj.remove_passive_interface(interface="gi 0/3")
 # ospf_obj.remove_nssa_area(area="0.0.0.1")
 # ospf_obj.add_nssa_area(area="0.0.0.1")
+# ospf_obj.redist_config(network="30.0.0.0",network_mask="255.255.255.0",tag="200")
+# ospf_obj.remove_redist_config(network="30.0.0.0",network_mask="255.255.255.0")
