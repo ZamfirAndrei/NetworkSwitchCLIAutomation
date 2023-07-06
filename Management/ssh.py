@@ -42,12 +42,12 @@ class SSH:
     def send_cmd(self, cmd):
 
         self.shell.send(cmd + "\r\n")
-        time.sleep(1)
+        time.sleep(2)
 
     def read(self):
 
         # Read the prompt
-
+        # time.sleep(1)
         output = str(self.shell.recv(65535))
 
         return output
