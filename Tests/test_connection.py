@@ -5,11 +5,13 @@ from config import vlan
 vl = vlan.VLAN(ip_session="10.2.109.178")
 session = ssh.SSH(ip="10.2.109.178")
 
+
 def test_connection():
 
     a = 10
     print(a)
     assert a == 10
+
 
 def test_create_vlan():
 
@@ -19,6 +21,7 @@ def test_create_vlan():
     print(a["VLAN ID"])
 
     assert x == a["VLAN ID"]
+
 
 def test_remove_vlan():
 
@@ -42,6 +45,7 @@ def test_port_add_vlan():
         ok = True
 
     assert True == ok
+
 
 def test_remove_port_from_vlan():
 
