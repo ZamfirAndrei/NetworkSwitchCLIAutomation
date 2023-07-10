@@ -172,10 +172,11 @@ class VLAN:
         if vlan is not None:
             self.session.send_cmd(f"show vlan id {vlan}\r\n")
             output = self.session.read()
-            match = re.findall(r"VLAN ID\s+:\s+(\d+)\S+Member Ports\s+:\s+([\w/,\s]+)\S+Untagged Ports\s+:\s+([\w/,\s]+)\S+"
+            match = re.findall(r"VLAN ID\s+:\s+(\d+)\S+Member Ports\s+:\s+([\w/,\s]+)[\S\s]+Untagged Ports\s+:\s+([\w/,\s]+)\S+"
                                r"PBA Ports\s+:\s+([\w/,\s]+)\S+Name\s+:([\s\w]+)\S+Status\s+:\s+(\w+)\S+"
                                r"Egress Ethertype\s+:\s+([\dx]+)\S", output)
 
+            # match = re.findall(r"VLAN ID\s+:\s+(\d+)\S+Member Ports\s+:\s+([\w/,\s]+)[\S\s]+Untagged Ports\s+:\s+([\w/,\s]+)\S+", output)
             # print(output)
             # print(match)
             # print(len(match))
@@ -260,7 +261,7 @@ class VLAN:
         return d
 
 
-vlan = VLAN("10.2.109.198")
+vlan = VLAN("10.2.109.178")
 # vlan.create_vlan(vlan="430")
 # vlan.remove_vlan(vlan="330")
 # vlan.add_ports_to_vlan(ports="ex 0/5",vlan="330")
@@ -268,5 +269,6 @@ vlan = VLAN("10.2.109.198")
 # vlan.show_vlan_port(port="gi 0/13")
 # print("###########################")
 # vlan.show_vlan(vlan="2000")
-vlan.show_vlan()
+# vlan.create_vlan(vlan="100")
+# vlan.show_vlan(vlan="100")
 

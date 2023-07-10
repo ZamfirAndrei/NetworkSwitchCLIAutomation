@@ -1,5 +1,5 @@
 import pytest
-from Management import ssh,telnet
+from Management import ssh, telnet
 from config import vlan
 
 vl = vlan.VLAN(ip_session="10.2.109.178")
