@@ -150,12 +150,10 @@ class VLAN:
         self.session.close()
         return output
 
-
     # remove_ports_from_vlan(ports="ex 0/2", vlan="2000")
     # remove_ports_from_vlan(ports="gi 0/9", vlan="2000")
     # remove_ports_from_vlan(ports="ex 0/1", vlan="2000")
     # remove_ports_from_vlan(ports="gi 0/6", vlan="2000")
-
 
     def show_vlan(self, vlan=None):
 
@@ -215,34 +213,14 @@ class VLAN:
             print(d)
 
         else:
-            #all_output = list()
-            print("Facem print")
-            self.session.send_cmd("show vlan \r\n")
+
+            self.session.send_cmd("conf t\r\n")
+            self.session.send_cmd("set cli pagination off\r\n")
+            self.session.send_cmd("do show vlan\r\n")
             output = self.session.read()
-            # all_output.append(output)
-            all_out = output
-            # print(output)
-            while output:
-                if "--More" in output:
-                    print("Trb sa dam space-uri")
-                    self.session.send_cmd(" \r\n")
-                    # print(output)
+            print(output)
 
-                else:
-                    print("Iesim din bucla")
-                    break
-                output = self.session.read()
-                # all_output.append(output)
-                all_out += output
-            # print(output)
-            # print("###########################")
-
-            # output = session.read()
-            # print(all_output)
-            print("############################")
-            print(all_out)
-
-        return d, all_out
+        return d, output
 
 
     #show_vlan(vlan="2000")
@@ -282,7 +260,7 @@ class VLAN:
         return d
 
 
-# vlan = VLAN("10.2.109.178")
+vlan = VLAN("10.2.109.198")
 # vlan.create_vlan(vlan="430")
 # vlan.remove_vlan(vlan="330")
 # vlan.add_ports_to_vlan(ports="ex 0/5",vlan="330")
@@ -290,3 +268,5 @@ class VLAN:
 # vlan.show_vlan_port(port="gi 0/13")
 # print("###########################")
 # vlan.show_vlan(vlan="2000")
+vlan.show_vlan()
+

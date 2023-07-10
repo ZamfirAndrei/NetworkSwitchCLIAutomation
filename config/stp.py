@@ -14,7 +14,7 @@ class STP:
         self.session = ssh.SSH(ip_session)
         # self.vlan_obj = vlan.VLAN(ip_session)
         # self.ip_obj = ip.IP(ip_session)
-        self.tn = telnet.Telnet(ip_session)
+        # self.tn = telnet.Telnet(ip_session)
 
     def check_stp_mode(self):
 
@@ -141,7 +141,7 @@ class STP:
         print(output)
 
         match = re.findall(r"\s+Priority\s+(\d+)\S+\s+Address\s+(\w+.\w+.\w+.\w+.\w+.\w+)", output) # Regex pentru Root ID si Bridge ID
-        match1 = re.findall(r"([GExi\d/]+)\s+(\w+)\s+(\w+)\s+(\d+)\s+(\d+)\s+([\w\d]+)", output) # Regex pentru porturi
+        match1 = re.findall(r"([GEix]+\d/\d+)\s+(\w+)\s+(\w+)\s+(\d+)\s+(\d+)\s+([\w\d]+)", output) # Regex pentru porturi
 
         print(match)
         print(match1)
@@ -326,6 +326,180 @@ class STP:
         # print(output)
         self.session.close()
 
+    def show_spanning_tree_mst(self, instance=None):
+
+        d_instance_zero = {
+            "Instance": "",
+            "Bridge MAC-Address": "",
+            "Root MAC-Address": "",
+            "IST root Address":"",
+            "Priority": "",
+        }
+        d_ports_instance_zero = {
+            "Name": "",
+            "Role": "",
+            "State": "",
+            "Cost": "",
+            "Prio": "",
+            "Type": ""
+        }
+
+        d_instances = {
+            "Instance":"",
+            "VLANs Mapped":"",
+            "Bridge ID":"",
+            "Root ID":"",
+            "Priority":"",
+        }
+
+        d_ports_instances = {
+            "Name": "",
+            "Role": "",
+            "State": "",
+            "Cost": "",
+            "Prio": "",
+            "Type": ""
+        }
+
+        list_ports_instance_zero = list()
+        list_ports_instance = list()
+
+        self.session.connect()
+
+        if instance is None:
+
+            self.session.send_cmd("show span mst\r\n")
+            output = self.session.read()
+            # print(output)
+
+            match1 = re.findall(r"(MST\d+)\s+\S+Bridge\s+Address\s+(\w+.\w+.\w+.\w+.\w+.\w+)\s+Priority\s(\d+)\S+"
+                                r"Root\s+Address\s+(\w+.\w+.\w+.\w+.\w+.\w+)\s+Priority\s+(\d+)\S+"
+                                r".*IST\s+Root\s+Address\s+(\w+.\w+.\w+.\w+.\w+.\w+)\s+Priority\s+(\d+)", output)
+
+            match2 = re.findall(r"([GEix]+\d/\d+)\s+(\w+)\s+(\w+)\s+(\w+)\s+(\d+)\S\d+\s+([\d\w]+)", output)
+            match2 = list(set(match2))
+
+            # print(match1) # Regex pt. MST00 root,brigde (mac-addresses and priorities)
+            # print(match2) # Regex pt. MST00 ports
+
+            # Trb sa gasesc o cale sa elimin porturile pe care le ia de la MST01 cand sunt mai putin de 4 porturi in MST00
+
+            for key, attribute in zip(d_instance_zero.keys(), match1[0]):
+                # print(key, attribute)
+                d_instance_zero[key] = attribute
+
+            print(d_instance_zero)
+
+            for i in range(len(match2)):
+
+                d = {}
+
+                for key, attribute in zip(d_ports_instance_zero.keys(), match2[i]):
+
+                    # print(key, attribute)
+                    d[key] = attribute
+
+                # print(d)
+                list_ports_instance_zero.append(d)
+            print(list_ports_instance_zero)
+            # print(list_ports_instance_zero[0]["Name"])
+
+        else:
+
+            self.session.send_cmd(f"show span mst {instance}\r\n")
+            output = self.session.read()
+            # print(output)
+
+            match1 = re.findall(r"(MST\d+)\s+\S+Vlans mapped:\s+([\d,-]+)\S+Bridge\s+Address\s+(\w+.\w+.\w+.\w+.\w+.\w+)\s+Priority\s(\d+)\S+"
+                                r"Root\s+Address\s+(\w+.\w+.\w+.\w+.\w+.\w+)\s+Priority\s+(\d+)", output)
+
+            match2 = re.findall(r"([GEix]+\d/\d+)\s+(\w+)\s+(\w+)\s+(\w+)\s+(\d+)\S\d+\s+([\d\w]+)", output)
+            match2 = list(set(match2))
+
+            # print(match1)  # Regex pt. MST root,brigde (mac-addresses and priorities)
+            # print(match2)  # Regex pt. MST ports
+
+            for key, attribute in zip(d_instances.keys(), match1[0]):
+
+                d_instances[key] = attribute
+
+            print(d_instances)
+
+            for i in range(len(match2)):
+
+                d = {}
+
+                for key, attribute in zip(d_ports_instances.keys(), match2[i]):
+
+                    d[key] = attribute
+
+                list_ports_instance.append(d)
+
+            print(list_ports_instance)
+
+        return d_instance_zero, list_ports_instance_zero, d_instances, list_ports_instance
+
+    def show_spanning_tree_pvrst(self, vlan=None):
+
+        d_instance_vlan = {
+            "VLAN": "",
+            "Root ID Priority": "",
+            "Root ID Address": "",
+            "Bridge ID Priority": "",
+            "Bridge ID Address": ""
+        }
+
+        d_ports_instance_vlan = {
+            "Name": "",
+            "Role": "",
+            "State": "",
+            "Cost": "",
+            "Prio": "",
+            "Type": ""
+        }
+
+        list_ports_instance = list()
+
+        self.session.connect()
+        self.session.send_cmd(f"show span vlan {vlan}\r\n")
+
+        output = self.session.read()
+        # print(output)
+        output1 = ""
+
+        if "--More" in output:
+            self.session.send_cmd("\r\n")
+            output += self.session.read()
+
+        # print(output)
+        match1 = re.findall(r"Spanning-tree for VLAN\s+(\d+)\s+[\S\s]+Root Id\s+Priority\s+(\d+)\S+\s+"
+                            r"Address\s+(\w+.\w+.\w+.\w+.\w+.\w+)[\s\S]+Bridge Id\s+Priority\s+(\d+)\S+"
+                            r"\s+Address\s+(\w+.\w+.\w+.\w+.\w+.\w+)", output)
+
+        match2 = re.findall(r"([GEix]+\d/\d+)\s+(\w+)\s+(\w+)\s+(\w+)\s+(\d+)\S\d+\s+([\d\w]+)", output)
+
+        # print(match1)  # Regex pt. PVRST VL X root,brigde (mac-addresses and priorities)
+        # print(match2)  # Regex pt. PVRST VL X ports
+
+        for key, attribute in zip(d_instance_vlan.keys(), match1[0]):
+
+            d_instance_vlan[key] = attribute
+
+        print(d_instance_vlan)
+
+        for i in range(len(match2)):
+
+            d = {}
+
+            for key, attribute in zip(d_ports_instance_vlan.keys(), match2[i]):
+
+                d[key] = attribute
+
+            list_ports_instance.append(d)
+        print(list_ports_instance)
+
+        return d_instance_vlan, list_ports_instance
+
 
 obj = STP("10.2.109.178")
 # obj.add_rstp_bridge_priority(bridge_priority=0)
@@ -350,10 +524,15 @@ obj = STP("10.2.109.178")
 # obj.add_pvrst_port_cost(vlan="10",port="Ex 0/1",cost="1")
 # obj.remove_pvrst_port_cost(vlan="10",port="Ex 0/1")
 # obj.changing_stp_mode(mode="mst")
-# obj.mst_configuration(name="TETE",instance="1",vlan="10,100")
+# obj.mst_configuration(name="TETE1",instance="1",vlan="10,100")
 # obj.add_mst_priority(instance="1",priority="4096")
 # obj.remove_mst_priority(instance="1")
 # obj.add_mst_port_cost(instance="1",port="Ex 0/1",cost="2")
 # obj.remove_mst_port_cost(instance="1",port="Ex 0/1")
 # obj.add_mst_port_priority(instance="1",port="Ex 0/2",port_priority="0")
 # obj.remove_mst_port_priority(instance="1", port="Ex 0/1")
+# obj.show_spanning_tree_rstp()
+# obj.show_spanning_tree_mst()
+# print("############################")
+# obj.show_spanning_tree_mst(instance="1")
+# obj.show_spanning_tree_pvrst(vlan="10")
