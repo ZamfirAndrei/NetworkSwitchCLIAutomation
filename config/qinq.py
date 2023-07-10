@@ -115,7 +115,7 @@ class QinQ:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd(f"int {port}\r\n")
         self.session.send_cmd(f"service-vlan {svlan} pvid {pvid}\r\n")
-        print(f"Added for service-vlan {svlan} pvid {pvid}")
+        print(f"Added pvid {pvid} for the service-vlan {svlan} ")
         output = self.session.read()
         # print(output)
         self.session.close()
@@ -126,7 +126,7 @@ class QinQ:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd(f"int {port}\r\n")
         self.session.send_cmd(f"service-vlan {svlan} pvid disable\r\n")
-        print(f"Removed for service-vlan {svlan}")
+        print(f"Removed pvid for service-vlan {svlan}")
         output = self.session.read()
         # print(output)
         self.session.close()
@@ -137,8 +137,9 @@ class QinQ:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd(f"int {port}\r\n")
         self.session.send_cmd(f"switchport svlan-prio {svlan_prio}\r\n")
-        print(f"Added for the default service-vlan the svlan-prio {svlan_prio}")
+        print(f"Added default service-vlan svlan-prio {svlan_prio}")
         output = self.session.read()
+        # print(output)
         self.session.close()
 
     def remove_svlan_prio(self, port):
@@ -147,8 +148,9 @@ class QinQ:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd(f"int {port}\r\n")
         self.session.send_cmd("switchport svlan-prio none\r\n")
-        print(f"Removed for the default service-vlan the svlan-prio")
+        print(f"Removed svlan-prio of default service-vlan ")
         output = self.session.read()
+        # print(output)
         self.session.close()
 
     def add_customer_vlan_svlan_prio(self, port, cvlan, svlan_prio):
@@ -157,8 +159,9 @@ class QinQ:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd(f"int {port}\r\n")
         self.session.send_cmd(f"switchport customer-vlan {cvlan} svlan-prio {svlan_prio}\r\n")
-        print(f"Added for the customer-vlan {cvlan} the svlan-prio {svlan_prio}")
+        print(f"Added svlan-prio {svlan_prio} to the customer-vlan {cvlan}")
         output = self.session.read()
+        # print(output)
         self.session.close()
 
     def remove_customer_vlan_svlan_prio(self, port, cvlan):
@@ -167,8 +170,31 @@ class QinQ:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd(f"int {port}\r\n")
         self.session.send_cmd(f"switchport customer-vlan {cvlan} svlan-prio none\r\n")
-        print(f"Removed for the customer-vlan {cvlan} the svlan-prio")
+        print(f"Removed svlan-prio of the customer-vlan {cvlan}")
         output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def add_def_user_priority(self, port, svlan, def_user_priority):
+
+        self.session.connect()
+        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd(f"int {port}\r\n")
+        self.session.send_cmd(f"service-vlan {svlan} def-user-priority {def_user_priority}\r\n")
+        print(f"Added def-user priority {def_user_priority} for service-vlan {svlan}")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def remove_def_user_priority(self, port, svlan, def_user_priority):
+
+        self.session.connect()
+        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd(f"int {port}\r\n")
+        self.session.send_cmd(f"service-vlan {svlan} def-user-priority {def_user_priority}\r\n")
+        print(f"Added def-user priority {def_user_priority} for service-vlan {svlan}")
+        output = self.session.read()
+        # print(output)
         self.session.close()
 
 
@@ -187,4 +213,5 @@ obj_qinq = QinQ("10.2.109.198")
 # obj_qinq.remove_svlan_prio(port="Gi 0/5")
 # obj_qinq.add_customer_vlan_svlan_prio(port="Gi 0/5", cvlan="10", svlan_prio="7")
 # obj_qinq.remove_customer_vlan_svlan_prio(port="Gi 0/5", cvlan="10")
-
+obj_qinq.add_def_user_priority(port="Gi 0/5",svlan="1000",def_user_priority="7")
+obj_qinq.remove_def_user_priority(port="Gi 0/5",svlan="2000",def_user_priority="0")

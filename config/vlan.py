@@ -223,10 +223,8 @@ class VLAN:
 
         return d, output
 
-
     #show_vlan(vlan="2000")
     #show_vlan()
-
     def show_vlan_port(self, port):
 
         self.session.connect()
