@@ -197,8 +197,122 @@ class QinQ:
         # print(output)
         self.session.close()
 
+    def add_egress_ethertype(self, port, ethertype="x88a8"):
 
-obj_qinq = QinQ("10.2.109.198")
+        self.session.connect()
+        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd(f"int {port}\r\n")
+        self.session.send_cmd(f"switchport egress ether-type {ethertype}\r\n")
+        print(f"Added egress ether-type {ethertype} for {port}")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def remove_egress_ethertype(self, port):
+
+        self.session.connect()
+        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd(f"int {port}\r\n")
+        self.session.send_cmd(f"no switchport egress ether-type\r\n")
+        print(f"Removed egress ether-type for {port}")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def add_ingress_ethertype(self, port, ethertype="x9100"):
+
+        self.session.connect()
+        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd(f"int {port}\r\n")
+        self.session.send_cmd(f"switchport ingress ether-type {ethertype}\r\n")
+        print(f"Added ingress ether-type {ethertype} for {port}")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def remove_ingress_ethertype(self, port):
+
+        self.session.connect()
+        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd(f"int {port}\r\n")
+        self.session.send_cmd(f"no switchport ingress ether-type\r\n")
+        print(f"Removed ingress ether-type for {port}")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def show_service_vlan_customer_vlan_id(self):
+
+        d_customer_vlan = {
+
+            "Service VLAN":"",
+            "Port":"",
+            "Customer VLAN":"",
+            "SVLAN Priority":""
+        }
+
+        list_of_customer_vlan = list()
+
+        self.session.connect()
+        self.session.send_cmd("show service-vlan cvlan\r\n")
+        output = self.session.read()
+        # print(output)
+
+        match = re.findall(r"\s+(\d+)\s+([GEix]+\d+/\d+)\s+([\d\w]+)\s+([\d\w]+)", output)
+        # print(match)
+        # print(len(match))
+
+        for i in match:
+
+            d = {}
+
+            for key, value in zip(d_customer_vlan.keys(), i):
+
+                d[key] = value
+            # print(d)
+            list_of_customer_vlan.append(d)
+        print(list_of_customer_vlan)
+
+        return list_of_customer_vlan
+
+    def show_service_vlan_provider_edge_configuration(self):
+
+        d_provider_edge = {
+
+            "Service VLAN": "",
+            "Port": "",
+            "PVID": "",
+            "Default Prio": ""
+        }
+
+        list_of_provider_edge = list()
+
+        self.session.connect()
+        self.session.send_cmd("show service-vlan pvid\r\n")
+        output = self.session.read()
+        # print(output)
+
+        match = re.findall(r"\s+(\d+)\s+([GEix]+\d+/\d+)\s+([\d\w]+)\s+([\d\w]+)", output)
+        # print(match)
+        # print(len(match))
+
+        for i in match:
+
+            d = {}
+
+            for key, value in zip(d_provider_edge.keys(), i):
+
+                d[key] = value
+            # print(d)
+            list_of_provider_edge.append(d)
+        print(list_of_provider_edge)
+
+        return list_of_provider_edge
+
+
+
+# obj_qinq = QinQ("10.2.109.198")
+obj_qinq = QinQ("10.2.109.195")
 # obj_qinq.change_bridge_mode(bridge_mode="provider-edge")
 # obj_qinq.change_bridge_port_type(port="Gi 0/10",bridge_port_type="provider")
 # obj_qinq.add_cvlan_to_svlan(port="Gi 0/5", cvlan="20",svlan="2000")
@@ -213,5 +327,11 @@ obj_qinq = QinQ("10.2.109.198")
 # obj_qinq.remove_svlan_prio(port="Gi 0/5")
 # obj_qinq.add_customer_vlan_svlan_prio(port="Gi 0/5", cvlan="10", svlan_prio="7")
 # obj_qinq.remove_customer_vlan_svlan_prio(port="Gi 0/5", cvlan="10")
-obj_qinq.add_def_user_priority(port="Gi 0/5",svlan="1000",def_user_priority="7")
-obj_qinq.remove_def_user_priority(port="Gi 0/5",svlan="2000",def_user_priority="0")
+# obj_qinq.add_def_user_priority(port="Gi 0/5",svlan="1000",def_user_priority="7")
+# obj_qinq.remove_def_user_priority(port="Gi 0/5",svlan="2000",def_user_priority="0")
+# obj_qinq.add_egress_ethertype(port="Gi 0/6",ethertype="x9100")
+# obj_qinq.remove_egress_ethertype(port="Gi 0/6")
+# obj_qinq.add_ingress_ethertype(port="Gi 0/6",ethertype="x8100")
+# obj_qinq.remove_ingress_ethertype(port="Gi 0/6")
+obj_qinq.show_service_vlan_customer_vlan_id()
+obj_qinq.show_service_vlan_provider_edge_configuration()
