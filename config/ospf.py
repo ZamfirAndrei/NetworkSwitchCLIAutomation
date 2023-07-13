@@ -269,6 +269,7 @@ class OSPF:
         # print(output)
         self.session.close()
 
+# De adaugat citirea show ip ospf nei, show ip ospf database etc.
 
 ospf_obj = OSPF(ip_session="10.2.109.178")
 # ospf_obj.enable_ospf()

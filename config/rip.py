@@ -249,6 +249,8 @@ class RIP:
         # print(output)
         self.session.close()
 
+# De adaugat citirea show ip rip database
+
 
 obj_rip = RIP(ip_session="10.2.109.178")
 # obj_rip.disable_rip()
