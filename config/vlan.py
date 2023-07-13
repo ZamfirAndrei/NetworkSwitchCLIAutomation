@@ -36,6 +36,7 @@ class VLAN:
     def __init__(self, ip_session="10.2.109.178"):
 
         print("Clasa VLAN")
+
         self.ip_session = ip_session
         self.session = ssh.SSH(ip_session)  # Creez obiectul session prin care ma conectez la DUT. Apoi il utiliez in functiile de VLAN
                                     # ssh --> folderul unde am creat functiile de ssh,
@@ -69,8 +70,6 @@ class VLAN:
 
         return output
 
-    #create_vlan(vlan="205")
-
     def remove_vlan(self, vlan):
 
         self.session.connect("admin", "Admin1234!")
@@ -89,9 +88,6 @@ class VLAN:
 
         return output
 
-
-    # remove_vlan(vlan="10")
-
     def add_ports_to_vlan(self, ports, vlan):
 
         self.session.connect("admin", "Admin1234!")
@@ -108,10 +104,6 @@ class VLAN:
             print("The port is added succesfully")
 
         return output
-
-
-    #print(add_ports_to_vlan(ports="gi 0/100", vlan="2000"))
-    #add_ports_to_vlan(ports="gi 0/6", vlan="2000")
 
     def remove_ports_from_vlan(self, ports, vlan):
 
@@ -149,11 +141,6 @@ class VLAN:
 
         self.session.close()
         return output
-
-    # remove_ports_from_vlan(ports="ex 0/2", vlan="2000")
-    # remove_ports_from_vlan(ports="gi 0/9", vlan="2000")
-    # remove_ports_from_vlan(ports="ex 0/1", vlan="2000")
-    # remove_ports_from_vlan(ports="gi 0/6", vlan="2000")
 
     def show_vlan(self, vlan=None):
 
@@ -223,8 +210,6 @@ class VLAN:
 
         return d, output
 
-    #show_vlan(vlan="2000")
-    #show_vlan()
     def show_vlan_port(self, port):
 
         self.session.connect()

@@ -9,6 +9,7 @@ class QinQ:
     def __init__(self, ip_session = "10.2.109.178"):
 
         print("Clasa QinQ")
+
         self.ip_session = ip_session
         self.session = ssh.SSH(ip=ip_session)
         # self.tn = telnet.Telnet(ip=ip_session)
@@ -272,6 +273,7 @@ class QinQ:
             # print(d)
             list_of_customer_vlan.append(d)
         print(list_of_customer_vlan)
+        self.session.close()
 
         return list_of_customer_vlan
 
@@ -306,13 +308,14 @@ class QinQ:
             # print(d)
             list_of_provider_edge.append(d)
         print(list_of_provider_edge)
+        self.session.close()
 
         return list_of_provider_edge
 
+# De adaugat sa citesc show-running config si sa citesc daca e in mode provider-edge sau customer-edge
 
-
-# obj_qinq = QinQ("10.2.109.198")
-obj_qinq = QinQ("10.2.109.195")
+# obj_qinq = QinQ(ip_session="10.2.109.198")
+obj_qinq = QinQ(ip_session="10.2.109.195")
 # obj_qinq.change_bridge_mode(bridge_mode="provider-edge")
 # obj_qinq.change_bridge_port_type(port="Gi 0/10",bridge_port_type="provider")
 # obj_qinq.add_cvlan_to_svlan(port="Gi 0/5", cvlan="20",svlan="2000")
@@ -333,5 +336,5 @@ obj_qinq = QinQ("10.2.109.195")
 # obj_qinq.remove_egress_ethertype(port="Gi 0/6")
 # obj_qinq.add_ingress_ethertype(port="Gi 0/6",ethertype="x8100")
 # obj_qinq.remove_ingress_ethertype(port="Gi 0/6")
-obj_qinq.show_service_vlan_customer_vlan_id()
-obj_qinq.show_service_vlan_provider_edge_configuration()
+# obj_qinq.show_service_vlan_customer_vlan_id()
+# obj_qinq.show_service_vlan_provider_edge_configuration()
