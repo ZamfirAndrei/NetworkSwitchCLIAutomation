@@ -9,6 +9,7 @@ class RIP:
     def __init__(self, ip_session):
 
         print("Clasa RIP")
+
         self.ip_session = ip_session
         self.session = ssh.SSH(ip_session)
         self.tn = telnet.Telnet(ip_session)
