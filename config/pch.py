@@ -84,9 +84,9 @@ class PCH:
         match1 = re.findall(r"(\d+)\s+(Po\d+[(UEIDR\S]+[\SAU,OD]+)\s+(\w+)\s", output)
         ports = re.findall(r"[GExi]+\d/\d+", output)
 
-        print(match)
-        print(match1)
-        print(ports)
+        # print(match)
+        # print(match1)
+        # print(ports)
 
         for i in match:
             for key, value in zip(d_port_channel_system.keys(), i):
@@ -128,7 +128,7 @@ obj_pch = PCH(ip_session="10.2.109.195")
 # obj_pch.add_port_to_pch(id="10",port="Ex 0/1",mode="active")
 # obj_pch.add_port_to_pch(id="10",port="Ex 0/2",mode="active")
 # obj_pch.remove_port_to_pch(port="Gi 0/9")
-obj_pch.show_pch_summary(id="10")
+obj_pch.show_pch_summary(id="1")
 # obj_pch.change_mode_pch(id="10",mode="hybrid")
 
 

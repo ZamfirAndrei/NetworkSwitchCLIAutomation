@@ -269,9 +269,227 @@ class OSPF:
         # print(output)
         self.session.close()
 
-# De adaugat citirea show ip ospf nei, show ip ospf database etc.
+    def show_ospf_neighbors(self):
 
-ospf_obj = OSPF(ip_session="10.2.109.178")
+        d_ospf_neighbors = {
+
+            "Neighbor-ID": "",
+            "Pri": "",
+            "State": "",
+            "DeadTime": "",
+            "Address": "",
+            "Interface": "",
+
+        }
+
+        list_ospf_neigbors = list()
+
+        self.session.connect()
+        self.session.send_cmd("show ip ospf neighbor\r\n")
+        output = self.session.read()
+        print(output)
+
+        match = re.findall(r"(\d+.\d+.\d+.\d+)\s+(\d+)\s+(\w+/\w+)\s+(\d+)\s+(\d+.\d+.\d+.\d+)\s+([\w\d]+)", output)
+        print(match)
+
+        for attribute in match:
+
+            d = {}
+
+            for key, value in zip(d_ospf_neighbors.keys(), attribute):
+
+                d[key] = value
+
+            list_ospf_neigbors.append(d)
+        print(list_ospf_neigbors)
+
+        self.session.close()
+
+        return list_ospf_neigbors
+
+    def show_ospf_database(self, database=None):
+
+        list_ospf_database = list()
+        list_ospf_database_router = list()
+        list_ospf_database_network = list()
+        list_ospf_database_summary = list()
+        list_ospf_database_asbr = list()
+        list_ospf_database_nssa = list()
+        list_ospf_database_external = list()
+
+        self.session.connect()
+        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd("set cli pagination off\r\n")
+
+        if database == "router":
+
+            self.session.send_cmd(f"do show ip ospf database {database}\r\n")
+            output = self.session.read()
+            # print(output)
+
+            area = re.findall(r"Router Link States\s\SArea\s+(\d+.\d+.\d+.\d+)", output)
+            link_state_id = re.findall(r"Link State ID\s+:\s+(\d+.\d+.\d+.\d+)", output)
+            adv_router = re.findall(r"Advertising Router\s+:\s+(\d+.\d+.\d+.\d+)", output)
+
+            print(area)
+            print(link_state_id)
+            print(adv_router)
+
+            d = {}
+
+            for attribute, id, adv in zip(area, link_state_id, adv_router):
+
+                d["Area"] = attribute
+                d["Link State ID"] = id
+                d["Advertising Router"] = adv
+
+                # print(d)
+                list_ospf_database_router.append(d)
+                d = {}
+
+            print(list_ospf_database_router)
+
+        elif database == "network":
+
+            self.session.send_cmd(f"do show ip ospf database {database}\r\n")
+            output = self.session.read()
+            # print(output)
+
+            area = re.findall(r"Network Link States\s\SArea\s+(\d+.\d+.\d+.\d+)", output)
+            link_state_id = re.findall(r"Link State ID\s+:\s+(\d+.\d+.\d+.\d+)", output)
+            adv_router = re.findall(r"Advertising Router\s+:\s+(\d+.\d+.\d+.\d+)", output)
+
+            print(area)
+            print(link_state_id)
+            print(adv_router)
+
+            d = {}
+
+            for attribute, id, adv in zip(area, link_state_id, adv_router):
+
+                d["Area"] = attribute
+                d["Link State ID"] = id
+                d["Advertising Router"] = adv
+
+                # print(d)
+                list_ospf_database_network.append(d)
+                d = {}
+
+            print(list_ospf_database_network)
+
+        elif database == "summary":
+
+            self.session.send_cmd(f"do show ip ospf database {database}\r\n")
+            output = self.session.read()
+            # print(output)
+
+            area = re.findall(r"Summary Link States\s\SArea\s+(\d+.\d+.\d+.\d+)", output)
+            link_state_id = re.findall(r"Link State ID\s+:\s+(\d+.\d+.\d+.\d+)", output)
+            adv_router = re.findall(r"Advertising Router\s+:\s+(\d+.\d+.\d+.\d+)", output)
+
+            print(area)
+            print(link_state_id)
+            print(adv_router)
+
+            d = {}
+
+            for attribute, id, adv in zip(area, link_state_id, adv_router):
+
+                d["Area"] = attribute
+                d["Link State ID"] = id
+                d["Advertising Router"] = adv
+
+                # print(d)
+                list_ospf_database_summary.append(d)
+                d = {}
+
+            print(list_ospf_database_summary)
+
+        elif database == "asbr":
+
+            self.session.send_cmd(f"do show ip ospf database {database}\r\n")
+            output = self.session.read()
+            # print(output)
+
+            router_id = re.findall(r"Router with ID\s+\S(\d+.\d+.\d+.\d+)", output)
+            print(router_id)
+
+            d = {}
+
+            d["Router ID"] = router_id[0]
+            # print(d)
+            list_ospf_database_asbr.append(d)
+
+            print(list_ospf_database_asbr)
+
+        elif database == "nssa":
+
+            self.session.send_cmd(f"do show ip ospf database {database}\r\n")
+            output = self.session.read()
+            # print(output)
+
+            area = re.findall(r"NSSA External Link States\s\SArea\s+(\d+.\d+.\d+.\d+)", output)
+            link_state_id = re.findall(r"Link State ID\s+:\s+(\d+.\d+.\d+.\d+)", output)
+            adv_router = re.findall(r"Advertising Router\s+:\s+(\d+.\d+.\d+.\d+)", output)
+
+            print(area)
+            print(link_state_id)
+            print(adv_router)
+
+            d = {}
+
+            for attribute, id, adv in zip(area, link_state_id, adv_router):
+
+                d["Area"] = attribute
+                d["Link State ID"] = id
+                d["Advertising Router"] = adv
+
+                # print(d)
+                list_ospf_database_nssa.append(d)
+                d = {}
+
+            print(list_ospf_database_nssa)
+
+        elif database == "external":
+
+            self.session.send_cmd(f"do show ip ospf database {database}\r\n")
+            output = self.session.read()
+            # print(output)
+
+
+            link_state_id = re.findall(r"Link State ID\s+:\s+(\d+.\d+.\d+.\d+)", output)
+            adv_router = re.findall(r"Advertising Router\s+:\s+(\d+.\d+.\d+.\d+)", output)
+
+
+            print(link_state_id)
+            print(adv_router)
+
+            d = {}
+
+            for id, adv in zip(link_state_id, adv_router):
+
+                d["Link State ID"] = id
+                d["Advertising Router"] = adv
+
+                # print(d)
+                list_ospf_database_external.append(d)
+                d = {}
+
+            print(list_ospf_database_external)
+
+        else:
+
+            self.session.send_cmd(f"do show ip ospf database\r\n")
+            output = self.session.read()
+            # print(output)
+
+        self.session.close()
+
+        return list_ospf_database_router, list_ospf_database_network, list_ospf_database_summary, list_ospf_database_asbr, list_ospf_database_nssa, list_ospf_database_external
+
+
+
+ospf_obj = OSPF(ip_session="10.2.109.136")
 # ospf_obj.enable_ospf()
 # ospf_obj.disable_ospf()
 # ospf_obj.advertise_network(ip_network="4.0.0.1",area="0.0.0.0")
@@ -294,3 +512,5 @@ ospf_obj = OSPF(ip_session="10.2.109.178")
 # ospf_obj.add_nssa_area(area="0.0.0.1")
 # ospf_obj.redist_config(network="30.0.0.0",network_mask="255.255.255.0",tag="200")
 # ospf_obj.remove_redist_config(network="30.0.0.0",network_mask="255.255.255.0")
+# ospf_obj.show_ospf_neighbors()
+ospf_obj.show_ospf_database(database="summary")

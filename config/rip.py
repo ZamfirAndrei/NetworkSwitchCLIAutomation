@@ -249,10 +249,25 @@ class RIP:
         # print(output)
         self.session.close()
 
-# De adaugat citirea show ip rip database
+    def show_rip_database(self):
+
+        self.session.connect()
+        self.session.send_cmd("show ip rip database\r\n")
+        output = self.session.read()
+        print(output)
+
+        match_total_count = re.findall(r"Total Count :\s+(\d+)", output)
+        match_auto_summary = re.findall(r"(\d+.\d+.\d+.\d+)/(\d+)\s+\S(\d+)\S\s+(auto-summary)", output)
+        match_directly_connected = re.findall(r"(\d+.\d+.\d+.\d+)/(\d+)\s+\S(\d+)\S\s+(directly connected)\S+\s+([vlanGimgt]+)([/\d]+)", output)
+        match_via = re.findall(r"(\d+.\d+.\d+.\d+)/(\d+)\s+\S(\d+)\S\s+via\s+(\d+.\d+.\d+.\d+)\S+\s+([vlanGimgt]+)([/\d]+)", output)
+
+        print(match_total_count)
+        print(match_auto_summary)
+        print(match_directly_connected)
+        print(match_via)
 
 
-obj_rip = RIP(ip_session="10.2.109.178")
+obj_rip = RIP(ip_session="10.2.109.88")
 # obj_rip.disable_rip()
 # obj_rip.enable_rip()
 # obj_rip.advertise_network(ip_network="14.0.0.2")
@@ -276,3 +291,4 @@ obj_rip = RIP(ip_session="10.2.109.178")
 # obj_rip.remove_distance()
 # obj_rip.remove_auto_summary()
 # obj_rip.auto_summary()
+obj_rip.show_rip_database()
