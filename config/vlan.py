@@ -243,8 +243,55 @@ class VLAN:
 
         return d
 
+    def add_more_ports_to_vlan(self, *args, vlan):
 
-vlan = VLAN("10.2.109.178")
+        self.session.connect("admin", "Admin1234!")
+        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd(f"vlan {vlan}\r\n")
+
+        for arg in args:
+            self.session.send_cmd(f"port add {arg}\r\n")
+
+        self.session.send_cmd("!\r\n")
+        output = self.session.read()
+        # print(output)
+        error = re.findall(r"% Invalid interface type", output)
+        #print(error)
+        if "% Invalid interface type" in error:
+            print("The interface does not exist")
+        else:
+            print("The port is added succesfully")
+
+        return output
+
+    def add_more_ports_to_more_vlans(self, *args, **kwargs):
+
+        self.session.connect("admin", "Admin1234!")
+        self.session.send_cmd("conf t\r\n")
+
+        for vlan in kwargs.values():
+
+            print(vlan)
+            self.session.send_cmd(f"vlan {vlan}\r\n")
+
+            for arg in args:
+                self.session.send_cmd(f"port add {arg}\r\n")
+
+            self.session.send_cmd("!\r\n")
+
+        output = self.session.read()
+        # print(output)
+        error = re.findall(r"% Invalid interface type", output)
+        # print(error)
+        if "% Invalid interface type" in error:
+            print("The interface does not exist")
+        else:
+            print("The port is added succesfully")
+
+        return output
+
+
+vlan = VLAN("10.2.109.136")
 # vlan.create_vlan(vlan="430")
 # vlan.remove_vlan(vlan="330")
 # vlan.add_ports_to_vlan(ports="ex 0/5",vlan="330")
@@ -254,4 +301,6 @@ vlan = VLAN("10.2.109.178")
 # vlan.show_vlan(vlan="2000")
 # vlan.create_vlan(vlan="100")
 # vlan.show_vlan(vlan="100")
+# vlan.add_more_ports_to_vlan("Gi 0/4","Gi 0/3","Gi 0/5",vlan="14")
+vlan.add_more_ports_to_more_vlans("Gi 0/4","Gi 0/3","Gi 0/5", vlan1="23", vlan2="24",vlan3="25")
 
