@@ -251,6 +251,11 @@ class RIP:
 
     def show_rip_database(self):
 
+        list_rip_database = list()
+        list_of_auto_summary = list()
+        list_of_directly_connected = list()
+        list_of_via = list()
+
         self.session.connect()
         self.session.send_cmd("show ip rip database\r\n")
         output = self.session.read()
@@ -265,6 +270,55 @@ class RIP:
         print(match_auto_summary)
         print(match_directly_connected)
         print(match_via)
+
+        print("#############################")
+
+        d = {}
+
+        for attribute in match_auto_summary:
+
+            d["Network"] = attribute[0]
+            d["Mask"] = attribute[1]
+            d["Metric"] = attribute[2]
+            d["Type"] = attribute[3]
+            # print(d)
+            list_of_auto_summary.append(d)
+            d = {}
+
+        # print(len(list_of_auto_summary))
+        print(list_of_auto_summary)
+
+        for attribute in match_directly_connected:
+
+            d["Network"] = attribute[0]
+            d["Mask"] = attribute[1]
+            d["Metric"] = attribute[2]
+            d["Type"] = attribute[3]
+            d["Interface"] = attribute[4]+attribute[5]
+            # print(d)
+            list_of_directly_connected.append(d)
+            d = {}
+
+        # print(len(list_of_directly_connected))
+        print(list_of_directly_connected)
+
+        for attribute in match_via:
+
+            d["Network"] = attribute[0]
+            d["Mask"] = attribute[1]
+            d["Metric"] = attribute[2]
+            d["via Network"] = attribute[3]
+            d["via Interface"] = attribute[4]+attribute[5]
+            # print(d)
+            list_of_via.append(d)
+            d = {}
+
+        # print(len(list_of_via))
+        print(list_of_via)
+
+        self.session.close()
+
+        return match_total_count,  list_of_auto_summary, list_of_directly_connected, list_of_via
 
 
 obj_rip = RIP(ip_session="10.2.109.88")
