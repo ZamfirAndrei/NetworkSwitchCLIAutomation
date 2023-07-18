@@ -14,7 +14,7 @@ class IP:
 
         self.ip_session = ip_session
         self.session = ssh.SSH(ip_session)
-        self.vlan_obj = vlan.VLAN(ip_session) # Creez obiectul prin care ma voi folosii de metodele/functiile specifice vlan
+        # self.vlan_obj = vlan.VLAN(ip_session) # Creez obiectul prin care ma voi folosii de metodele/functiile specifice vlan
                                       # vlan --> folderul unde am creat functiile de vlan,
                                       # .VLAN --> apelez clasa din interiorul folderului vlan
         self.tn = telnet.Telnet(ip_session)
@@ -139,7 +139,7 @@ class IP:
                 self.session.send_cmd("ip add dhcp\r\n")
 
             output = self.session.read()
-            print(output)
+            # print(output)
 
         else:
 
@@ -176,7 +176,7 @@ class IP:
             self.session.send_cmd("conf t\r\n")
             self.session.send_cmd(f"ip route {network_dest} {mask_dest} {next_hop}\r\n")
             output = self.session.read()
-            print(output)
+            # print(output)
 
         else:
 
@@ -327,10 +327,10 @@ class IP:
         return ip_route, networks, networks_connected
 
 
-# obj = IP(ip_session="10.2.109.178")
+obj = IP(ip_session="10.2.109.136")
 # obj1 = IP(ip_session="10.2.109.198")
 # obj.create_int_vlan()
-# obj.create_int_vlan(int_vlan="200")
+# obj.create_int_vlan(int_vlan="30")
 # obj.remove_int_vlan(int_vlan="1000")
 # obj.remove_int_vlan(int_vlan="100")
 # obj.remove_int_vlan()

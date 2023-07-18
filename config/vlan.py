@@ -59,11 +59,11 @@ class VLAN:
                 self.session.send_cmd("conf t")
                 self.session.send_cmd(f"vlan {vlan}\r\n")
                 self.session.send_cmd("!\r\n")
-                print("1")
+                # print("1")
             else:
                 self.session.send_cmd("!\r\n")
                 self.session.send_cmd(f"vlan {vlan}\r\n")
-                print("2")
+                # print("2")
             print(f"The VLAN {vlan} was created")
 
         self.session.close()
@@ -102,6 +102,8 @@ class VLAN:
             print("The interface does not exist")
         else:
             print("The port is added succesfully")
+
+        self.session.close()
 
         return output
 
@@ -208,6 +210,8 @@ class VLAN:
             output = self.session.read()
             print(output)
 
+        self.session.close()
+
         return d, output
 
     def show_vlan_port(self, port):
@@ -240,6 +244,7 @@ class VLAN:
             d[key] = value
 
         print(d)
+        self.session.close()
 
         return d
 
@@ -261,6 +266,8 @@ class VLAN:
             print("The interface does not exist")
         else:
             print("The port is added succesfully")
+
+        self.session.close()
 
         return output
 
@@ -288,10 +295,12 @@ class VLAN:
         else:
             print("The port is added succesfully")
 
+        self.session.close()
+
         return output
 
 
-vlan = VLAN("10.2.109.136")
+vlan = VLAN("10.2.109.88")
 # vlan.create_vlan(vlan="430")
 # vlan.remove_vlan(vlan="330")
 # vlan.add_ports_to_vlan(ports="ex 0/5",vlan="330")
@@ -300,7 +309,7 @@ vlan = VLAN("10.2.109.136")
 # print("###########################")
 # vlan.show_vlan(vlan="2000")
 # vlan.create_vlan(vlan="100")
-# vlan.show_vlan(vlan="100")
+# vlan.show_vlan(vlan="2")
 # vlan.add_more_ports_to_vlan("Gi 0/4","Gi 0/3","Gi 0/5",vlan="14")
-vlan.add_more_ports_to_more_vlans("Gi 0/4","Gi 0/3","Gi 0/5", vlan1="23", vlan2="24",vlan3="25")
+# vlan.add_more_ports_to_more_vlans("Gi 0/4","Gi 0/3","Gi 0/5", vlan1="23", vlan2="24",vlan3="25")
 

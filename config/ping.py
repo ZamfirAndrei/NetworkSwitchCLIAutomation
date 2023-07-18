@@ -28,15 +28,47 @@ class PING:
 
             if ip_dest in response:
 
-                print(f"Avem conexiune in {ip_dest}")
+                print(f"We have connection in {ip_dest}")
 
             else:
 
-                print(f"Nu avem conexiune in {ip_dest}")
+                print(f"We don't have connection in {ip_dest}")
 
         else:
 
-            print(f"Nu avem conexiune in {ip_dest}")
+            print(f"We don't have connection {ip_dest}")
+
+        self.session.close()
+
+        return response
+
+    def ping_more(self, *args):
+
+        self.session.connect()
+
+        for ip_dest in args:
+            self.session.send_cmd(f"ping {ip_dest}\r\n")
+        output = self.session.read()
+        # print(output)
+
+        response = re.findall(r"Reply Received From :(\d+.\d+.\d+.\d+)", output)
+        print(response)
+
+        if response is not None:
+
+            for ip_dest in args:
+
+                if ip_dest in response:
+
+                    print(f"We have connection in {ip_dest}")
+
+                else:
+
+                    print(f"We don't have connection in {ip_dest}")
+
+        else:
+
+            print(f"We don't have connection")
 
         self.session.close()
 
@@ -44,6 +76,7 @@ class PING:
 
 
 obj = PING(ip_session="10.2.109.136")
-obj.ping(ip_dest="15.0.0.100")
-obj.ping(ip_dest="15.0.0.88")
-obj.ping(ip_dest="15.0.0.1")
+# obj.ping(ip_dest="15.0.0.100")
+# obj.ping(ip_dest="15.0.0.88")
+# obj.ping(ip_dest="15.0.0.1")
+# obj.ping_more("15.0.0.1","15.0.0.100","15.0.0.88", "6.0.0.1")
