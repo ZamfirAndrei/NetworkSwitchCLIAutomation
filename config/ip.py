@@ -34,10 +34,9 @@ class IP:
             self.session.send_cmd(f"int vlan {int_vlan}\r\n")
             self.session.send_cmd("no shut\r\n")
             output = self.session.read()
-            print(output)
+            # print(output)
             print("The interface VLAN was created succesfully")
             self.session.close()
-
 
         return output
 
