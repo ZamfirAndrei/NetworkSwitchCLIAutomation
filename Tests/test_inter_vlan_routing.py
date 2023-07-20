@@ -96,9 +96,32 @@ def test_inter_vlan_routing_func_2():
 
 def test_inter_vlan_routing_func_3():
 
-    int1.no_shut_interface(interface="Gi 0/3")
+    # int1.no_shut_interface(interface="Gi 0/3")
+    # vlan1.create_vlan(vlan="50")
+    # vlan1.add_more_ports_to_vlan("Gi 0/3", "Gi 0/4", vlan="50")
+    # ip1.create_int_vlan(int_vlan="50")
+    # ip1.add_ip_interface(int_vlan="50",ip="50.0.0.1",mask="255.255.0.0")
 
+    a, b, c = int1.show_int_description()
+    # print(a, b, c)
+    list_of_int_vlans = list()
+    x, y, z = "", "", ""
 
-    assert "ok" == "ok"
+    for i in c:
+        print(i)
+        print(i["Interface"], i["Status"], i["Protocol"])
+        list_of_int_vlans.append([i["Interface"], i["Status"], i["Protocol"]])
 
+    print(list_of_int_vlans)
 
+    for inter in list_of_int_vlans:
+
+        print(inter)
+
+        if "vlan50" in inter:
+
+            print(inter[0], inter[1], inter[2])
+            x, y, z = inter[0], inter[1], inter[2]
+            break
+
+    assert x == "vlan50" and y == "Up" and z == "Up"

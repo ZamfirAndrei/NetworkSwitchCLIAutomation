@@ -74,7 +74,7 @@ class Interface:
         # print(output)
 
         match = re.findall(r"([GExi]+\d/\d+)\s+([DownUp]+)\s+([DownUp]+)", output)
-        match1 = re.findall(r"([GExi]+\d/\d+)\s+([DownUp]+)\s+([DownUp]+)\s+([\w-]+)", output)
+        match1 = re.findall(r"([GExi]+\d/\d+)\s+([DownUp]+)\s+([DownUp]+)\s+([\w./-]+)", output)
         match2 = re.findall(r"(vlan\d+)\s+([DownUp]+)\s+([DownUp]+)", output)
 
         # print(match)
@@ -140,4 +140,4 @@ obj = Interface(ip_session="10.2.109.136")
 # obj.no_shut_interface(interface="Gi 0/4")
 # obj.add_routed_port(interface="Gi 0/5")
 # obj.remove_routed_port(interface="Gi 0/5")
-obj.show_int_description()
+# obj.show_int_description()
