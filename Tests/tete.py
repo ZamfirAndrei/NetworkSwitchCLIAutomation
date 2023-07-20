@@ -110,6 +110,21 @@ Link ID          ADV Router       Age        Seq#          Checksum
 '''
 
 
-match1 = re.findall(r"(\d+.\d+.\d+.\d+)\s+(\d+.\d+.\d+.\d+)\s+(\d+)", output)
-print(match1)
-print(len(match1))
+# match1 = re.findall(r"(\d+.\d+.\d+.\d+)\s+(\d+.\d+.\d+.\d+)\s+(\d+)", output)
+# print(match1)
+# print(len(match1))
+
+
+lis = [{'Interface': 'vlan1', 'Status': 'Down', 'Protocol': 'Down'},
+     {'Interface': 'vlan50', 'Status': 'Up', 'Protocol': 'Up'},
+     {'Interface': 'vlan30', 'Status': 'Up', 'Protocol': 'Up'}]
+print(lis)
+
+for i in lis:
+    print(i)
+    # for j in i:
+    #     print(j)
+    if "vlan30" in i.values():
+        print("Da")
+    else:
+        print("Nu")
