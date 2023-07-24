@@ -488,8 +488,9 @@ class OSPF:
         return list_ospf_database_router, list_ospf_database_network, list_ospf_database_summary, list_ospf_database_asbr, list_ospf_database_nssa, list_ospf_database_external
 
 
+ip = "10.2.109.238"
 
-ospf_obj = OSPF(ip_session="10.2.109.136")
+ospf_obj = OSPF(ip_session=ip)
 # ospf_obj.enable_ospf()
 # ospf_obj.disable_ospf()
 # ospf_obj.advertise_network(ip_network="4.0.0.1",area="0.0.0.0")

@@ -128,3 +128,12 @@ for i in lis:
         print("Da")
     else:
         print("Nu")
+
+for i in lis:
+    print(i)
+    for j in i.values():
+        print(j)
+        if "vlan30" == j:
+            print("Da")
+        else:
+            print("Nu")

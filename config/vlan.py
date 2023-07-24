@@ -300,7 +300,9 @@ class VLAN:
         return output
 
 
-vlan = VLAN("10.2.109.88")
+ip = "10.2.109.238"
+
+vlan = VLAN(ip_session=ip)
 # vlan.create_vlan(vlan="430")
 # vlan.remove_vlan(vlan="330")
 # vlan.add_ports_to_vlan(ports="ex 0/5",vlan="330")

@@ -322,7 +322,9 @@ class RIP:
         return match_total_count,  list_of_auto_summary, list_of_directly_connected, list_of_via
 
 
-obj_rip = RIP(ip_session="10.2.109.88")
+ip = "10.2.109.238"
+
+obj_rip = RIP(ip_session=ip)
 # obj_rip.disable_rip()
 # obj_rip.enable_rip()
 # obj_rip.advertise_network(ip_network="14.0.0.2")
@@ -346,4 +348,4 @@ obj_rip = RIP(ip_session="10.2.109.88")
 # obj_rip.remove_distance()
 # obj_rip.remove_auto_summary()
 # obj_rip.auto_summary()
-obj_rip.show_rip_database()
+# obj_rip.show_rip_database()

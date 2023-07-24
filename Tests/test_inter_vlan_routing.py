@@ -1,20 +1,30 @@
 import time
-
 import pytest
+
 from config import ip, vlan, interfaces, ping
 from Management import ssh
 
-ip1 = ip.IP(ip_session="10.2.109.136")
-vlan1 = vlan.VLAN(ip_session="10.2.109.136")
-session1 = ssh.SSH(ip="10.2.109.136")
-int1 = interfaces.Interface(ip_session="10.2.109.136")
-ping1 = ping.PING(ip_session="10.2.109.136")
+ip_session_1 = "10.2.109.238"
+ip_session_2 = "10.2.109.239"
 
-ip2 = ip.IP(ip_session="10.2.109.88")
-vlan2 = vlan.VLAN(ip_session="10.2.109.88")
-session3 = ssh.SSH(ip="10.2.109.88")
-int2 = interfaces.Interface(ip_session="10.2.109.88")
-ping2 = ping.PING(ip_session="10.2.109.88")
+ip1 = ip.IP(ip_session=ip_session_1)
+vlan1 = vlan.VLAN(ip_session=ip_session_1)
+session1 = ssh.SSH(ip=ip_session_1)
+int1 = interfaces.Interface(ip_session=ip_session_1)
+ping1 = ping.PING(ip_session=ip_session_1)
+
+ip2 = ip.IP(ip_session=ip_session_2)
+vlan2 = vlan.VLAN(ip_session=ip_session_2)
+session2 = ssh.SSH(ip=ip_session_2)
+int2 = interfaces.Interface(ip_session=ip_session_2)
+ping2 = ping.PING(ip_session=ip_session_2)
+
+
+def test():
+
+    # session1.connect()
+    int1.no_shut_interface(interface="Gi 0/4")
+    # vlan1.create_vlan(vlan="111")
 
 
 def test_inter_vlan_routing_func_1():
@@ -125,3 +135,51 @@ def test_inter_vlan_routing_func_3():
             break
 
     assert x == "vlan50" and y == "Up" and z == "Up"
+
+
+def test_inter_vlan_routing_func_4():
+
+    int1.no_shut_interface(interface="Gi 0/3")
+    vlan1.create_vlan(vlan="30")
+    vlan1.add_more_ports_to_vlan("Gi 0/3", "Gi 0/4", vlan="30")
+    ip1.create_int_vlan(int_vlan="30")
+    ip1.add_ip_interface(int_vlan="30",ip="30.0.0.1",mask="255.255.0.0")
+
+    a, b, c = int1.show_int_description()
+    ok = False
+
+    for elem in c:
+        if "vlan1" in elem.values():
+            print(f"Found in {elem}")
+            ok = True
+
+    assert ok is True
+
+
+def test_inter_vlan_routing_func_5():
+
+    int1.no_shut_interface(interface="Gi 0/3")
+    vlan1.create_vlan(vlan="20")
+    vlan1.add_more_ports_to_vlan("Gi 0/3", "Gi 0/4", vlan="20")
+    ip1.create_int_vlan(int_vlan="20")
+    ip1.add_ip_interface(int_vlan="20",ip="20.0.0.1",mask="255.255.0.0")
+
+    vlan = "vlan1"
+    a, b, c = int1.show_int_description()
+    ok = False
+
+    for elem in c:
+        if vlan in elem.values():
+            print(elem["Status"], elem["Protocol"])
+
+            if elem["Status"] == "Down":
+
+                print(f"Found in {elem}")
+                ok = True
+
+    assert ok is True
+
+
+
+
+

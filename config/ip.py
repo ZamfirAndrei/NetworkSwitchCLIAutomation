@@ -326,7 +326,9 @@ class IP:
         return ip_route, networks, networks_connected
 
 
-obj = IP(ip_session="10.2.109.136")
+ip = "10.2.109.238"
+
+obj = IP(ip_session=ip)
 # obj1 = IP(ip_session="10.2.109.198")
 # obj.create_int_vlan()
 # obj.create_int_vlan(int_vlan="30")
