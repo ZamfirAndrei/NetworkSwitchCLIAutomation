@@ -2,8 +2,10 @@ import pytest
 from Management import ssh, telnet
 from config import vlan
 
-vl = vlan.VLAN(ip_session="10.2.109.178")
-session = ssh.SSH(ip="10.2.109.178")
+ip = "10.2.109.238"
+
+vl = vlan.VLAN(ip_session=ip)
+session = ssh.SSH(ip=ip)
 
 
 def test_connection():

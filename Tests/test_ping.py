@@ -3,8 +3,10 @@ import pytest
 from Management import ssh, telnet
 from config import ping
 
-session = ssh.SSH(ip="10.2.109.136")
-obj_ping = ping.PING(ip_session="10.2.109.136")
+ip_session = "10.2.109.238"
+
+session = ssh.SSH(ip=ip_session)
+obj_ping = ping.PING(ip_session=ip_session)
 
 
 def test_func_1():

@@ -13,11 +13,11 @@ class IP:
         print("Clasa IP")
 
         self.ip_session = ip_session
-        self.session = ssh.SSH(ip_session)
+        self.session = ssh.SSH(ip=ip_session)
         # self.vlan_obj = vlan.VLAN(ip_session) # Creez obiectul prin care ma voi folosii de metodele/functiile specifice vlan
                                       # vlan --> folderul unde am creat functiile de vlan,
                                       # .VLAN --> apelez clasa din interiorul folderului vlan
-        self.tn = telnet.Telnet(ip_session)
+        self.tn = telnet.Telnet(ip=ip_session)
 
     def create_int_vlan(self, int_vlan=None):
 
@@ -26,6 +26,7 @@ class IP:
         if int_vlan is None:
 
             print("Baga drq o interfata")
+            self.session.close()
 
         else:
 
@@ -45,7 +46,10 @@ class IP:
         output = ""
 
         if int_vlan is None:
+
             print("Selecteaza drq o interfata")
+            self.session.close()
+
         else:
             self.session.connect()
             self.session.send_cmd("conf t\r\n")
@@ -77,24 +81,44 @@ class IP:
 
         return output
 
-    def show_ip_int(self, int_vlan=None):
+    def show_ip_int(self, int_vlan=None, mgmt=None):
 
         output = ""
+        list_of_ip_interfaces = list()
 
         d = {
-            "Int Vlan":"",
+            "Inteface Vlan":"",
             "The Interface is":"",
             "Line Protocol is":"",
             "Ip Address":"",
             "Mask":""
         }
 
+        d_mgmt = {}
+
+        if mgmt is not None:
+
+            self.session.connect()
+            self.session.send_cmd(f"show ip int mgmt\r\n")
+            output = self.session.read()
+            # print(output)
+            print("1")
+
+            match = re.findall(r"(mgmt\d+)\s+is\s+([updown]+),\s+line protocol is\s+([updown]+)\S+Internet Address is\s+(\d+.\d+.\d+.\d+)/(\d+)", output)
+            print(match)
+
+            for key, attribute in zip(d.keys(),match[0]):
+                d_mgmt[key] = attribute
+
+            print(d_mgmt)
+
         if int_vlan is not None:
 
             self.session.connect()
             self.session.send_cmd(f"show ip int vlan {int_vlan}\r\n")
             output = self.session.read()
-            print(output)
+            # print(output)
+            print("2")
 
             if "% Invalid Vlan Interface" in output:
 
@@ -102,7 +126,7 @@ class IP:
 
             else:
 
-                match = re.findall(r"(vlan\d+) is (\w+).\s+line protocol is (\w+).+Internet Address is (\d+.\d+.\d+.\d+)/(\d+)", output)
+                match = re.findall(r"(vlan\d+)\s+is\s+([updown]+),\s+line protocol is\s+([updown]+)\S+Internet Address is\s+(\d+.\d+.\d+.\d+)/(\d+)", output)
                 print(match)
 
                 for key, attribute in zip(d.keys(),match[0]):
@@ -111,13 +135,43 @@ class IP:
 
         else:
 
-            self.session.send_cmd("show ip int\r\n")
+            self.session.connect()
+            self.session.send_cmd(cmd="conf t\r\n")
+            self.session.send_cmd(cmd="do show ip int\r\n")
             output = self.session.read()
-            print(output)
+            # print(output)
+            print("3")
 
+            match = re.findall(r"([vlamgtn]+\d+)\s+is\s+([updown]+),\s+line protocol is\s+([updown]+)\S+Internet Address is\s+(\d+.\d+.\d+.\d+)/(\d+)", output)
+            # print(match)
+
+            for attribute in match:
+
+                d1 = {}
+
+                for key, value in zip(d.keys(), attribute):
+
+                    # print(key, value)
+
+                    if value == "nmgmt0":
+
+                        value = value.replace("nmgmt","mgmt")
+                        # print(value)
+
+                    else:
+
+                        value = value.replace("nvlan","vlan")
+                        # print(value)
+
+                    d1[key] = value
+
+                # print(d1)
+                list_of_ip_interfaces.append(d1)
+
+        print(list_of_ip_interfaces)
         self.session.close()
 
-        return d
+        return d, list_of_ip_interfaces, d_mgmt
 
     def add_ip_interface(self, int_vlan=None, ip=None, mask=None, dhcp="No"):
 
@@ -329,6 +383,7 @@ class IP:
 ip = "10.2.109.238"
 
 obj = IP(ip_session=ip)
+# obj.create_int_vlan(int_vlan="50")
 # obj1 = IP(ip_session="10.2.109.198")
 # obj.create_int_vlan()
 # obj.create_int_vlan(int_vlan="30")
@@ -338,7 +393,11 @@ obj = IP(ip_session=ip)
 # obj.remove_int_vlan(int_vlan="201")
 # obj.show_ip_int("50")
 # obj.show_ip_int("30")
-# obj.show_ip_int()
+obj.show_ip_int()
+print("########################")
+obj.show_ip_int(mgmt="Yes")
+print("########################")
+obj.show_ip_int(int_vlan="1",mgmt="Yes")
 # obj.show_ip_int(int_vlan="200")
 # obj.add_ip_interface(int_vlan="200",ip="200.0.0.1",mask="255.255.0.0")
 # obj.add_ip_interface(ip="200.0.0.1",mask="255.255.0.0",dhcp="Yes")
