@@ -138,7 +138,7 @@ class Interface:
 ip = "10.2.109.238"
 
 obj = Interface(ip_session=ip)
-# obj.shut_interface(interface="Gi 0/4")
+obj.shut_interface(interface="Gi 0/4")
 # obj.no_shut_interface(interface="Gi 0/4")
 # obj.add_routed_port(interface="Gi 0/5")
 # obj.remove_routed_port(interface="Gi 0/5")

@@ -25,8 +25,9 @@ def ssh_session(ip,username,password):
     # Storing the variables ssh, shell
     return output
 
-x = ssh_session("10.2.109.178", "admin", "Admin1234!")
-#print(x)
+# x = ssh_session("10.2.109.178", "admin", "Admin1234!")
+# print(x)
+
 
 def telnet(ip, username , password):
 
@@ -137,3 +138,29 @@ for i in lis:
             print("Da")
         else:
             print("Nu")
+
+
+def con(ip,username,password):
+
+    # Create a new SSH client
+
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    # Connect to device
+
+    ssh.connect(ip, username=username, password=password)
+    shell = ssh.invoke_shell()
+    time.sleep(1)
+
+    shell.send("show ip int\r\n")
+    time.sleep(1)
+    output = shell.recv(65535)
+
+
+    # Storing the variables ssh, shell
+    print(output)
+    return output
+
+
+con("10.2.109.239",username="admin",password="Admin1234!")

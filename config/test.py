@@ -2,7 +2,7 @@ import paramiko
 import time
 
 
-def connection(ip="10.2.109.178", username="admin", password="Admin1234!"):
+def connection(ip="10.2.109.238", username="admin", password="Admin1234!"):
     ssh = paramiko.SSHClient()
     ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
 
@@ -12,9 +12,11 @@ def connection(ip="10.2.109.178", username="admin", password="Admin1234!"):
     shell = ssh.invoke_shell()
     time.sleep(1)
     shell.send("show ip int \r\n")
+    shell.send("ping 8.8.8.8\r\n")
     time.sleep(1)
     output = shell.recv(65535)
     print(output)
+
 
 def show_vlan_pagination_enable_disable(ip="10.2.109.198",username="admin", password = "Admin1234!"):
 
@@ -32,7 +34,6 @@ def show_vlan_pagination_enable_disable(ip="10.2.109.198",username="admin", pass
     time.sleep(2)
     output = shell.recv(65535)
     print(output)
-
 
 
 # connection()

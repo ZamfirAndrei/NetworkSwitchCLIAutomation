@@ -53,9 +53,13 @@ class SSH:
         return output
 
 
-# session = SSH("10.2.109.178")
+ip_session = "10.2.109.238"
+
+# session = SSH(ip=ip_session)
+# session.connect()
+# session.send_cmd(cmd="sh vlan")
 # session.connect("admin", "Admin1234!")
-# session.send_cmd("show ip int")
+# session.send_cmd(cmd="show ip int")
 # session.send_cmd("ping 8.8.8.8")
 # print(session.read())
 # session.close()

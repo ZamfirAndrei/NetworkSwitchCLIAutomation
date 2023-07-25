@@ -8,25 +8,22 @@ ip_session_1 = "10.2.109.238"
 ip_session_2 = "10.2.109.239"
 
 
-# ip1 = ip.IP(ip_session=ip_session_1)
+ip1 = ip.IP(ip_session=ip_session_1)
 vlan1 = vlan.VLAN(ip_session=ip_session_1)
-session1 = ssh.SSH(ip=ip_session_1)
 int1 = interfaces.Interface(ip_session=ip_session_1)
 ping1 = ping.PING(ip_session=ip_session_1)
 
 
 ip2 = ip.IP(ip_session=ip_session_2)
 vlan2 = vlan.VLAN(ip_session=ip_session_2)
-session2 = ssh.SSH(ip=ip_session_2)
 int2 = interfaces.Interface(ip_session=ip_session_2)
 ping2 = ping.PING(ip_session=ip_session_2)
 
 
 def test_1():
 
-    # session1.connect()
     int1.no_shut_interface(interface="Gi 0/4")
-    vlan1.create_vlan(vlan="111")
+    # vlan1.create_vlan(vlan="111")
 
 
 def test_inter_vlan_routing_func_1():
