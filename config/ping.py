@@ -75,9 +75,9 @@ class PING:
         return response
 
 
-ip = "10.2.109.238"
+ip_session = "10.2.109.238"
 
-obj = PING(ip_session=ip)
+# obj = PING(ip_session=ip_session)
 # obj.ping(ip_dest="15.0.0.100")
 # obj.ping(ip_dest="15.0.0.88")
 # obj.ping(ip_dest="15.0.0.1")

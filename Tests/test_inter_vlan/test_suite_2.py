@@ -22,8 +22,8 @@ ping2 = ping.PING(ip_session=ip_session_2)
 
 def test_1():
 
-    int1.no_shut_interface(interface="Gi 0/4")
-    # vlan1.create_vlan(vlan="111")
+    int1.no_shut_interface(interface="Gi 0/5")
+    vlan1.create_vlan(vlan="111")
 
 
 def test_inter_vlan_routing_func_1():

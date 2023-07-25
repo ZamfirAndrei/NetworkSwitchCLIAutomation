@@ -1,5 +1,6 @@
 import paramiko
 import time
+from config import vlan, interfaces, ip, ping
 
 
 def connection(ip="10.2.109.238", username="admin", password="Admin1234!"):
@@ -38,3 +39,17 @@ def show_vlan_pagination_enable_disable(ip="10.2.109.198",username="admin", pass
 
 # connection()
 # show_vlan_pagination_enable_disable()
+
+# ip_session = "10.2.109.238"
+# vl = vlan.VLAN(ip_session=ip_session)
+# int1 = interfaces.Interface(ip_session=ip_session)
+#
+#
+# def exercitiu():
+#
+#
+#     vl.create_vlan(vlan="150")
+#     int1.no_shut_interface(interface="Gi 0/4")
+#
+#
+# exercitiu()

@@ -104,8 +104,8 @@ class INFOs:
 
 
 ip = "10.2.109.238"
-obj = INFOs(ip_session=ip)
+# obj = INFOs(ip_session=ip)
 # obj.show_system_info()
 # obj.show_run()
 # obj.show_env_cpu()
-obj.show_env_cpu_counters()
+# obj.show_env_cpu_counters()

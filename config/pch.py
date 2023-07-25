@@ -121,14 +121,15 @@ class PCH:
         self.session.close()
 
 
-obj_pch = PCH(ip_session="10.2.109.195")
+ip_session = "10.2.109.238"
+# obj_pch = PCH(ip_session=ip_session)
 # obj_pch.create_pch(id="100")
 # obj_pch.create_pch(id="10")
 # obj_pch.remove_pch(id="100")
 # obj_pch.add_port_to_pch(id="10",port="Ex 0/1",mode="active")
 # obj_pch.add_port_to_pch(id="10",port="Ex 0/2",mode="active")
 # obj_pch.remove_port_to_pch(port="Gi 0/9")
-obj_pch.show_pch_summary(id="1")
+# obj_pch.show_pch_summary(id="1")
 # obj_pch.change_mode_pch(id="10",mode="hybrid")
 
 

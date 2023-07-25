@@ -501,7 +501,8 @@ class STP:
         return d_instance_vlan, list_ports_instance
 
 
-obj = STP("10.2.109.178")
+ip_session = "10.2.109.238"
+# obj = STP(ip_session=ip_session)
 # obj.add_rstp_bridge_priority(bridge_priority=0)
 # obj.remove_rstp_bridge_priority()
 # obj.add_rstp_port_cost(port="Gi 0/3", cost="4")

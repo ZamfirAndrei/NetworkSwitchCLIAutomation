@@ -314,8 +314,10 @@ class QinQ:
 
 # De adaugat sa citesc show-running config si sa citesc daca e in mode provider-edge sau customer-edge
 
-# obj_qinq = QinQ(ip_session="10.2.109.198")
-obj_qinq = QinQ(ip_session="10.2.109.195")
+
+ip_session = "10.2.109.238"
+
+# obj_qinq = QinQ(ip_session=ip_session)
 # obj_qinq.change_bridge_mode(bridge_mode="provider-edge")
 # obj_qinq.change_bridge_port_type(port="Gi 0/10",bridge_port_type="provider")
 # obj_qinq.add_cvlan_to_svlan(port="Gi 0/5", cvlan="20",svlan="2000")

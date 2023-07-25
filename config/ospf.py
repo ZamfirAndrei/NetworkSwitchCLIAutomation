@@ -490,7 +490,7 @@ class OSPF:
 
 ip = "10.2.109.238"
 
-ospf_obj = OSPF(ip_session=ip)
+# ospf_obj = OSPF(ip_session=ip)
 # ospf_obj.enable_ospf()
 # ospf_obj.disable_ospf()
 # ospf_obj.advertise_network(ip_network="4.0.0.1",area="0.0.0.0")
@@ -514,4 +514,4 @@ ospf_obj = OSPF(ip_session=ip)
 # ospf_obj.redist_config(network="30.0.0.0",network_mask="255.255.255.0",tag="200")
 # ospf_obj.remove_redist_config(network="30.0.0.0",network_mask="255.255.255.0")
 # ospf_obj.show_ospf_neighbors()
-ospf_obj.show_ospf_database(database="summary")
+# ospf_obj.show_ospf_database(database="summary")
