@@ -47,7 +47,7 @@ class SSH:
     def read(self):
 
         # Read the prompt
-        time.sleep(1)
+        # time.sleep(1)
         output = str(self.shell.recv(65535))
 
         return output

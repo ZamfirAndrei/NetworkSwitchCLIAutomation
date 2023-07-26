@@ -19,3 +19,4 @@ def test_func_1():
     vl1.create_vlan(vlan="200")
     int1.no_shut_interface(interface="Gi 0/3")
     vl1.add_ports_to_vlan(ports="Gi 0/3", vlan="200")
+

@@ -119,25 +119,25 @@ Link ID          ADV Router       Age        Seq#          Checksum
 lis = [{'Interface': 'vlan1', 'Status': 'Down', 'Protocol': 'Down'},
      {'Interface': 'vlan50', 'Status': 'Up', 'Protocol': 'Up'},
      {'Interface': 'vlan30', 'Status': 'Up', 'Protocol': 'Up'}]
-print(lis)
-
-for i in lis:
-    print(i)
-    # for j in i:
-    #     print(j)
-    if "vlan30" in i.values():
-        print("Da")
-    else:
-        print("Nu")
-
-for i in lis:
-    print(i)
-    for j in i.values():
-        print(j)
-        if "vlan30" == j:
-            print("Da")
-        else:
-            print("Nu")
+# print(lis)
+#
+# for i in lis:
+#     print(i)
+#     # for j in i:
+#     #     print(j)
+#     if "vlan30" in i.values():
+#         print("Da")
+#     else:
+#         print("Nu")
+#
+# for i in lis:
+#     print(i)
+#     for j in i.values():
+#         print(j)
+#         if "vlan30" == j:
+#             print("Da")
+#         else:
+#             print("Nu")
 
 
 def con(ip,username,password):
@@ -163,4 +163,20 @@ def con(ip,username,password):
     return output
 
 
-con("10.2.109.239",username="admin",password="Admin1234!")
+# con("10.2.109.239",username="admin",password="Admin1234!")
+
+def add_ip_interfaces(*args, **kwargs):
+    ok = 0
+    for int_vlan in args:
+        print(int_vlan)
+        l = list(kwargs.values())
+        print(l)
+        print(l[ok])
+        ok += 1
+
+
+
+
+
+add_ip_interfaces("100", "110","120", int_vlan1_ip=["100.0.0.1", "255.255.0.0"], int_vlan2_ip=["110.0.0.1", "255.255.0.0"], int_vlan3_ip=["120.0.0.1", "255.255.0.0"])
+# add_ip_interfaces("100","110","120")

@@ -25,6 +25,22 @@ class Interface:
         print(f"The interface {interface} has been shut")
         self.session.close()
 
+    def shut_interfaces(self, *args):
+
+        self.session.connect()
+        self.session.send_cmd(cmd="conf t\r\n")
+
+        for interface in args:
+
+            self.session.send_cmd(cmd=f"int {interface}\r\n")
+            self.session.send_cmd(cmd="shut\r\n")
+            self.session.send_cmd(cmd="!")
+            print(f"The interface {interface} has been shut")
+
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
     def no_shut_interface(self, interface):
 
         self.session.connect()
@@ -34,6 +50,22 @@ class Interface:
         output = self.session.read()
         # print(output)
         print(f"The interface {interface} has been no-shut")
+        self.session.close()
+
+    def no_shut_interfaces(self, *args):
+
+        self.session.connect()
+        self.session.send_cmd(cmd="conf t\r\n")
+
+        for interface in args:
+
+            self.session.send_cmd(cmd=f"int {interface}\r\n")
+            self.session.send_cmd(cmd="no shut\r\n")
+            self.session.send_cmd(cmd="!")
+            print(f"The interface {interface} has been no-shut")
+
+        output = self.session.read()
+        # print(output)
         self.session.close()
 
     def add_routed_port(self, interface):

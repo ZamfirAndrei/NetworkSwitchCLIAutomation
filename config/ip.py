@@ -87,7 +87,7 @@ class IP:
         list_of_ip_interfaces = list()
 
         d = {
-            "Inteface Vlan":"",
+            "Interface Vlan":"",
             "The Interface is":"",
             "Line Protocol is":"",
             "Ip Address":"",
@@ -137,6 +137,7 @@ class IP:
 
             self.session.connect()
             self.session.send_cmd(cmd="conf t\r\n")
+            self.session.send_cmd(cmd="set cli pagination off\r\n")
             self.session.send_cmd(cmd="do show ip int\r\n")
             output = self.session.read()
             # print(output)
@@ -202,6 +203,27 @@ class IP:
 
         return output
 
+    def add_ip_interfaces(self, *args, **kwargs):
+
+        self.session.connect()
+        self.session.send_cmd("conf t\r\n")
+
+        for int_vlan, ip in zip(args,kwargs.values()):
+
+            # print(int_vlan, ip, ip[0], ip[1])
+
+            self.session.send_cmd(f"int vlan {int_vlan}\r\n")
+            self.session.send_cmd(f"ip add {ip[0]} {ip[1]}")
+            self.session.send_cmd("!\r\n")
+            print(f"The int vlan {int_vlan} has now the ip {ip[0]} and mask {ip[1]}")
+
+        output = self.session.read()
+        # print(output)
+
+        self.session.close()
+
+        return output
+
     def remove_ip_interface(self,int_vlan=None):
 
         output = ""
@@ -214,6 +236,28 @@ class IP:
             self.session.send_cmd("no ip add\r\n")
             output = self.session.read()
             print(output)
+
+        self.session.close()
+
+        return output
+
+    def remove_vlan_interfaces(self, *args):
+
+        self.session.connect()
+        self.session.send_cmd("conf t\r\n")
+
+        for int_vlan in args:
+
+            # print(int_vlan, ip, ip[0], ip[1])
+
+            self.session.send_cmd(f"int vlan {int_vlan}\r\n")
+            self.session.send_cmd(f"shut\r\n")
+            self.session.send_cmd("!\r\n")
+            self.session.send_cmd(f"no int vlan {int_vlan}\r\n")
+            print(f"The int vlan {int_vlan} has been removed")
+
+        output = self.session.read()
+        # print(output)
 
         self.session.close()
 

@@ -105,11 +105,11 @@ def test_inter_vlan_routing_func_2():
 
 def test_inter_vlan_routing_func_3():
 
-    # int1.no_shut_interface(interface="Gi 0/3")
-    # vlan1.create_vlan(vlan="50")
-    # vlan1.add_more_ports_to_vlan("Gi 0/3", "Gi 0/4", vlan="50")
-    # ip1.create_int_vlan(int_vlan="50")
-    # ip1.add_ip_interface(int_vlan="50",ip="50.0.0.1",mask="255.255.0.0")
+    int1.no_shut_interface(interface="Gi 0/3")
+    vlan1.create_vlan(vlan="50")
+    vlan1.add_more_ports_to_vlan("Gi 0/3", "Gi 0/4", vlan="50")
+    ip1.create_int_vlan(int_vlan="50")
+    ip1.add_ip_interface(int_vlan="50", ip="50.0.0.1", mask="255.255.0.0")
 
     a, b, c = int1.show_int_description()
     # print(a, b, c)
@@ -142,7 +142,7 @@ def test_inter_vlan_routing_func_4():
     vlan1.create_vlan(vlan="30")
     vlan1.add_more_ports_to_vlan("Gi 0/3", "Gi 0/4", vlan="30")
     ip1.create_int_vlan(int_vlan="30")
-    ip1.add_ip_interface(int_vlan="30",ip="30.0.0.1",mask="255.255.0.0")
+    ip1.add_ip_interface(int_vlan="30", ip="30.0.0.1", mask="255.255.0.0")
 
     a, b, c = int1.show_int_description()
     ok = False
@@ -161,7 +161,7 @@ def test_inter_vlan_routing_func_5():
     vlan1.create_vlan(vlan="20")
     vlan1.add_more_ports_to_vlan("Gi 0/3", "Gi 0/4", vlan="20")
     ip1.create_int_vlan(int_vlan="20")
-    ip1.add_ip_interface(int_vlan="20",ip="20.0.0.1",mask="255.255.0.0")
+    ip1.add_ip_interface(int_vlan="20", ip="20.0.0.1", mask="255.255.0.0")
 
     vlan = "vlan1"
     a, b, c = int1.show_int_description()
@@ -179,6 +179,94 @@ def test_inter_vlan_routing_func_5():
     assert ok is True
 
 
+def test_inter_vlan_routing_func_6():
+
+    vl = "60"
+    ip1.create_int_vlan(int_vlan=vl)
+    ip1.add_ip_interface(int_vlan=vl, ip="60.0.0.1", mask="255.255.0.0")
+    a, b, c = ip1.show_ip_int(int_vlan=vl)
+    print(a,b,c)
+
+    assert "vlan50" not in a.values()
 
 
+def test_inter_vlan_routing_func_7():
 
+    vl = "60"
+    ip1.create_int_vlan(int_vlan=vl)
+    ip1.add_ip_interface(int_vlan=vl, ip="60.0.0.1", mask="255.255.0.0")
+    a, b, c = ip1.show_ip_int(int_vlan=vl)
+    print(a,b,c)
+
+    assert "vlan"+vl in a.values()
+
+
+def test_inter_vlan_routing_func_8():
+
+    vl = "50"
+    ip1.create_int_vlan(int_vlan=vl)
+    ip1.add_ip_interface(int_vlan=vl, ip="50.0.0.1", mask="255.255.255.0")
+    vlan1.add_more_ports_to_vlan("Gi 0/3", "Gi 0/4", vlan=vl)
+    int1.no_shut_interface(interface="Gi 0/3")
+    int1.no_shut_interface(interface="Gi 0/4")
+
+    a, b, c = ip1.show_ip_int(int_vlan=vl)
+    print(a,b,c)
+
+    assert a["Interface Vlan"] == "vlan"+vl
+    assert a["The Interface is"] == "up"
+    assert a["Line Protocol is"] == "up"
+
+
+def test_inter_vlan_routing_func_9():
+
+    vl = "14"
+    # Configuring DUT1
+
+    vlan1.create_vlan(vlan=vl)
+    vlan1.add_ports_to_vlan(ports="Ex 0/1", vlan=vl)
+    int1.no_shut_interface(interface="Ex 0/1")
+    ip1.create_int_vlan(int_vlan=vl)
+    ip1.add_ip_interface(int_vlan=vl, ip="14.0.0.2", mask="255.255.255.0")
+
+    # Configuring DUT2
+
+    vlan2.create_vlan(vlan=vl)
+    vlan2.add_ports_to_vlan(ports="Gi 0/9", vlan=vl)
+    int2.no_shut_interface(interface="Gi 0/9")
+    ip2.create_int_vlan(int_vlan=vl)
+    ip2.add_ip_interface(int_vlan=vl, ip="14.0.0.1", mask="255.255.255.0")
+
+    # Checking connectivity
+
+    resp = ping1.ping(ip_dest="14.0.0.2")
+    # print(resp)
+
+    assert "14.0.0.2" in resp
+
+
+def test_inter_vlan_routing_func_10():
+
+    vl = "30"
+    # Configuring DUT1
+
+    vlan1.create_vlan(vlan=vl)
+    vlan1.add_ports_to_vlan(ports="Gi 0/3", vlan=vl)
+    int1.no_shut_interface(interface="Gi 0/3")
+    ip1.create_int_vlan(int_vlan=vl)
+    ip1.add_ip_interface(int_vlan=vl, ip="30.0.0.1", mask="255.255.255.0")
+
+    # Checking connectivity
+
+    resp1 = ping1.ping(ip_dest="30.0.0.100")
+    # print(resp)
+    resp2 = ping1.ping(ip_dest="30.0.0.77")
+    # print(resp)
+
+    assert "30.0.0.100" in resp1
+    assert "30.0.0.88" not in resp2
+
+
+def test_inter_vlan_routing_func_11():
+
+    ip1.add_ip_interfaces("100", "110", "120", int_vlan1_ip=["100.0.0.1", "255.255.0.0"], int_vlan2_ip=["110.0.0.1", "255.255.0.0"], int_vlan3_ip=["120.0.0.1", "255.255.0.0"])
