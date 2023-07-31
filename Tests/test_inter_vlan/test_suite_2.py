@@ -4,8 +4,8 @@ import pytest
 from config import ip, vlan, interfaces, ping
 from Management import ssh
 
-ip_session_1 = "10.2.109.238"
-ip_session_2 = "10.2.109.239"
+ip_session_1 = "10.2.109.203"
+ip_session_2 = "10.2.109.83"
 
 
 ip1 = ip.IP(ip_session=ip_session_1)
@@ -269,4 +269,89 @@ def test_inter_vlan_routing_func_10():
 
 def test_inter_vlan_routing_func_11():
 
-    ip1.add_ip_interfaces("100", "110", "120", int_vlan1_ip=["100.0.0.1", "255.255.0.0"], int_vlan2_ip=["110.0.0.1", "255.255.0.0"], int_vlan3_ip=["120.0.0.1", "255.255.0.0"])
+    ip1.add_ip_interfaces("100", "110", int_vlan1_ip=["100.0.0.1","255.255.255.0"], int_vlan2_ip=["110.0.0.1","255.255.255.0"])
+    ip1.no_shut_int_vlans("100", "110")
+    ok = False
+    a, b, c = int1.show_int_description()
+    print(c)
+
+    for item in c:
+        # print(item)
+        if item["Interface"] == "vlan100" and item["Status"] == "Up":
+            print(item)
+            ok = True
+
+    assert ok is True
+
+    x, y, z = ip1.show_ip_int(int_vlan="100")
+    print(x, y, z)
+    assert x["Interface Vlan"] == "vlan100"
+    assert x["The Interface is"] == "up"
+    assert x["IP Address"] == "100.0.0.1"
+    assert x["Mask"] == "24"
+
+    x1, y1, z1 = ip1.show_ip_int(int_vlan="110")
+    print(x1, y1, z1)
+    assert x1["Interface Vlan"] == "vlan110"
+    assert x1["The Interface is"] == "up"
+    assert x1["IP Address"] == "110.0.0.1"
+    assert x1["Mask"] == "24"
+
+
+def test_inter_vlan_routing_func_12():
+
+    # Checking routing between routed ports
+
+    # Configuring DUT 1
+
+    int1.add_routed_port(interface="Ex 0/2")
+    ip1.add_ip_routed_port(interface="Ex 0/2", ip="20.0.0.2", mask="255.255.0.0")
+    int1.no_shut_interface(interface="Ex 0/2")
+
+    int1.add_routed_port(interface="Gi 0/4")
+    ip1.add_ip_routed_port(interface="Gi 0/4", ip="60.0.0.1", mask="255.255.0.0")
+    int1.no_shut_interface(interface="Gi 0/4")
+
+    # Configuring DUT 2
+
+    int2.add_routed_port(interface="Gi 0/10")
+    ip2.add_ip_routed_port(interface="Gi 0/10", ip="20.0.0.1", mask="255.255.0.0")
+    int2.no_shut_interface(interface="Gi 0/10")
+
+    int2.add_routed_port(interface="Gi 0/6")
+    ip2.add_ip_routed_port(interface="Gi 0/6", ip="6.0.0.1", mask="255.255.0.0")
+    int2.no_shut_interface(interface="Gi 0/6")
+
+    vlan2.create_vlan(vlan="15")
+    vlan2.add_ports_to_vlan(ports="Gi 0/5", vlan="15")
+    ip2.create_int_vlan(int_vlan="15")
+    ip2.add_ip_interface(int_vlan="15", ip="15.0.0.1", mask="255.255.255.0")
+
+    # Configuring the static routes
+
+    ip1.add_static_route(network_dest="6.0.0.0", next_hop="20.0.0.1", mask_dest="255.255.0.0")
+    ip2.add_static_route(network_dest="60.0.0.0", next_hop="20.0.0.2", mask_dest="255.255.0.0")
+
+    ip1.add_static_route(network_dest="15.0.0.0", next_hop="20.0.0.1", mask_dest="255.255.255.0")
+
+    # Checking connectivity
+
+    resp1 = ping1.ping(ip_dest="6.0.0.100")
+    resp2 = ping2.ping(ip_dest="60.0.0.100")
+    resp3 = ping1.ping(ip_dest="15.0.0.100")
+
+    print(resp1)
+    print(resp2)
+    print(resp3)
+
+    assert "6.0.0.100" in resp1
+    assert "60.0.0.100" in resp2
+    assert "15.0.0.100" in resp3
+
+
+def test_inter_vlan_routing_func_13():
+
+    # int1.add_routed_ports("Gi 0/3", "Gi 0/4")
+    # ip1.add_ip_routed_ports("Gi 0/3", "Gi 0/4", routed_port_1=["100.0.0.1","255.255.0.0"], routed_port_2=["110.0.0.1","255.255.0.0"])
+    # ip1.remove_ip_routed_ports("Gi 0/3", "Gi 0/4")
+    # int1.remove_routed_ports("Gi 0/3", "Gi 0/4")

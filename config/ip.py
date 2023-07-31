@@ -90,7 +90,7 @@ class IP:
             "Interface Vlan":"",
             "The Interface is":"",
             "Line Protocol is":"",
-            "Ip Address":"",
+            "IP Address":"",
             "Mask":""
         }
 
@@ -105,12 +105,12 @@ class IP:
             print("1")
 
             match = re.findall(r"(mgmt\d+)\s+is\s+([updown]+),\s+line protocol is\s+([updown]+)\S+Internet Address is\s+(\d+.\d+.\d+.\d+)/(\d+)", output)
-            print(match)
+            # print(match)
 
             for key, attribute in zip(d.keys(),match[0]):
                 d_mgmt[key] = attribute
 
-            print(d_mgmt)
+            # print(d_mgmt)
 
         if int_vlan is not None:
 
@@ -127,11 +127,11 @@ class IP:
             else:
 
                 match = re.findall(r"(vlan\d+)\s+is\s+([updown]+),\s+line protocol is\s+([updown]+)\S+Internet Address is\s+(\d+.\d+.\d+.\d+)/(\d+)", output)
-                print(match)
+                # print(match)
 
                 for key, attribute in zip(d.keys(),match[0]):
                     d[key] = attribute
-                print(d)
+                # print(d)
 
         else:
 
@@ -169,7 +169,7 @@ class IP:
                 # print(d1)
                 list_of_ip_interfaces.append(d1)
 
-        print(list_of_ip_interfaces)
+        # print(list_of_ip_interfaces)
         self.session.close()
 
         return d, list_of_ip_interfaces, d_mgmt
@@ -208,7 +208,7 @@ class IP:
         self.session.connect()
         self.session.send_cmd("conf t\r\n")
 
-        for int_vlan, ip in zip(args,kwargs.values()):
+        for int_vlan, ip in zip(args, kwargs.values()):
 
             # print(int_vlan, ip, ip[0], ip[1])
 
@@ -224,7 +224,7 @@ class IP:
 
         return output
 
-    def remove_ip_interface(self,int_vlan=None):
+    def remove_ip_interface(self, int_vlan=None):
 
         output = ""
 
@@ -235,7 +235,8 @@ class IP:
             self.session.send_cmd(f"int vlan {int_vlan}\r\n")
             self.session.send_cmd("no ip add\r\n")
             output = self.session.read()
-            print(output)
+            # print(output)
+            print(f"The ip from int vlan {int_vlan} has been removed")
 
         self.session.close()
 
@@ -255,6 +256,148 @@ class IP:
             self.session.send_cmd("!\r\n")
             self.session.send_cmd(f"no int vlan {int_vlan}\r\n")
             print(f"The int vlan {int_vlan} has been removed")
+
+        output = self.session.read()
+        # print(output)
+
+        self.session.close()
+
+        return output
+
+    def add_ip_routed_port(self, interface, ip, mask):
+
+        self.session.connect()
+        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd(f"int {interface}\r\n")
+        self.session.send_cmd(f"ip add {ip} {mask}")
+        self.session.send_cmd("!\r\n")
+        print(f"The interface {interface} has now the ip {ip} and mask {mask}")
+
+        output = self.session.read()
+        # print(output)
+
+        self.session.close()
+
+        return output
+
+    def remove_ip_routed_port(self, interface):
+
+        output = ""
+
+        self.session.connect()
+        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd(f"int {interface}\r\n")
+        self.session.send_cmd("no ip add\r\n")
+        output = self.session.read()
+        # print(output)
+        print(f"The ip of interface {interface} has been removed")
+
+        self.session.close()
+
+        return output
+
+    def add_ip_routed_ports(self, *args, **kwargs):
+
+        self.session.connect()
+        self.session.send_cmd("conf t\r\n")
+
+        for interface, ip in zip(args, kwargs.values()):
+            # print(int_vlan, ip, ip[0], ip[1])
+
+            self.session.send_cmd(f"int {interface}\r\n")
+            self.session.send_cmd(f"ip add {ip[0]} {ip[1]}")
+            self.session.send_cmd("!\r\n")
+            print(f"The interface {interface} has now the ip {ip[0]} and mask {ip[1]}")
+
+        output = self.session.read()
+        # print(output)
+
+        self.session.close()
+
+        return output
+
+    def remove_ip_routed_ports(self, *args):
+
+        self.session.connect()
+        self.session.send_cmd("conf t\r\n")
+
+        for interface in args:
+
+            # print(interface, ip, ip[0], ip[1])
+
+            self.session.send_cmd(f"int {interface}\r\n")
+            self.session.send_cmd(f"shut\r\n")
+            self.session.send_cmd(f"no ip addr\r\n")
+            self.session.send_cmd("!\r\n")
+            print(f"The ip of interface {interface} has been removed")
+
+        output = self.session.read()
+        # print(output)
+
+        self.session.close()
+
+        return output
+
+    def shut_int_vlan(self, int_vlan):
+
+        self.session.connect()
+        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd(f"int vlan {int_vlan}\r\n")
+        self.session.send_cmd(f"shut\r\n")
+        self.session.send_cmd("!\r\n")
+        output = self.session.read()
+        # print(output)
+        print(f"The int vlan {int_vlan} has been shut")
+
+        self.session.close()
+
+        return output
+
+    def shut_int_vlans(self, *args):
+
+        self.session.connect()
+        self.session.send_cmd("conf t\r\n")
+
+        for int_vlan in args:
+
+            self.session.send_cmd(f"int vlan {int_vlan}\r\n")
+            self.session.send_cmd(f"shut\r\n")
+            self.session.send_cmd("!\r\n")
+            print(f"The int vlan {int_vlan} has been shut")
+
+        output = self.session.read()
+        # print(output)
+
+        self.session.close()
+
+        return output
+
+    def no_shut_int_vlan(self, int_vlan):
+
+        self.session.connect()
+        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd(f"int vlan {int_vlan}\r\n")
+        self.session.send_cmd(f"no shut\r\n")
+        self.session.send_cmd("!\r\n")
+        output = self.session.read()
+        # print(output)
+        print(f"The int vlan {int_vlan} has been no-shut")
+
+        self.session.close()
+
+        return output
+
+    def no_shut_int_vlans(self, *args):
+
+        self.session.connect()
+        self.session.send_cmd("conf t\r\n")
+
+        for int_vlan in args:
+
+            self.session.send_cmd(f"int vlan {int_vlan}\r\n")
+            self.session.send_cmd(f"no shut\r\n")
+            self.session.send_cmd("!\r\n")
+            print(f"The int vlan {int_vlan} has been no-shut")
 
         output = self.session.read()
         # print(output)

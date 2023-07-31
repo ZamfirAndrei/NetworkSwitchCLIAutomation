@@ -92,6 +92,38 @@ class Interface:
         print(f"The routed port {interface} has been removed")
         self.session.close()
 
+    def add_routed_ports(self, *args):
+
+        self.session.connect()
+        self.session.send_cmd(cmd="conf t\r\n")
+
+        for interface in args:
+
+            self.session.send_cmd(cmd=f"int {interface}\r\n")
+            self.session.send_cmd(cmd="shut\r\n")
+            self.session.send_cmd(cmd="no sw\r\n")
+            print(f"The routed port {interface} has been created")
+        output = self.session.read()
+        # print(output)
+
+        self.session.close()
+
+    def remove_routed_ports(self, *args):
+
+        self.session.connect()
+        self.session.send_cmd(cmd="conf t\r\n")
+
+        for interface in args:
+
+            self.session.send_cmd(cmd=f"int {interface}\r\n")
+            self.session.send_cmd(cmd="shut\r\n")
+            self.session.send_cmd(cmd="sw\r\n")
+            print(f"The routed port {interface} has been removed")
+        output = self.session.read()
+        # print(output)
+
+        self.session.close()
+
     def show_int_description(self):
 
         list_of_ports = list()
