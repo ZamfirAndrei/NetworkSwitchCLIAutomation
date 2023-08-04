@@ -351,7 +351,7 @@ def test_inter_vlan_routing_func_12():
 
 def test_inter_vlan_routing_func_13():
 
-    # int1.add_routed_ports("Gi 0/3", "Gi 0/4")
+    int1.add_routed_ports("Gi 0/3", "Gi 0/4")
     # ip1.add_ip_routed_ports("Gi 0/3", "Gi 0/4", routed_port_1=["100.0.0.1","255.255.0.0"], routed_port_2=["110.0.0.1","255.255.0.0"])
     # ip1.remove_ip_routed_ports("Gi 0/3", "Gi 0/4")
     # int1.remove_routed_ports("Gi 0/3", "Gi 0/4")

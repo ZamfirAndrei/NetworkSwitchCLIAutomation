@@ -102,7 +102,7 @@ class IP:
             self.session.send_cmd(f"show ip int mgmt\r\n")
             output = self.session.read()
             # print(output)
-            print("1")
+            # print("1")
 
             match = re.findall(r"(mgmt\d+)\s+is\s+([updown]+),\s+line protocol is\s+([updown]+)\S+Internet Address is\s+(\d+.\d+.\d+.\d+)/(\d+)", output)
             # print(match)
@@ -118,7 +118,7 @@ class IP:
             self.session.send_cmd(f"show ip int vlan {int_vlan}\r\n")
             output = self.session.read()
             # print(output)
-            print("2")
+            # print("2")
 
             if "% Invalid Vlan Interface" in output:
 
@@ -436,7 +436,7 @@ class IP:
             self.session.send_cmd("conf t\r\n")
             self.session.send_cmd(f"no ip route {network_dest} {mask_dest} {next_hop}\r\n")
             output = self.session.read()
-            print(output)
+            # print(output)
 
             if "% Route entry not Present" in output:
 
@@ -590,7 +590,7 @@ ip = "10.2.109.238"
 # obj.add_ip_interface(ip="200.0.0.1",mask="255.255.0.0",dhcp="Yes")
 # obj.remove_ip_interface(int_vlan="200")
 # obj.show_ip_int(int_vlan="500")
-#obj.add_static_route(network_dest="220.0.0.0", mask_dest="255.0.0.0", next_hop="14.0.0.1")
+# obj.add_static_route(network_dest="220.0.0.0", mask_dest="255.0.0.0", next_hop="14.0.0.1")
 # obj.remove_static_route(network_dest="220.0.0.0", mask_dest="255.0.0.0", next_hop="14.0.0.1")
 # obj.remove_static_route(network_dest="100.0.0.0", mask_dest="255.0.0.0", next_hop="14.0.0.1")
 # obj.show_ip_route()

@@ -6,7 +6,7 @@ from Management import ssh, telnet
 
 class QinQ:
 
-    def __init__(self, ip_session = "10.2.109.178"):
+    def __init__(self, ip_session="10.2.109.178"):
 
         print("Clasa QinQ")
 
@@ -312,10 +312,89 @@ class QinQ:
 
         return list_of_provider_edge
 
-# De adaugat sa citesc show-running config si sa citesc daca e in mode provider-edge sau customer-edge
+    def show_bridge_mode(self):
+
+        d_bridge_mode = {
+            "Bridge Mode": ""
+        }
+
+        self.session.connect()
+        self.session.send_cmd("show running-config")
+
+        output = self.session.read()
+        # print(output)
+
+        match = re.findall("Bridge Mode\s+:\s+(\w+-edge)", output)
+        # print(match)
+
+        d_bridge_mode["Bridge Mode"] = match[0]
+        # print(d_bridge_mode)
+
+        return d_bridge_mode
+
+    def show_bridge_port_type(self, interface):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("set cli pagination off")
+        self.session.send_cmd(f"do show interface bridge port-type {interface}")
+
+        output = self.session.read()
+        # print(output)
+
+        match = re.findall(r"[GEix]{2}\d/\d+\s+(\w+)", output)
+        # print(match)
+        port_type = match[0]+"-edge"
+        # print(port_type)
+        return port_type
+
+    def show_ingress_ethertype(self, interface):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("set cli pagination off")
+        self.session.send_cmd(f"do show running-config interface {interface}")
+
+        default_ingress_ethertype = "x88a8"
+
+        output = self.session.read()
+        # print(output)
+        match = re.findall(r"switchport ingress ether-type\s+(\w+)", output)
+        # print(match)
+        if len(match) != 0:
+            ingress_ethertype = match[0]
+        else:
+            ingress_ethertype = default_ingress_ethertype
+        # print(ingress_ethertype)
+
+        return ingress_ethertype
+
+    def show_egress_ethertype(self, interface):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("set cli pagination off")
+        self.session.send_cmd(f"do show running-config interface {interface}")
+
+        default_egress_ethertype = "x88a8"
+
+        output = self.session.read()
+        # print(output)
+        match = re.findall(r"switchport egress ether-type\s+(\w+)", output)
+        # print(match)
+        if len(match) != 0:
+            egress_ethertype = match[0]
+        else:
+            egress_ethertype = default_egress_ethertype
+        # print(egress_ethertype)
+
+        return egress_ethertype
 
 
-ip_session = "10.2.109.238"
+
+
+
+ip_session = "10.2.109.203"
 
 # obj_qinq = QinQ(ip_session=ip_session)
 # obj_qinq.change_bridge_mode(bridge_mode="provider-edge")
@@ -340,3 +419,7 @@ ip_session = "10.2.109.238"
 # obj_qinq.remove_ingress_ethertype(port="Gi 0/6")
 # obj_qinq.show_service_vlan_customer_vlan_id()
 # obj_qinq.show_service_vlan_provider_edge_configuration()
+# obj_qinq.show_bridge_mode()
+# obj_qinq.show_bridge_port_type("gi 0/3")
+# obj_qinq.show_ingress_ethertype("gi 0/3")
+# obj_qinq.show_egress_ethertype("gi 0/3")

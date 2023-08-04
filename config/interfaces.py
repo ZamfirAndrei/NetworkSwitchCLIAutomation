@@ -103,6 +103,7 @@ class Interface:
             self.session.send_cmd(cmd="shut\r\n")
             self.session.send_cmd(cmd="no sw\r\n")
             print(f"The routed port {interface} has been created")
+
         output = self.session.read()
         # print(output)
 
@@ -119,6 +120,7 @@ class Interface:
             self.session.send_cmd(cmd="shut\r\n")
             self.session.send_cmd(cmd="sw\r\n")
             print(f"The routed port {interface} has been removed")
+
         output = self.session.read()
         # print(output)
 
