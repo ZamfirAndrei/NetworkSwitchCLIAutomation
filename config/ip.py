@@ -529,7 +529,7 @@ class IP:
 
                 # print(networks_connected) # Lista pentru networkurile direct connectate
 
-            print(networks)  # Am format o Lista de dictionare
+            # print(networks)  # Am format o Lista de dictionare
             # print(networks[1])
             # print(networks[1]['Network']) # Aflam pt elem 1 din lista ip-ul de la cheia Network
         else:
@@ -549,7 +549,7 @@ class IP:
                 ip_route["Metric"] = match[1][4]
                 ip_route["Next Hop"] = match[1][5]
 
-                print(ip_route)
+                # print(ip_route)
 
             else:
                 match = re.findall(r"(C)\s(\d+.\d+.\d+.\d+)/(\d+)\s+is (directly connected), ([\w/\d]+)", output)
@@ -560,7 +560,7 @@ class IP:
                 ip_route["Mask"] = match[0][2]
                 ip_route["Vlan/Port"] = match[0][4]
 
-                print(ip_route)
+                # print(ip_route)
 
         self.session.close()
 

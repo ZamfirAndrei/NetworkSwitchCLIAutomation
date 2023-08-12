@@ -485,7 +485,9 @@ class OSPF:
 
         self.session.close()
 
-        return list_ospf_database_router, list_ospf_database_network, list_ospf_database_summary, list_ospf_database_asbr, list_ospf_database_nssa, list_ospf_database_external
+        return list_ospf_database_router, list_ospf_database_network, \
+               list_ospf_database_summary, list_ospf_database_asbr, \
+               list_ospf_database_nssa, list_ospf_database_external
 
 
 ip = "10.2.109.238"

@@ -20,19 +20,22 @@ class STP:
 
         d = {}
         self.session.connect()
-        self.session.send_cmd("show span\r\n")
+        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd("set cli pagination off\r\n")
+        self.session.send_cmd("do show span\r\n")
+
         output = self.session.read()
         match = re.findall(r"is executing the ([mstpr]+)", output)
-        print(output)
-        print(match)
+        # print(output)
+        # print(match)
         match1 = re.findall(r"Spanning Tree Enabled Protocol ([PVRST]+)", output)
-        print(match1)
+        # print(match1)
         if len(match) > 0:
             d["mode"] = match[0]
         else:
             d["mode"] = match1[0]
 
-        print(d)
+        # print(d)
 
         return d
 
@@ -136,15 +139,17 @@ class STP:
         ports = list()
 
         self.session.connect()
-        self.session.send_cmd("show span\r\n")
+        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd("set cli pagination off\r\n")
+        self.session.send_cmd("do show span\r\n")
         output = self.session.read()
-        print(output)
+        # print(output)
 
         match = re.findall(r"\s+Priority\s+(\d+)\S+\s+Address\s+(\w+.\w+.\w+.\w+.\w+.\w+)", output) # Regex pentru Root ID si Bridge ID
         match1 = re.findall(r"([GEix]+\d/\d+)\s+(\w+)\s+(\w+)\s+(\d+)\s+(\d+)\s+([\w\d]+)", output) # Regex pentru porturi
 
-        print(match)
-        print(match1)
+        # print(match)
+        # print(match1)
 
         print("###################")
 
@@ -154,8 +159,8 @@ class STP:
         d_bridge_id["Bridge Priority"] = match[1][0]
         d_bridge_id["Bridge MAC-Address"] = match[1][1]
 
-        print(d_root_id)
-        print(d_bridge_id)
+        # print(d_root_id)
+        # print(d_bridge_id)
 
         print("###################")
 
@@ -166,7 +171,7 @@ class STP:
                 # print(key,attribute)
                 d2[key] = attribute
             ports.append(d2)
-        print(ports)
+        # print(ports)
         self.session.close()
 
         return d_root_id, d_bridge_id, ports

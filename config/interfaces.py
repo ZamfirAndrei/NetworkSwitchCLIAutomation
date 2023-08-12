@@ -160,7 +160,7 @@ class Interface:
             list_of_ports.append(d)
             # print(d)
 
-        print(list_of_ports)
+        # print(list_of_ports)
         # print(len(list_of_ports))
 
         for i in range(len(match1)):
@@ -193,7 +193,7 @@ class Interface:
             list_of_int_vlans.append(d)
             # print(d)
 
-        print(list_of_int_vlans)
+        # print(list_of_int_vlans)
         # print(len(list_of_int_vlans))
 
         self.session.close()

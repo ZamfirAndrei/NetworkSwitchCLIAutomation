@@ -207,17 +207,17 @@ class TestInterVlanRoutingSuite1:
         print("#### Configuring DUT ####")
 
         int1.no_shut_interfaces("Gi 0/3", "Gi 0/4", "Ex 0/1")
-        vl1.create_vlan(vlan="30")
         vl1.create_vlan(vlan="14")
+        vl1.create_vlan(vlan="30")
         vl1.create_vlan(vlan="60")
         vl1.add_ports_to_vlan(ports="Ex 0/1", vlan="14")
         vl1.add_ports_to_vlan(ports="Gi 0/3", vlan="30")
         vl1.add_ports_to_vlan(ports="Gi 0/4", vlan="60")
-        ip1.create_int_vlan(int_vlan="30")
         ip1.create_int_vlan(int_vlan="14")
+        ip1.create_int_vlan(int_vlan="30")
         ip1.create_int_vlan(int_vlan="60")
+        ip1.add_ip_interface(int_vlan="14", ip="14.0.0.1", mask="255.255.255.0")
         ip1.add_ip_interface(int_vlan="30", ip="30.0.0.1", mask="255.255.255.0")
-        ip1.add_ip_interface(int_vlan="14", ip="14.0.0.2", mask="255.255.255.0")
         ip1.add_ip_interface(int_vlan="60", ip="60.0.0.1", mask="255.255.0.0")
 
         print("#### Checking connectivity ####")
@@ -232,8 +232,150 @@ class TestInterVlanRoutingSuite1:
         print("########## Removing the config from DUT #############")
 
         vl1.remove_vlan(vlan="14")
-        vl1.remove_vlan(vlan="60")
         vl1.remove_vlan(vlan="30")
+        vl1.remove_vlan(vlan="60")
         int1.shut_interfaces("Gi 0/3", "Gi 0/4", "Ex 0/1")
-        ip1.remove_vlan_interfaces("14", "15", "60")
+        ip1.remove_vlan_interfaces("14", "30", "60")
+
+    def test_func_7(self):
+
+        print("###### Test_func_7 ######")
+        print("########## Check if interfaces VLAN are created and are Up Up/Up Down #############")
+
+        print("#### Configuring DUT ####")
+
+        vlan1 = "100"
+        vlan2 = "110"
+        vl1.create_vlan(vlan=vlan1)
+        vl1.create_vlan(vlan=vlan2)
+        vl1.add_ports_to_vlan(ports="Gi 0/3", vlan=vlan1)
+        vl1.add_ports_to_vlan(ports="Gi 0/4", vlan=vlan2)
+        int1.no_shut_interfaces("Gi 0/3", "Gi 0/4")
+        ip1.add_ip_interfaces("100", "110", int_vlan1_ip=["100.0.0.1", "255.255.255.0"], int_vlan2_ip=["110.0.0.1", "255.255.255.0"])
+        ip1.no_shut_int_vlans(vlan1, vlan2)
+
+        a, b, c = int1.show_int_description()
+
+        print(a)
+        print(b)
+        print(c)
+
+        ok1 = False
+        ok2 = False
+
+        for item in c:
+
+            if item["Interface"] == "vlan"+vlan1:
+
+                if item["Status"] and item["Protocol"] == "Up":
+
+                    print(f"The interface vlan {vlan1} was found and is Up Up")
+                    ok1 = True
+
+            if item["Interface"] == "vlan" + vlan2:
+
+                if item["Status"] == "Up" and item["Protocol"] == "Up":
+
+                    print(f"The interface vlan {vlan2} was found and is Up Up")
+                    ok2 = True
+
+        assert ok1 is True
+        assert ok2 is True
+
+        print("########## Removing the config from DUT #############")
+
+        vl1.remove_vlan(vlan=vlan1)
+        vl1.remove_vlan(vlan=vlan2)
+        int1.shut_interfaces("Gi 0/3")
+        ip1.remove_vlan_interfaces(vlan1, vlan2)
+
+    def test_func_8(self):
+
+        print("###### Test_func_8 ######")
+        print("########## Check if connected interface are shown in the ip routing table #############")
+
+        print("#### Configuring the variables ####")
+
+        vlan1 = "40"
+        vlan2 = "50"
+        ip_1 = "40.0.0.1"
+        ip_2 = "50.0.0.1"
+        network_1 = "40.0.0.0"
+        network_2 = "50.0.0.0"
+        mask_1 = "255.255.255.0"
+        mask_2 = "255.255.255.0"
+
+        print("#### Configuring DUT ####")
+
+        vl1.create_vlan(vlan=vlan1)
+        vl1.create_vlan(vlan=vlan2)
+        vl1.add_ports_to_vlan(ports="Gi 0/3", vlan=vlan1)
+        vl1.add_ports_to_vlan(ports="Gi 0/4", vlan=vlan2)
+        int1.no_shut_interfaces("Gi 0/3", "Gi 0/4")
+        ip1.add_ip_interfaces(vlan1, vlan2, int_vlan1_ip=[ip_1, mask_1],
+                                            int_vlan2_ip=[ip_2, mask_2])
+        ip1.no_shut_int_vlans(vlan1, vlan2)
+
+        ip_route_1, networks_1, networks_connected_1 = ip1.show_ip_route(network=ip_1)
+        ip_route_2, networks_2, networks_connected_2 = ip1.show_ip_route(network=ip_2)
+
+        print(ip_route_1)
+        print(ip_route_2)
+
+        assert ip_route_1["Protocol"] == "C" and ip_route_1["Network"] == network_1 and ip_route_1["Vlan/Port"] == "vlan" + vlan1
+        assert ip_route_2["Protocol"] == "C" and ip_route_2["Network"] == network_2 and ip_route_2["Vlan/Port"] == "vlan" + vlan2
+
+        print("########## Removing the config from DUT #############")
+
+        vl1.remove_vlan(vlan=vlan1)
+        vl1.remove_vlan(vlan=vlan2)
+        int1.shut_interfaces("Gi 0/3", "Gi 0/4")
+        ip1.remove_vlan_interfaces(vlan1, vlan2)
+
+    def test_func_9(self):
+
+        print("###### Test_func_9 ######")
+        print("########## Check if static routes are shown in the ip routing table #############")
+
+        print("#### Configuring the variables ####")
+
+        vlan1 = "14"
+        ip_1 = "14.0.0.2"
+        mask_1 = "255.255.255.0"
+        network_destination = "15.0.0.0"
+        mask_destination = "255.255.255.0"
+        next_hop = "14.0.0.1"
+
+        print("#### Configuring DUT ####")
+
+        vl1.create_vlan(vlan=vlan1)
+        vl1.add_ports_to_vlan(ports="Gi 0/3", vlan=vlan1)
+        int1.no_shut_interfaces("Gi 0/3")
+        ip1.add_ip_interfaces(vlan1, int_vlan1_ip=[ip_1, mask_1])
+        ip1.no_shut_int_vlans(vlan1)
+
+        print(f"#### Configuring static route towards network {network_destination} ####")
+
+        ip1.add_static_route(network_dest=network_destination, mask_dest=mask_destination, next_hop=next_hop)
+
+        ip_route_1, networks_1, networks_connected_1 = ip1.show_ip_route(network=network_destination)
+
+        print(ip_route_1)
+
+        assert ip_route_1["Protocol"] == "S" and ip_route_1["Network"] == network_destination and ip_route_1["Next Hop"] == next_hop
+
+        print("########## Removing the config from DUT #############")
+
+        vl1.remove_vlan(vlan=vlan1)
+        int1.shut_interfaces("Gi 0/3")
+        ip1.remove_vlan_interfaces(vlan1)
+        ip1.remove_static_route(network_dest=network_destination, mask_dest=mask_destination, next_hop=next_hop)
+
+    # Mai e de facut cu show ip route sa le vad pe alea connected si static in acelasi timp test
+
+
+
+
+
+
 

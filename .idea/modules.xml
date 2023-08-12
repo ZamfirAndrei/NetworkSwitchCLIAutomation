@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/andrei_framework_cambium.iml" filepath="$PROJECT_DIR$/.idea/andrei_framework_cambium.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/andrei_framework.iml" filepath="$PROJECT_DIR$/.idea/andrei_framework.iml" />
     </modules>
   </component>
 </project>
