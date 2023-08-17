@@ -49,6 +49,40 @@ class STP:
         # print(output)
         self.session.close()
 
+    def stp_enable(self, port):
+
+        self.session.connect()
+        self.session.send_cmd("conf t \r\n")
+        self.session.send_cmd(f"int {port}\r\n")
+        self.session.send_cmd(f"spanning-tree enable\r\n")
+        print(f"The spanning-tree was enabled on the port {port}")
+        # output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def stp_disable(self, port):
+
+        self.session.connect()
+        self.session.send_cmd("conf t \r\n")
+        self.session.send_cmd(f"int {port}\r\n")
+        self.session.send_cmd(f"spanning-tree disable\r\n")
+        print(f"The spanning-tree was disabled on the port {port}")
+        # output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def show_spanning_tree_root(self):
+
+        self.session.connect()
+        self.session.send_cmd("show spanning-tree root address\r\n")
+        output = self.session.read()
+        # print(output)
+        root = re.findall(r"\w{2}:\w{2}:\w{2}:\w{2}:\w{2}:\w{2}", output)
+        # print(root)
+        self.session.close()
+
+        return root
+
     def add_rstp_bridge_priority(self, bridge_priority=None):
 
         if bridge_priority is not None:
