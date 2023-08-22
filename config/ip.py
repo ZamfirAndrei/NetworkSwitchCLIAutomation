@@ -539,6 +539,7 @@ class IP:
             # print(output)
 
             if "is directly connected" not in output:
+
                 match = re.findall(r"([SRO\sIANE12]+)\s+(\d+.\d+.\d+.\d+)/(\d+)\s+\S(\d+)/(\d+)\S via (\d+.\d+.\d+.\d+)",output)
                 # print(match)
 

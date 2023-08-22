@@ -4,7 +4,7 @@ import pytest_html
 import sys
 
 
-from config import vlan, interfaces, stp
+from config import vlan, interfaces, stp, fdb
 from Management import ssh
 
 ip_session_1 = "10.2.109.206"
@@ -16,18 +16,21 @@ ip_session_3 = "10.2.109.232"
 int1 = interfaces.Interface(ip_session=ip_session_1)
 vl1 = vlan.VLAN(ip_session=ip_session_1)
 stp1 = stp.STP(ip_session=ip_session_1)
+fdb1 = fdb.FDB(ip_session=ip_session_1)
 
 # DUT 2 Objects
 
 int2 = interfaces.Interface(ip_session=ip_session_2)
 vl2 = vlan.VLAN(ip_session=ip_session_2)
 stp2 = stp.STP(ip_session=ip_session_2)
+fdb2 = fdb.FDB(ip_session=ip_session_2)
 
 # DUT 3 Objects
 
 int3 = interfaces.Interface(ip_session=ip_session_3)
 vl3 = vlan.VLAN(ip_session=ip_session_3)
 stp3 = stp.STP(ip_session=ip_session_3)
+fdb3 = fdb.FDB(ip_session=ip_session_3)
 
 
 class TestRSTPSuite1:
@@ -422,7 +425,7 @@ class TestRSTPSuite1:
         stp3.remove_rstp_bridge_priority()
         time.sleep(2)
 
-        # Going back to default settings
+        # Going back to default settings and checking if the root is the default one
 
         root1_3 = stp1.show_spanning_tree_root()
         root2_3 = stp1.show_spanning_tree_root()
@@ -622,11 +625,11 @@ class TestRSTPSuite1:
         list_ports_DUT_2 = list()
         list_ports_DUT_3 = list()
 
-        # int1.no_shut_interfaces("Gi 0/3", "Ex 0/1", "Gi 0/9")
-        # int2.no_shut_interfaces("Gi 0/4", "Gi 0/5", "Gi 0/9")
-        # int3.no_shut_interfaces("Gi 0/4", "Gi 0/9")
-        # stp2.stp_disable(port="Gi 0/1")  # Link towards CambiumLAB
-        # time.sleep(2)
+        int1.no_shut_interfaces("Gi 0/3", "Ex 0/1", "Gi 0/9")
+        int2.no_shut_interfaces("Gi 0/4", "Gi 0/5", "Gi 0/9")
+        int3.no_shut_interfaces("Gi 0/4", "Gi 0/9")
+        stp2.stp_disable(port="Gi 0/1")  # Link towards CambiumLAB
+        time.sleep(2)
 
         x1, y1, z1 = stp1.show_spanning_tree_rstp()
         x2, y2, z2 = stp2.show_spanning_tree_rstp()
@@ -750,6 +753,241 @@ class TestRSTPSuite1:
         int3.shut_interfaces("Gi 0/4", "Gi 0/9")
         stp2.stp_enable(port="Gi 0/1")
         stp3.remove_rstp_port_cost(port="Gi 0/9")
+
+    def test_func_13(self):
+
+        print("###### Test_func_13 ######")
+        print("########## Check that you can influence the path towards Root Bridge in setup of more DUTs vers3 #############")
+        print("########### 3 DUTs ########### ")
+
+        cost = "60000"
+        default_cost = "20000"
+        port_output = ""
+
+        int1.no_shut_interfaces("Gi 0/3", "Ex 0/1", "Gi 0/9")
+        int2.no_shut_interfaces("Gi 0/4", "Gi 0/5", "Gi 0/9")
+        int3.no_shut_interfaces("Gi 0/4", "Gi 0/9")
+        stp2.stp_disable(port="Gi 0/1")  # Link towards CambiumLAB
+        time.sleep(2)
+
+        d_root_id, d_bridge_id, ports = stp3.show_spanning_tree_rstp()
+        print(ports)
+
+        for port in ports:
+
+            if port["Role"] == "Root":
+
+                port_output = port["Name"][:2] + " " + port["Name"][2:]
+                print(port_output)
+                stp3.add_rstp_port_cost(port=port_output, cost=cost)
+
+        d_root_id, d_bridge_id, ports = stp3.show_spanning_tree_rstp()
+        print(ports)
+
+        for port in ports:
+
+            if port["Name"] == "Gi0/9":
+
+                print("####### 1 ########")
+                print(port["Name"])
+                assert port["Role"] == "Alternate"
+                assert port["Cost"] == cost
+
+        # Going back to default and checking that everything is behaving as expected
+
+        stp3.remove_rstp_port_cost(port=port_output)
+        d_root_id, d_bridge_id, ports = stp3.show_spanning_tree_rstp()
+        print(ports)
+
+        for port in ports:
+
+            if port["Name"] == "Gi0/9":
+
+                print("####### 2 ########")
+                print(port["Name"])
+                assert port["Role"] == "Root"
+                assert port["Cost"] == default_cost
+
+        print("########## Removing the config #############")
+
+        int1.shut_interfaces("Gi 0/3", "Ex 0/1", "Gi 0/9")
+        int2.shut_interfaces("Gi 0/4", "Gi 0/5", "Gi 0/9")
+        int3.shut_interfaces("Gi 0/4", "Gi 0/9")
+        stp2.stp_enable(port="Gi 0/1")
+
+    def test_func_14(self):
+
+        print("###### Test_func_14 ######")
+        print("########## Check that RSTP is still working after shutting down a link #############")
+        print("########### 3 DUTs ########### ")
+
+        port_output = ""
+        ok = False
+
+        int1.no_shut_interfaces("Gi 0/3", "Ex 0/1", "Gi 0/9")
+        int2.no_shut_interfaces("Gi 0/4", "Gi 0/5", "Gi 0/9")
+        int3.no_shut_interfaces("Gi 0/4", "Gi 0/9")
+        stp2.stp_disable(port="Gi 0/1")  # Link towards CambiumLAB
+        time.sleep(2)
+
+        d_root_id, d_bridge_id, ports = stp3.show_spanning_tree_rstp()
+        print(ports)
+        len1 = len(ports)
+
+        # Shut down the Root Port from the Non-Root DUT
+
+        for port in ports:
+
+            if port["Role"] == "Root":
+
+                port_output = port["Name"][:2] + " " + port["Name"][2:]
+                print(port_output)
+                int3.shut_interface(interface=port_output)
+
+        # Check the other port of Non-Root DUT. From Alternate --> Root and the shuted port is missing from the ports
+
+        d_root_id, d_bridge_id, ports = stp3.show_spanning_tree_rstp()
+        print(ports)
+        len2 = len(ports)
+
+        # for port in ports:
+        #
+        #     if port["Name"] == port_output.replace(" ",""):
+        #
+        #         print("We found the port")
+        #         ok = False
+        #
+        #     else:
+        #
+        #         print("We did not find the port")
+        #         ok = True
+
+        # assert ok is true
+        assert len1 - len2 == 1
+
+        # Getting back to the default setup
+
+        int3.no_shut_interface(interface=port_output)
+
+        d_root_id, d_bridge_id, ports = stp3.show_spanning_tree_rstp()
+        print(ports)
+        len3 = len(ports)
+
+        assert len3 == len1
+
+        print("########## Removing the config #############")
+
+        int1.shut_interfaces("Gi 0/3", "Ex 0/1", "Gi 0/9")
+        int2.shut_interfaces("Gi 0/4", "Gi 0/5", "Gi 0/9")
+        int3.shut_interfaces("Gi 0/4", "Gi 0/9")
+        stp2.stp_enable(port="Gi 0/1")
+
+    def test_func_15(self):
+
+        print("###### Test_func_15 ######")
+        print("########## Check that RSTP is still working after shutting down a link when is traffic from ixia #############")
+        print("########### 3 DUTs ########### ")
+
+        stream_mac_source = "00:00:00:00:aa:bb"
+        stream_vlan = "88"
+        vlan = "88"
+
+        port_root = ""
+
+        int1.no_shut_interfaces("Gi 0/3", "Ex 0/1", "Gi 0/9")
+        int2.no_shut_interfaces("Gi 0/4", "Gi 0/5", "Gi 0/9")
+        int3.no_shut_interfaces("Gi 0/4", "Gi 0/9")
+
+        # Creating the VLAN on all DUTs
+
+        vl1.create_vlan(vlan=vlan)
+        vl2.create_vlan(vlan=vlan)
+        vl3.create_vlan(vlan=vlan)
+
+        # Adding the ports to the VLAN
+
+        vl1.add_more_ports_to_vlan("Gi 0/3", "Ex 0/1", "Gi 0/9", vlan=vlan)
+        vl2.add_more_ports_to_vlan("Gi 0/4", "Gi 0/5", "Gi 0/9", vlan=vlan)
+        vl3.add_more_ports_to_vlan("Gi 0/4", "Gi 0/9", vlan=vlan)
+
+        stp2.stp_disable(port="Gi 0/1")  # Link towards CambiumLAB
+        time.sleep(2)
+
+        d_root_id, d_bridge_id, ports = stp3.show_spanning_tree_rstp()
+        print(ports)
+
+        mac_addr = fdb3.show_mac_addr_table_vlan(vlan=stream_vlan)
+        print(mac_addr)
+
+        for port in ports:
+
+            if port["Role"] == "Root":
+
+                print("######## 1 ########")
+                # print(port["Name"],"----", mac_addr[0]["Ports"])
+                assert port["Name"] == mac_addr[0]["Ports"]
+                assert mac_addr[0]["Mac Address"] == stream_mac_source
+                port_root = port["Name"]
+
+        print(port_root)
+        # Shutting the Root Port and checking that the stream_mac_source is learned on the Alternate Port that is Root now
+
+        int3.shut_interface(interface="Gi 0/9")
+
+        d_root_id_1, d_bridge_id_1, ports_1 = stp3.show_spanning_tree_rstp()
+        print(ports_1)
+
+        mac_addr_1 = fdb3.show_mac_addr_table_vlan(vlan=stream_vlan)
+        print(mac_addr_1)
+
+        for port in ports_1:
+
+            if port["Role"] == "Root":
+
+                print("######## 2 ########")
+                # print(port["Name"],"----", mac_addr[0]["Ports"])
+                assert port["Name"] == mac_addr_1[0]["Ports"]
+                assert mac_addr_1[0]["Mac Address"] == stream_mac_source
+                assert port["Name"] != port_root
+
+        # No shutting the port and checking that is learned on the first Root Port
+
+        int3.no_shut_interface(interface="Gi 0/9")
+
+        d_root_id_2, d_bridge_id_2, ports_2 = stp3.show_spanning_tree_rstp()
+        print(ports_2)
+
+        mac_addr_2 = fdb3.show_mac_addr_table_vlan(vlan=stream_vlan)
+        print(mac_addr_2)
+
+        for port in ports_2:
+
+            if port["Role"] == "Root":
+
+                print("######## 3 ########")
+                # print(port["Name"],"----", mac_addr[0]["Ports"])
+                assert port["Name"] == mac_addr_2[0]["Ports"]
+                assert mac_addr_2[0]["Mac Address"] == stream_mac_source
+                assert port["Name"] == port_root
+
+        print("########## Removing the config #############")
+
+        int1.shut_interfaces("Gi 0/3", "Ex 0/1", "Gi 0/9")
+        int2.shut_interfaces("Gi 0/4", "Gi 0/5", "Gi 0/9")
+        int3.shut_interfaces("Gi 0/4", "Gi 0/9")
+
+        vl1.remove_vlan(vlan=vlan)
+        vl2.remove_vlan(vlan=vlan)
+        vl3.remove_vlan(vlan=vlan)
+
+        stp2.stp_enable(port="Gi 0/1")
+
+
+
+
+
+
+
 
 
 

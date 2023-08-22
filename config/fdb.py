@@ -74,7 +74,7 @@ class FDB:
                 d1[key] = attributes
             mac_addr.append(d1)
 
-        print(mac_addr)
+        # print(mac_addr)
         self.session.close()
 
         return mac_addr
@@ -158,7 +158,7 @@ class FDB:
         self.session.close()
 
 
-obj = FDB("10.2.109.178")
+# obj = FDB("10.2.109.178")
 
 # obj.clear_mac_addr_table()
 # obj.show_mac_addr_table()

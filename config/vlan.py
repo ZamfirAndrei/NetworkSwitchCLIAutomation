@@ -82,7 +82,7 @@ class VLAN:
         if "% Vlan does not exist" in error:
             print("The VLAN does not exist")
         else:
-            print("The VLAN has been removed succesfully")
+            print(f"The VLAN {vlan} has been removed succesfully")
 
         self.session.close()
 

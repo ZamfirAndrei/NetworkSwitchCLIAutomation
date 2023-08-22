@@ -200,6 +200,9 @@ class Interface:
 
         return list_of_ports, list_of_ports_connected_to_others, list_of_int_vlans
 
+        # Need to add clear int counter/show interface counters
+
+
 
 ip = "10.2.109.238"
 
