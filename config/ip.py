@@ -10,7 +10,7 @@ class IP:
 
     def __init__(self, ip_session="10.2.109.178"):
 
-        print("Clasa IP")
+        print("Class IP")
 
         self.ip_session = ip_session
         self.session = ssh.SSH(ip=ip_session)

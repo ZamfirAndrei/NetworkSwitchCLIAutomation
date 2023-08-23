@@ -35,7 +35,7 @@ class VLAN:
 
     def __init__(self, ip_session="10.2.109.178"):
 
-        print("Clasa VLAN")
+        print("Class VLAN")
 
         self.ip_session = ip_session
         self.session = ssh.SSH(ip_session)  # Creez obiectul session prin care ma conectez la DUT. Apoi il utiliez in functiile de VLAN

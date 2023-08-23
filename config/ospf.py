@@ -8,7 +8,7 @@ class OSPF:
 
     def __init__(self, ip_session="10.2.109.178"):
 
-        print("Clasa OSPF")
+        print("Class OSPF")
 
         self.ip_session = ip_session
         self.session = ssh.SSH(ip_session)

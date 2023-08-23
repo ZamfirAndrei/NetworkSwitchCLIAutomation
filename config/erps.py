@@ -8,7 +8,7 @@ class ERPS:
 
     def __init__(self, ip_session="10.2.109.178"):
 
-        print("Clasa ERPS")
+        print("Class ERPS")
 
         self.ip_session = ip_session
         self.session = ssh.SSH(ip=ip_session)
