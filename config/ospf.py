@@ -90,6 +90,7 @@ class OSPF:
         self.session.close()
 
     def redistribute_all(self, metric_type=None):
+
         self.session.connect()
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd("router ospf\r\n")

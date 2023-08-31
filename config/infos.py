@@ -25,15 +25,15 @@ class INFOs:
 
         software_version = re.findall(r"CNS Software Version\s+:\s+([\w.-]+)", output)
         model_name = re.findall(r"Model Name\s+:\s+([\w-]+)", output)
-        switch_mac_address =  re.findall(r"Switch MAC Address\s+:\s+(\w+.\w+.\w+.\w+.\w+.\w+)", output)
+        switch_mac_address = re.findall(r"Switch MAC Address\s+:\s+(\w+.\w+.\w+.\w+.\w+.\w+)", output)
         serial_number = re.findall(r"Serial Number\s+:\s+(\w+)", output)
         system_name = re.findall(r"System Name\s+:\s+([\w-]+)", output)
 
-        print(software_version)
-        print(model_name)
-        print(switch_mac_address)
-        print(serial_number)
-        print(system_name)
+        # print(software_version)
+        # print(model_name)
+        # print(switch_mac_address)
+        # print(serial_number)
+        # print(system_name)
 
         return software_version, model_name, switch_mac_address, serial_number, system_name
 
@@ -44,7 +44,7 @@ class INFOs:
         self.session.send_cmd(cmd="set cli pagination off\r\n")
         self.session.send_cmd(cmd=f"do show run {protocol}\r\n")
         output = self.session.read()
-        print(output)
+        # print(output)
 
     def show_env_cpu(self):
 
@@ -61,13 +61,13 @@ class INFOs:
         flash_threshold = re.findall(r"Flash Threshold\s+:\s+(\d+%)", output)
         current_flash_usage = re.findall(r"Current Flash Usage\s+:\s+(\d+%)", output)
 
-        print(ram_threshold)
-        print(ram_usage)
-        print(cpu_threshold)
-        print(cpu_usage)
-        print(current_temperature)
-        print(flash_threshold)
-        print(current_flash_usage)
+        # print(ram_threshold)
+        # print(ram_usage)
+        # print(cpu_threshold)
+        # print(cpu_usage)
+        # print(current_temperature)
+        # print(flash_threshold)
+        # print(current_flash_usage)
 
         return ram_threshold, ram_usage, cpu_threshold, cpu_usage, current_temperature, flash_threshold, current_flash_usage
 
@@ -89,16 +89,16 @@ class INFOs:
         dhcp_packets = re.findall(r"DHCP Packets\s+:\s+(\d+)", output)
         others_packets = re.findall(r"Other Packets\s+:\s+(\d+)", output)
 
-        print(unicast_packets)
-        print(multicast_packets)
-        print(broadcast_packets)
-        print(arp_packets)
-        print(igmp_packets)
-        print(ip_multicast_packets)
-        print(stp_packets)
-        print(lldp_packets)
-        print(dhcp_packets)
-        print(others_packets)
+        # print(unicast_packets)
+        # print(multicast_packets)
+        # print(broadcast_packets)
+        # print(arp_packets)
+        # print(igmp_packets)
+        # print(ip_multicast_packets)
+        # print(stp_packets)
+        # print(lldp_packets)
+        # print(dhcp_packets)
+        # print(others_packets)
 
         return unicast_packets, multicast_packets[0], broadcast_packets, arp_packets, igmp_packets, ip_multicast_packets, stp_packets, lldp_packets, dhcp_packets, others_packets
 

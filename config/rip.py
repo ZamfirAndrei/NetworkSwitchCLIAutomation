@@ -41,17 +41,44 @@ class RIP:
         self.session.send_cmd("router rip\r\n")
         self.session.send_cmd(f"network {ip_network}\r\n")
         self.session.send_cmd("version 2")
-        print("The network has been advertise in rip")
+        print(f"The network {ip_network} has been advertise in rip")
+        # output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def advertise_networks(self, *args):
+
+        self.session.connect()
+        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd("router rip\r\n")
+        for ip_network in args:
+
+            self.session.send_cmd(f"network {ip_network}\r\n")
+            self.session.send_cmd("version 2")
+            print(f"The network {ip_network} has been advertise in rip")
         # output = self.session.read()
         # print(output)
         self.session.close()
 
     def remove_network(self, ip_network=None):
+
         self.session.connect()
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd("router rip\r\n")
         self.session.send_cmd(f"no network {ip_network}\r\n")
-        print("The network has been removed from rip process")
+        print(f"The network {ip_network} has been removed from rip process")
+        # output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def remove_networks(self, *args):
+
+        self.session.connect()
+        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd("router rip\r\n")
+        for ip_network in args:
+            self.session.send_cmd(f"no network {ip_network}\r\n")
+            print(f"The network {ip_network} has been removed from rip process")
         # output = self.session.read()
         # print(output)
         self.session.close()
@@ -321,6 +348,7 @@ class RIP:
 
         return match_total_count,  list_of_auto_summary, list_of_directly_connected, list_of_via
 
+    # def show_ip_route_rip(self):
 
 ip_session = "10.2.109.238"
 

@@ -53,3 +53,9 @@ def show_vlan_pagination_enable_disable(ip="10.2.109.198",username="admin", pass
 #
 #
 # exercitiu()
+
+d = { "Tete" : 2, "Sete" : 3}
+
+for i in d:
+    print(i)
+
