@@ -692,6 +692,7 @@ class TestRIPSuite1:
         vl2.remove_vlans("20", "15", "12")
         vl3.remove_vlans("12", "100")
 
+    # Test !!!!!!!!!!!!!!
     def test_func_100(self):
 
         # Trebuie adaugat dupa ce termin cu testele cu 2 DUTs
