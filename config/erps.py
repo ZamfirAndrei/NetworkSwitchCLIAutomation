@@ -68,6 +68,17 @@ class ERPS:
         print(output)
         self.session.close()
 
+    def configure_erps_revertive_mode(self, group_id, wtr_timer):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"aps ring group {group_id}")
+        self.session.send_cmd(f"aps revert wtr {wtr_timer}")
+        print(f"ERPS Revertive Mode has been configured")
+        output = self.session.read()
+        print(output)
+        self.session.close()
+
     def activate_erps_group(self, group_id):
 
         self.session.connect()
@@ -156,9 +167,86 @@ class ERPS:
         # de for astfel incat sa fie gol dictionarul si sa nu se mai suprascrie
         return list_ports
 
+    def check_erps_ports_status(self, group_id):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("set cli pagination off")
+        self.session.send_cmd(f"do show aps ring group {group_id}")
+        output = self.session.read()
+
+        print(output)
+        d_ports = {
+            'Port 1': '',
+            'Port 2': ''
+        }
+
+        match = re.findall(r"Local MEP (\d+) - Remote MEP (\d+) \S+\s+MEP Status: (\w+)\S+\s+Last MEP change: (\d+:\d+:\d+.\d+) ago", output)
+        # print(match)
+
+        for i in range(0, 2):
+
+            d_port = dict()
+
+            d_port['Local MEP'] = match[i][0]
+            d_port['Remote MEP'] = match[i][1]
+            d_port['MEP Status'] = match[i][2]
+            d_port['Last MEP change'] = match[i][3]
+
+            # print(d_port)
+
+            d_ports[f'Port {i+1}'] = d_port
+
+        # print(d_ports)
+        # print(d_ports['Port 2']['Last MEP change'])
+
+        return d_ports
+
+    def check_erps_ring_id_information(self, group_id):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("set cli pagination off")
+        self.session.send_cmd(f"do show aps ring group {group_id}")
+        output = self.session.read()
+
+        print(output)
+        d_ring_info = {
+            'Ring Name': '',
+            'RAPS Vlan Id': '',
+            'Operating Mode': '',
+            'ERPS Compatible Version': '',
+            'Ring State': '',
+            'Status': '',
+            'Wait-to-restore timer': '',
+            'Hold timer': '',
+            'Guard timer': ''
+        }
+
+        match = re.findall(r"Ring Name\s+:\s+(\w+)\S+RAPS Vlan Id\s+:\s+(\d+)\S+Operating Mode\s+:\s+(\w+)[\S+\s+]+ERPS Compatible Version\s+:\s+(\w+)\S+Ring State\s+:\s+(\w+)\s+\S+Status\s+:\s+(\w+)\s+\S+Wait-to-restore timer\s+:\s+([\d+\s+\w+]+)\S+Hold timer\s+:\s+([\d+\s+\w+]+)\S+Guard timer\s+:\s+([\d+\s+\w+]+)", output)
+
+        # print(match)
+
+        for info in match:
+
+            d_ring_info['Ring Name'] = info[0]
+            d_ring_info['RAPS Vlan Id'] = info[1]
+            d_ring_info['Operating Mode'] = info[2]
+            d_ring_info['ERPS Compatible Version'] = info[3]
+            d_ring_info['Ring State'] = info[4]
+            d_ring_info['Status'] = info[5]
+            d_ring_info['Wait-to-restore timer'] = info[6]
+            d_ring_info['Hold timer'] = info[7]
+            d_ring_info['Guard timer'] = info[8]
+
+        print(d_ring_info)
+
+        return d_ring_info
+
+
 
 ip_session = "10.2.109.232"
-erps_obj = ERPS(ip_session=ip_session)
+# erps_obj = ERPS(ip_session=ip_session)
 
 # erps_obj.enable_erps_mode()
 # erps_obj.create_erps_group("1")
@@ -172,4 +260,7 @@ erps_obj = ERPS(ip_session=ip_session)
 # print(RPLport)
 # ports_list = erps_obj.check_erps_ports("1")
 # print(ports_list)
+# erps_obj.check_erps_ports_status("1")
+# erps_obj.configure_erps_revertive_mode("1","3000")
+# erps_obj.check_erps_ring_id_information("1")
 

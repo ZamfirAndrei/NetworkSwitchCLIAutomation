@@ -54,8 +54,16 @@ def show_vlan_pagination_enable_disable(ip="10.2.109.198",username="admin", pass
 #
 # exercitiu()
 
-d = { "Tete" : 2, "Sete" : 3}
+d = {'15.0.0.0': {'Network': '15.0.0.0', 'Mask': '24', 'AD': '120', 'Metric': '2', 'Learned From': '20.0.0.1'},
+      '88.0.0.0': {'Network': '88.0.0.0', 'Mask': '8', 'AD': '120', 'Metric': '4', 'Learned From': '20.0.0.1'}}
 
-for i in d:
-    print(i)
+x = "Mask"
+ip = "15.0.0.0"
+print(len(d))
+print(len(d.items()))
+print(len(d.keys()))
+print(d.values())
+print(d.keys())
+print(d["15.0.0.0"]["AD"])
+print(d[f'{ip}'][f'{x}'], "-----", ip,x)
 

@@ -40,7 +40,7 @@ class OSPF:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd("router ospf\r\n")
         self.session.send_cmd(f"network {ip_network} area {area}\r\n")
-        print("The network has been advertise in ospf")
+        print(f"The network {ip_network} has been advertise in ospf on DUT {self.ip_session}")
         output = self.session.read()
         # print(output)
         self.session.close()
@@ -51,7 +51,7 @@ class OSPF:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd("router ospf\r\n")
         self.session.send_cmd(f"no network {ip_network} area {area}\r\n")
-        print("The network has been removed from ospf process")
+        print(f"The network {ip_network} has been removed from ospf process on DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
         self.session.close()
@@ -67,7 +67,7 @@ class OSPF:
         else:
             self.session.send_cmd(f"redistribute connected metric-type {metric_type}\r\n")
 
-        print("The connected networks have been redistributed into ospf process")
+        print(f"The connected networks have been redistributed into ospf process on DUT {self.ip_session}")
         # time.sleep(2)
         # output = self.session.read()
         # print(output)
@@ -84,7 +84,7 @@ class OSPF:
         else:
             self.session.send_cmd(f"redistribute static metric-type {metric_type}\r\n")
 
-        print("The static routes have been redistributed into ospf process")
+        print(f"The static routes have been redistributed into ospf process on DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
         self.session.close()

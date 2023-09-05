@@ -70,6 +70,36 @@ class VLAN:
 
         return output
 
+    def create_vlans(self, *args):
+
+        self.session.connect("admin", "Admin1234!")
+        output = self.session.read()
+        conf = re.findall(r"config", output)
+        # print(output)
+        # print(conf)
+
+        for vlan in args:
+
+            if int(vlan) >= 4094:
+                print("The limit is 4094")
+
+            else:
+                if "config" not in conf:
+                    self.session.send_cmd("!\r\n")
+                    self.session.send_cmd("conf t")
+                    self.session.send_cmd(f"vlan {vlan}\r\n")
+                    self.session.send_cmd("!\r\n")
+                    # print("1")
+                else:
+                    self.session.send_cmd("!\r\n")
+                    self.session.send_cmd(f"vlan {vlan}\r\n")
+                    # print("2")
+                print(f"The VLAN {vlan} was created")
+
+        self.session.close()
+
+        return output
+
     def remove_vlan(self, vlan):
 
         self.session.connect("admin", "Admin1234!")
@@ -83,6 +113,28 @@ class VLAN:
             print("The VLAN does not exist")
         else:
             print(f"The VLAN {vlan} has been removed succesfully")
+
+        self.session.close()
+
+        return output
+
+    def remove_vlans(self, *args):
+
+        self.session.connect("admin", "Admin1234!")
+        self.session.send_cmd("conf t\r\n")
+        output = ""
+
+        for vlan in args:
+
+            self.session.send_cmd(f"no vlan {vlan}\r\n")
+            output = self.session.read()
+            # print(output)
+            error = re.findall("% Vlan does not exist", output)
+            # print(error)
+            if "% Vlan does not exist" in error:
+                print("The VLAN does not exist")
+            else:
+                print(f"The VLAN {vlan} has been removed succesfully")
 
         self.session.close()
 

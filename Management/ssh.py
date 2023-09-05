@@ -26,7 +26,7 @@ class SSH:
         # Connect to the device
         try:
 
-            self.ssh.connect(self.ipSSH, username=username, password=password, timeout=15)
+            self.ssh.connect(self.ipSSH, username=username, password=password, timeout=55)
             self.shell = self.ssh.invoke_shell()
             time.sleep(2)
 

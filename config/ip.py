@@ -64,17 +64,17 @@ class IP:
                 self.session.send_cmd("!\r\n")
                 self.session.send_cmd(f"no int vlan {int_vlan}\r\n")
                 output = self.session.read()
-                print(output)
+                # print(output)
                 print(f"The inteface vlan {int_vlan} has been removed succesfully")
 
             elif "% Invalid Interface Index" in output:
 
                 print("The interface does not exist")
-                print(output)
+                # print(output)
 
             else:
 
-                print(output)
+                # print(output)
                 print(f"The inteface vlan {int_vlan} has been removed succesfully")
 
         self.session.close()
@@ -236,7 +236,7 @@ class IP:
             self.session.send_cmd("no ip add\r\n")
             output = self.session.read()
             # print(output)
-            print(f"The ip from int vlan {int_vlan} has been removed")
+            print(f"The ip from int vlan {int_vlan} of DUT {self.ip_session} has been removed")
 
         self.session.close()
 
@@ -255,7 +255,7 @@ class IP:
             self.session.send_cmd(f"shut\r\n")
             self.session.send_cmd("!\r\n")
             self.session.send_cmd(f"no int vlan {int_vlan}\r\n")
-            print(f"The int vlan {int_vlan} has been removed")
+            print(f"The int vlan {int_vlan} of DUT {self.ip_session} has been removed")
 
         output = self.session.read()
         # print(output)
@@ -347,7 +347,7 @@ class IP:
         self.session.send_cmd("!\r\n")
         output = self.session.read()
         # print(output)
-        print(f"The int vlan {int_vlan} has been shut")
+        print(f"The int vlan {int_vlan} of DUT {self.ip_session} has been shut")
 
         self.session.close()
 
@@ -363,7 +363,7 @@ class IP:
             self.session.send_cmd(f"int vlan {int_vlan}\r\n")
             self.session.send_cmd(f"shut\r\n")
             self.session.send_cmd("!\r\n")
-            print(f"The int vlan {int_vlan} has been shut")
+            print(f"The int vlan {int_vlan} of DUT {self.ip_session} has been shut")
 
         output = self.session.read()
         # print(output)
@@ -381,7 +381,7 @@ class IP:
         self.session.send_cmd("!\r\n")
         output = self.session.read()
         # print(output)
-        print(f"The int vlan {int_vlan} has been no-shut")
+        print(f"The int vlan {int_vlan} of DUT {self.ip_session} has been no-shut")
 
         self.session.close()
 
@@ -397,7 +397,7 @@ class IP:
             self.session.send_cmd(f"int vlan {int_vlan}\r\n")
             self.session.send_cmd(f"no shut\r\n")
             self.session.send_cmd("!\r\n")
-            print(f"The int vlan {int_vlan} has been no-shut")
+            print(f"The int vlan {int_vlan} of DUT {self.ip_session} has been no-shut")
 
         output = self.session.read()
         # print(output)
