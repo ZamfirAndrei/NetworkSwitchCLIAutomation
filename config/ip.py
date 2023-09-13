@@ -454,6 +454,8 @@ class IP:
 
         output = ""
 
+        dict_of_networks = {}
+
         # Dictionar pentru Rutele Direct Conectate
 
         # d1 = {
@@ -499,6 +501,7 @@ class IP:
 
                 # print(d3)
                 networks.append(d3)
+                dict_of_networks[f'{d3["Network"]}'] = d3
 
                 # print("##################")
 
@@ -526,7 +529,7 @@ class IP:
                 # print(d1)
                 networks_connected.append(d1)
                 networks.append(d1)
-
+                dict_of_networks[f'{d1["Network"]}'] = d1
                 # print(networks_connected) # Lista pentru networkurile direct connectate
 
             # print(networks)  # Am format o Lista de dictionare
@@ -565,7 +568,7 @@ class IP:
 
         self.session.close()
 
-        return ip_route, networks, networks_connected
+        return ip_route, networks, networks_connected, dict_of_networks
 
 
 ip = "10.2.109.238"

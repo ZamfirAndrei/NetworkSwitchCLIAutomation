@@ -177,10 +177,7 @@ class TestRIPSuite1:
         dict_rip_routes_1 = rip1.show_ip_route_rip()
         print(dict_rip_routes_1)
 
-        if len(dict_rip_routes_1.keys()) == 0:
-            assert True
-        else:
-            assert "0.0.0.0" not in dict_rip_routes_1.keys()
+        assert "0.0.0.0" not in dict_rip_routes_1.keys()
 
         print("########## Removing the config #############")
 
@@ -201,7 +198,7 @@ class TestRIPSuite1:
     def test_func_3(self):
 
         print("###### Test_func_3 ######")
-        print("########## Verify Verify functionality for redistribute connected #############")
+        print("########## Verify functionality for redistribute connected #############")
         print("###### 2 DUTs ######")
 
         int1.no_shut_interfaces("Ex 0/1")
@@ -263,12 +260,9 @@ class TestRIPSuite1:
         dict_rip_routes_1 = rip1.show_ip_route_rip()
         # print(dict_rip_routes_1)
 
-        if len(dict_rip_routes_1.keys()) == 0:
-            assert True
-        else:
-            assert "15.0.0.0" not in dict_rip_routes_1.keys()
-            assert "16.0.0.0" not in dict_rip_routes_1.keys()
-            assert "100.0.0.0" in dict_rip_routes_1.keys()
+        assert "15.0.0.0" not in dict_rip_routes_1.keys()
+        assert "16.0.0.0" not in dict_rip_routes_1.keys()
+        assert "100.0.0.0" in dict_rip_routes_1.keys()
 
         print("########## Removing the config #############")
 
@@ -350,11 +344,8 @@ class TestRIPSuite1:
         dict_rip_routes_1 = rip1.show_ip_route_rip()
         # print(dict_rip_routes_1)
 
-        if len(dict_rip_routes_1.keys()) == 0:
-            assert True
-        else:
-            assert "15.0.0.0" in dict_rip_routes_1.keys()
-            assert "100.0.0.0" not in dict_rip_routes_1.keys()
+        assert "15.0.0.0" in dict_rip_routes_1.keys()
+        assert "100.0.0.0" not in dict_rip_routes_1.keys()
 
         print("########## Removing the config #############")
 
@@ -400,7 +391,7 @@ class TestRIPSuite1:
         ip1.no_shut_int_vlans("20")
         ip2.no_shut_int_vlans("20","15")
 
-        # Enabling RIP and advertising the interfaces in RIP
+        # Enabling RIP and advertising the interfaces into RIP
 
         rip1.enable_rip()
         rip2.enable_rip()
@@ -429,7 +420,7 @@ class TestRIPSuite1:
 
         assert "88.88.88.0" in dict_rip_routes_1.keys() and dict_rip_routes_1["88.88.88.0"]["Mask"] == "25"
 
-        # Eable the auto-summary on DUT2 and check if the route is classfull and is present in the routing table of DUT1
+        # Enable the auto-summary on DUT2 and check if the route is classfull and is present in the routing table of DUT1
 
         rip2.auto_summary()
 
@@ -441,11 +432,8 @@ class TestRIPSuite1:
         dict_rip_routes_1 = rip1.show_ip_route_rip()
         # print(dict_rip_routes_1)
 
-        if len(dict_rip_routes_1.keys()) == 0:
-            assert True
-        else:
-            assert "88.88.88.0" not in dict_rip_routes_1.keys()
-            assert "88.0.0.0" in dict_rip_routes_1.keys()
+        assert "88.88.88.0" not in dict_rip_routes_1.keys()
+        assert "88.0.0.0" in dict_rip_routes_1.keys()
 
         print("########## Removing the config #############")
 
@@ -462,9 +450,429 @@ class TestRIPSuite1:
 
         vl1.remove_vlan(vlan="20")
         vl2.remove_vlans("20","15")
+
     def test_func_6(self):
 
         print("###### Test_func_6 ######")
+        print("########## Verify that administrative RIP distance can be changed to other value #############")
+        print("###### 2 DUTs ######")
+
+        int1.no_shut_interfaces("Ex 0/1")
+        int2.no_shut_interfaces("Gi 0/9", "Gi 0/5")
+
+        # Creating VLANs
+
+        vl1.create_vlan(vlan="20")
+        vl2.create_vlans("15", "20")
+
+        # Adding the ports to the VLANs
+
+        vl1.add_ports_to_vlan(ports="Ex 0/1", vlan="20")
+        vl2.add_ports_to_vlan(ports="Gi 0/9", vlan="20")
+        vl2.add_ports_to_vlan(ports="Gi 0/5", vlan="15")
+
+        # Adding IPs on the interfaces
+
+        ip1.add_ip_interface(int_vlan="20", ip="20.0.0.2", mask="255.255.255.0")
+        ip2.add_ip_interfaces("15", "20", int_vlan15=["15.0.0.1", "255.255.255.0"],
+                              int_vlan20=["20.0.0.1", "255.255.255.0"])
+
+        ip1.no_shut_int_vlans("20")
+        ip2.no_shut_int_vlans("20", "15")
+
+        # Enabling RIP and advertising the interfaces into RIP
+
+        rip1.enable_rip()
+        rip2.enable_rip()
+
+        rip1.advertise_network(ip_network="20.0.0.2")
+        rip2.advertise_networks("20.0.0.1", "15.0.0.1")
+
+        # Enabling OSPF and advertising the interfaces into OSPF
+
+        ospf1.enable_ospf()
+        ospf2.enable_ospf()
+
+        ospf1.advertise_network(ip_network="20.0.0.2", area="0.0.0.0")
+        ospf2.advertise_network(ip_network="15.0.0.1", area="0.0.0.0")
+        ospf2.advertise_network(ip_network="20.0.0.1", area="0.0.0.0")
+
+        # Disabling no-autosummary on DUT2 so it will redistribute classless subnets
+
+        rip2.remove_auto_summary()
+
+        # Configuring the Distance on DUT1 so to routes are learned using RIP
+
+        rip1.add_distance(distance="99")
+
+        # Checking if the routes are installed and that are learned via RIP
+
+        time.sleep(30)
+
+        ip_route, networks, networks_connected, dict_of_networks = ip1.show_ip_route()
+        print(dict_of_networks)
+
+        assert "15.0.0.0" in dict_of_networks and dict_of_networks["15.0.0.0"]["Protocol"] == "R"
+
+        # Remove the distance and check that the routes are learned via OSPF
+
+        rip1.remove_distance()
+
+        ip1.shut_int_vlan(int_vlan="20")
+        ip1.no_shut_int_vlan(int_vlan="20")
+
+        time.sleep(45)
+
+        ip_route, networks, networks_connected, dict_of_networks = ip1.show_ip_route()
+        print(dict_of_networks)
+
+        assert "15.0.0.0" in dict_of_networks and dict_of_networks["15.0.0.0"]["Protocol"] == "O"
+
+        print("########## Removing the config #############")
+
+        rip1.disable_rip()
+        rip2.disable_rip()
+
+        ospf1.remove_network(ip_network="20.0.0.2", area="0.0.0.0")
+        ospf2.remove_network(ip_network="15.0.0.1", area="0.0.0.0")
+        ospf2.remove_network(ip_network="20.0.0.1", area="0.0.0.0")
+
+        ospf1.disable_ospf()
+        ospf2.disable_ospf()
+
+        ip1.remove_int_vlan(int_vlan="20")
+        ip2.remove_vlan_interfaces("20", "15")
+
+        int1.shut_interface(interface="Ex 0/1")
+        int2.shut_interfaces("Gi 0/9", "Gi 0/5")
+
+        vl1.remove_vlan(vlan="20")
+        vl2.remove_vlans("20", "15")
+
+    def test_func_7(self):
+
+        print("###### Test_func_7 ######")
+        print("########## Verify functionality for passive-interface #############")
+        print("###### 2 DUTs ######")
+
+        int1.no_shut_interfaces("Ex 0/1")
+        int2.no_shut_interfaces("Gi 0/9", "Gi 0/5")
+
+        # Creating VLANs
+
+        vl1.create_vlan(vlan="20")
+        vl2.create_vlans("15", "20")
+
+        # Adding the ports to the VLANs
+
+        vl1.add_ports_to_vlan(ports="Ex 0/1", vlan="20")
+        vl2.add_ports_to_vlan(ports="Gi 0/9", vlan="20")
+        vl2.add_ports_to_vlan(ports="Gi 0/5", vlan="15")
+
+        # Adding IPs on the interfaces
+
+        ip1.add_ip_interface(int_vlan="20", ip="20.0.0.2", mask="255.255.255.0")
+        ip2.add_ip_interfaces("15", "20", int_vlan15=["15.0.0.1", "255.255.255.0"],
+                              int_vlan20=["20.0.0.1", "255.255.255.0"])
+
+        ip1.no_shut_int_vlans("20")
+        ip2.no_shut_int_vlans("20", "15")
+
+        # Enabling RIP and advertising the interfaces into RIP
+
+        rip1.enable_rip()
+        rip2.enable_rip()
+
+        rip1.advertise_network(ip_network="20.0.0.2")
+        rip2.advertise_networks("20.0.0.1", "15.0.0.1")
+
+        # Enable passive interface on the int VLAN between the DUTs and shut/no shut the int VLAN between them
+
+        rip2.add_passive_interface(vlan="20")
+
+        ip1.shut_int_vlan(int_vlan="20")
+        ip1.no_shut_int_vlan(int_vlan="20")
+
+        # Checking if the routes are not installed on DUT1 and that are classless
+
+        time.sleep(45)
+
+        dict_rip_routes_1 = rip1.show_ip_route_rip()
+        # print(dict_rip_routes_1)
+
+        assert "15.0.0.0" not in dict_rip_routes_1.keys()
+
+        # Disable the passive interface and check that the routes are installed on DUT1
+
+        rip2.remove_passive_interface(vlan="20")
+
+        ip1.shut_int_vlan(int_vlan="20")
+        ip1.no_shut_int_vlan(int_vlan="20")
+
+        time.sleep(45)
+
+        dict_rip_routes_1 = rip1.show_ip_route_rip()
+        # print(dict_rip_routes_1)
+
+        assert "15.0.0.0" in dict_rip_routes_1.keys()
+
+        print("########## Removing the config #############")
+
+        rip1.disable_rip()
+        rip2.disable_rip()
+
+        ip1.remove_int_vlan(int_vlan="20")
+        ip2.remove_vlan_interfaces("20", "15")
+
+        int1.shut_interface(interface="Ex 0/1")
+        int2.shut_interfaces("Gi 0/9", "Gi 0/5")
+
+        vl1.remove_vlan(vlan="20")
+        vl2.remove_vlans("20", "15")
+
+    def test_func_8(self):
+
+        print("###### Test_func_8 ######")
+        print("########## Verify functionality for default-metric #############")
+        print("###### 2 DUTs ######")
+
+        default_metric = 3
+        metric = 5
+        metric_high = 16
+
+        int1.no_shut_interfaces("Ex 0/1")
+        int2.no_shut_interfaces("Gi 0/9", "Gi 0/5")
+
+        # Creating VLANs
+
+        vl1.create_vlan(vlan="20")
+        vl2.create_vlans("15", "20")
+
+        # Adding the ports to the VLANs
+
+        vl1.add_ports_to_vlan(ports="Ex 0/1", vlan="20")
+        vl2.add_ports_to_vlan(ports="Gi 0/9", vlan="20")
+        vl2.add_ports_to_vlan(ports="Gi 0/5", vlan="15")
+
+        # Adding IPs on the interfaces
+
+        ip1.add_ip_interface(int_vlan="20", ip="20.0.0.2", mask="255.255.255.0")
+        ip2.add_ip_interfaces("15", "20", int_vlan15=["15.0.0.1", "255.255.255.0"],
+                              int_vlan20=["20.0.0.1", "255.255.255.0"])
+
+        ip1.no_shut_int_vlans("20")
+        ip2.no_shut_int_vlans("20", "15")
+
+        # Enabling RIP and advertising the interfaces into RIP
+
+        rip1.enable_rip()
+        rip2.enable_rip()
+
+        rip1.advertise_network(ip_network="20.0.0.2")
+        rip2.advertise_networks("20.0.0.1")
+
+        # Changing the metric for redistributed routes
+
+        rip2.default_metric(metric=metric)
+
+        # Configuring static routes, redistribute static and redistribute connected on DUT2 towards DUT1
+
+        ip2.add_static_route(network_dest="88.0.0.0", mask_dest="255.255.255.0", next_hop="15.0.0.80")
+
+        rip2.redistribute_static()
+        rip2.redistribute_connected()
+
+        # Checking if the routes are installed and that are learned via RIP
+
+        time.sleep(30)
+
+        ip_route, networks, networks_connected, dict_of_networks = ip1.show_ip_route()
+        print(dict_of_networks)
+
+        assert "15.0.0.0" in dict_of_networks and dict_of_networks["15.0.0.0"]["Metric"] == str(metric+1)
+        assert "88.0.0.0" in dict_of_networks and dict_of_networks["88.0.0.0"]["Metric"] == str(metric+1)
+
+        # Changing the metric for redistributed routes
+
+        rip2.default_metric(metric=metric_high)
+
+        # Remove the redistribution of static/connected and add them back
+
+        rip2.remove_redistribute_static()
+        rip2.remove_redistribute_connected()
+
+        rip2.redistribute_static()
+        rip2.redistribute_connected()
+
+        ip1.shut_int_vlan(int_vlan="20")
+        ip1.no_shut_int_vlan(int_vlan="20")
+
+        time.sleep(45)
+
+        ip_route, networks, networks_connected, dict_of_networks = ip1.show_ip_route()
+        print(dict_of_networks)
+
+        # Checking that the routes are not installed because they have a metric higher than 15
+
+        assert "15.0.0.0" not in dict_of_networks
+        assert "88.0.0.0" not in dict_of_networks
+
+        # Remove the default metric
+
+        rip2.remove_default_metric()
+
+        # Remove the redistribution of static/connected and add them back
+
+        rip2.remove_redistribute_static()
+        rip2.remove_redistribute_connected()
+
+        rip2.redistribute_static()
+        rip2.redistribute_connected()
+
+        ip1.shut_int_vlan(int_vlan="20")
+        ip1.no_shut_int_vlan(int_vlan="20")
+
+        time.sleep(45)
+
+        ip_route, networks, networks_connected, dict_of_networks = ip1.show_ip_route()
+        print(dict_of_networks)
+
+        assert "15.0.0.0" in dict_of_networks and dict_of_networks["15.0.0.0"]["Metric"] == str(default_metric+1)
+        assert "88.0.0.0" in dict_of_networks and dict_of_networks["88.0.0.0"]["Metric"] == str(default_metric+1)
+
+        print("########## Removing the config #############")
+
+        rip1.disable_rip()
+        rip2.disable_rip()
+
+        ip1.remove_int_vlan(int_vlan="20")
+        ip2.remove_vlan_interfaces("20", "15")
+
+        ip2.remove_static_route(network_dest="88.0.0.0", mask_dest="255.255.255.0", next_hop="15.0.0.80")
+
+        int1.shut_interface(interface="Ex 0/1")
+        int2.shut_interfaces("Gi 0/9", "Gi 0/5")
+
+        vl1.remove_vlan(vlan="20")
+        vl2.remove_vlans("20", "15")
+
+    def test_func_9(self):
+
+        print("###### Test_func_9 ######")
+        print("########## Verify that the text mode authentication option works as expected. #############")
+        print("###### 2 DUTs ######")
+
+        int1.no_shut_interfaces("Ex 0/1")
+        int2.no_shut_interfaces("Gi 0/9", "Gi 0/5")
+
+        # Creating VLANs
+
+        vl1.create_vlan(vlan="20")
+        vl2.create_vlans("15", "20")
+
+        # Adding the ports to the VLANs
+
+        vl1.add_ports_to_vlan(ports="Ex 0/1", vlan="20")
+        vl2.add_ports_to_vlan(ports="Gi 0/9", vlan="20")
+        vl2.add_ports_to_vlan(ports="Gi 0/5", vlan="15")
+
+        # Adding IPs on the interfaces
+
+        ip1.add_ip_interface(int_vlan="20", ip="20.0.0.2", mask="255.255.255.0")
+        ip2.add_ip_interfaces("15", "20", int_vlan15=["15.0.0.1", "255.255.255.0"],
+                              int_vlan20=["20.0.0.1", "255.255.255.0"])
+
+        ip1.no_shut_int_vlans("20")
+        ip2.no_shut_int_vlans("20", "15")
+
+        # Enabling RIP and advertising the interfaces into RIP
+
+        rip1.enable_rip()
+        rip2.enable_rip()
+
+        rip1.advertise_network(ip_network="20.0.0.2")
+        rip2.advertise_networks("20.0.0.1", "15.0.0.1")
+
+        # Enable authentication key on the int VLAN between the DUTs on DUT2 and shut/no shut the int VLAN between them
+
+        rip2.add_ip_rip_authentication_mode(int_vlan="20",mode="text",key_chain="12345")
+
+        ip1.shut_int_vlan(int_vlan="20")
+        ip1.no_shut_int_vlan(int_vlan="20")
+
+        # Checking if the routes are not installed
+
+        time.sleep(45)
+
+        dict_rip_routes_1 = rip1.show_ip_route_rip()
+        # print(dict_rip_routes_1)
+        dict_of_int_vlans_authentication_2 = rip2.show_ip_rip_authentication()
+        dict_of_int_vlans_authentication_1 = rip1.show_ip_rip_authentication()
+        print(dict_of_int_vlans_authentication_2)
+        print(dict_of_int_vlans_authentication_1)
+
+        assert "15.0.0.0" not in dict_rip_routes_1.keys()
+        assert "20" in dict_of_int_vlans_authentication_2 and dict_of_int_vlans_authentication_2["20"]["Authentication Type"] == "simple text"
+        assert "20" in dict_of_int_vlans_authentication_1 and dict_of_int_vlans_authentication_1["20"]["Authentication Type"] == "none"
+
+        # Enable the same authentication key on DUT1 and check that routes are installed
+
+        rip1.add_ip_rip_authentication_mode(int_vlan="20", mode="text", key_chain="12345")
+
+        ip1.shut_int_vlan(int_vlan="20")
+        ip1.no_shut_int_vlan(int_vlan="20")
+
+        time.sleep(30)
+
+        dict_rip_routes_1 = rip1.show_ip_route_rip()
+        # print(dict_rip_routes_1)
+        dict_of_int_vlans_authentication_2 = rip2.show_ip_rip_authentication()
+        dict_of_int_vlans_authentication_1 = rip1.show_ip_rip_authentication()
+        print(dict_of_int_vlans_authentication_2)
+        print(dict_of_int_vlans_authentication_1)
+
+        assert "15.0.0.0" in dict_rip_routes_1.keys()
+        assert "20" in dict_of_int_vlans_authentication_2 and dict_of_int_vlans_authentication_2["20"]["Authentication Type"] == "simple text"
+        assert "20" in dict_of_int_vlans_authentication_1 and dict_of_int_vlans_authentication_1["20"]["Authentication Type"] == "simple text"
+
+        # Disable the authentication and check that the routes are installed on DUT1
+
+        rip1.remove_ip_rip_authentication_mode(int_vlan="20")
+        rip2.remove_ip_rip_authentication_mode(int_vlan="20")
+
+        ip1.shut_int_vlan(int_vlan="20")
+        ip1.no_shut_int_vlan(int_vlan="20")
+
+        time.sleep(35)
+
+        dict_rip_routes_1 = rip1.show_ip_route_rip()
+        # print(dict_rip_routes_1)
+        dict_of_int_vlans_authentication_2 = rip2.show_ip_rip_authentication()
+        dict_of_int_vlans_authentication_1 = rip1.show_ip_rip_authentication()
+        print(dict_of_int_vlans_authentication_2)
+        print(dict_of_int_vlans_authentication_1)
+
+        assert "15.0.0.0" in dict_rip_routes_1.keys()
+        assert "20" in dict_of_int_vlans_authentication_2 and dict_of_int_vlans_authentication_2["20"]["Authentication Type"] == "none"
+        assert "20" in dict_of_int_vlans_authentication_1 and dict_of_int_vlans_authentication_1["20"]["Authentication Type"] == "none"
+
+        print("########## Removing the config #############")
+
+        rip1.disable_rip()
+        rip2.disable_rip()
+
+        ip1.remove_int_vlan(int_vlan="20")
+        ip2.remove_vlan_interfaces("20", "15")
+
+        int1.shut_interface(interface="Ex 0/1")
+        int2.shut_interfaces("Gi 0/9", "Gi 0/5")
+
+        vl1.remove_vlan(vlan="20")
+        vl2.remove_vlans("20", "15")
+
+    def test_func_10(self):
+
+        print("###### Test_func_10 ######")
         print("########## Verify functionality for redistribute OSPF into RIP #############")
         print("###### 3 DUTs ######")
 
@@ -570,9 +978,9 @@ class TestRIPSuite1:
         vl2.remove_vlans("20","15","12")
         vl3.remove_vlans("12","100")
 
-    def test_func_7(self):
+    def test_func_11(self):
 
-        print("###### Test_func_7 ######")
+        print("###### Test_func_11 ######")
         print("########## Verify functionality for redistribute all into RIP #############")
         print("###### 3 DUTs ######")
 
@@ -692,7 +1100,6 @@ class TestRIPSuite1:
         vl2.remove_vlans("20", "15", "12")
         vl3.remove_vlans("12", "100")
 
-    # Test !!!!!!!!!!!!!!
     def test_func_100(self):
 
         # Trebuie adaugat dupa ce termin cu testele cu 2 DUTs

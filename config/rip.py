@@ -55,7 +55,7 @@ class RIP:
 
             self.session.send_cmd(f"network {ip_network}\r\n")
             self.session.send_cmd("version 2")
-            print(f"The network {ip_network} has been advertise in rip")
+            print(f"The network {ip_network} has been advertise in rip on DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
         self.session.close()
@@ -66,7 +66,7 @@ class RIP:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd("router rip\r\n")
         self.session.send_cmd(f"no network {ip_network}\r\n")
-        print(f"The network {ip_network} has been removed from rip process")
+        print(f"The network {ip_network} has been removed from rip process on DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
         self.session.close()
@@ -97,7 +97,7 @@ class RIP:
 
             self.session.send_cmd(f"passive-interface vlan {vlan}\r\n")
 
-        print("The passive-interface has been created")
+        print(f"The passive-interface has been created on vlan {vlan} on DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
         self.session.close()
@@ -116,7 +116,7 @@ class RIP:
 
             self.session.send_cmd(f"no passive-interface vlan {vlan}\r\n")
 
-        print("The passive-interface has been removed")
+        print(f"The passive-interface {vlan} has been removed from DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
         self.session.close()
@@ -127,7 +127,7 @@ class RIP:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd("router rip\r\n")
         self.session.send_cmd("redistribute connected\r\n")
-        print("The connected networks have been redistributed into RIP process")
+        print(f"The connected networks have been redistributed into RIP process on DUT {self.ip_session}")
         # time.sleep(2)
         # output = self.session.read()
         # print(output)
@@ -381,6 +381,91 @@ class RIP:
         self.session.close()
 
         return output
+
+    def add_ip_rip_auth_type_mode(self, int_vlan, mode=None, key_chain=None, key_id=None):
+
+        self.session.connect()
+        self.session.send_cmd(cmd="conf t")
+        self.session.send_cmd(cmd=f"int vlan {int_vlan}")
+        self.session.send_cmd(cmd=f"ip rip auth-type {mode}")
+
+        if key_chain is not None:
+            self.session.send_cmd(cmd=f"ip rip authentication key-chain {key_chain}")
+            print(f"The mode {mode} and key-chain {key_chain} have been configured on vlan {int_vlan} on DUT {self.ip_session}")
+        output = self.session.read()
+        # print(output)
+
+        self.session.close()
+
+    def remove_ip_rip_authentication_mode(self, int_vlan):
+
+        self.session.connect()
+        self.session.send_cmd(cmd="conf t")
+        self.session.send_cmd(cmd=f"int vlan {int_vlan}")
+        self.session.send_cmd(cmd=f"no ip rip authentication")
+        print(f"The RIP authentication have been removed on vlan {int_vlan} on DUT {self.ip_session}")
+        output = self.session.read()
+        # print(output)
+
+        self.session.close()
+
+    def add_ip_rip_authentication_mode(self, int_vlan, mode=None, key_chain=None, key_id=None):
+
+        self.session.connect()
+        self.session.send_cmd(cmd="conf t")
+        self.session.send_cmd(cmd=f"int vlan {int_vlan}")
+        self.session.send_cmd(cmd=f"ip rip authentication mode {mode}")
+
+        if key_chain is not None:
+            self.session.send_cmd(cmd=f"ip rip authentication key-chain {key_chain}")
+            print(
+                f"The mode {mode} and key-chain {key_chain} have been configured on vlan {int_vlan} on DUT {self.ip_session}")
+
+        output = self.session.read()
+        # print(output)
+
+        self.session.close()
+
+    def show_ip_rip_authentication(self):
+
+        dict_of_int_vlans = {}
+        d = {}
+
+        self.session.connect()
+        self.session.send_cmd(cmd="show ip rip authentication")
+        output = self.session.read()
+        # print(output)
+
+        match1 = re.findall(r'Interface Name\s+vlan(\d+)\S+Authentication type is\s+([\w\s]+)', output)
+        match2 = re.findall(r'Authentication KeyId in use:\s+(\d+)\S+Authentication Last key status:\s+(\w+)', output)
+
+        # print(match1)
+        # print(match2)
+
+        for item in match1:
+
+            d["Interface Name"] = item[0]
+            d["Authentication Type"] = item[1]
+
+            if len(match2) == 0:
+
+                dict_of_int_vlans[item[0]] = d
+                d = {}
+
+            else:
+
+                for item2 in match2:
+
+                    d["Authentication KeyId in use"] = item2[0]
+                    d["Authentication Last key status"] = item2[1]
+                    dict_of_int_vlans[item[0]] = d
+                    d = {}
+
+        # print(dict_of_int_vlans)
+
+        self.session.close()
+
+        return  dict_of_int_vlans
 
     def show_rip_database(self):
 

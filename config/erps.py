@@ -18,7 +18,7 @@ class ERPS:
         self.session.connect()
         self.session.send_cmd("conf t")
         self.session.send_cmd("aps ring enable")
-        print("ERPS mode has been enabled")
+        print(f"ERPS mode has been enabled on DUT {self.ip_session}")
         output = self.session.read()
         print(output)
         self.session.close()
@@ -28,7 +28,7 @@ class ERPS:
         self.session.connect()
         self.session.send_cmd("conf t")
         self.session.send_cmd(f"aps ring group {group_id}")
-        print(f"ERPS Ring Group {group_id} has been created")
+        print(f"ERPS Ring Group {group_id} has been created on DUT {self.ip_session}")
         output = self.session.read()
         print(output)
         self.session.close()
@@ -39,7 +39,7 @@ class ERPS:
         self.session.send_cmd("conf t")
         self.session.send_cmd(f"aps ring group {group_id}")
         self.session.send_cmd(f"aps protection-type {protection_type}")
-        print(f"ERPS Protection-Type {protection_type} has been configured")
+        print(f"ERPS Protection-Type {protection_type} has been configured on DUT {self.ip_session}")
         output = self.session.read()
         print(output)
         self.session.close()
@@ -52,7 +52,7 @@ class ERPS:
         self.session.send_cmd(f"aps working {port1} {port2} vlan {vlan}")
         self.session.send_cmd(f"aps working port1 local-mep {local_mep1} remote-mep {remote_mep1}")
         self.session.send_cmd(f"aps working port2 local-mep {local_mep2} remote-mep {remote_mep2}")
-        print(f"ERPS Mapped Ports {port1} and {port2} have been configured")
+        print(f"ERPS Mapped Ports {port1} and {port2} have been configured on DUT {self.ip_session}")
         output = self.session.read()
         print(output)
         self.session.close()
@@ -63,7 +63,7 @@ class ERPS:
         self.session.send_cmd("conf t")
         self.session.send_cmd(f"aps ring group {group_id}")
         self.session.send_cmd(f"aps protect {protected_port}")
-        print(f"ERPS Protected Port {protected_port} has been configured")
+        print(f"ERPS Protected Port {protected_port} has been configured on DUT {self.ip_session}")
         output = self.session.read()
         print(output)
         self.session.close()
@@ -74,7 +74,7 @@ class ERPS:
         self.session.send_cmd("conf t")
         self.session.send_cmd(f"aps ring group {group_id}")
         self.session.send_cmd(f"aps revert wtr {wtr_timer}")
-        print(f"ERPS Revertive Mode has been configured")
+        print(f"ERPS Revertive Mode has been configured on DUT {self.ip_session}")
         output = self.session.read()
         print(output)
         self.session.close()
@@ -85,7 +85,60 @@ class ERPS:
         self.session.send_cmd("conf t")
         self.session.send_cmd(f"aps ring group {group_id}")
         self.session.send_cmd("aps group active")
-        print(f"ERPS Group {group_id} has been activated")
+        print(f"ERPS Group {group_id} has been activated on DUT {self.ip_session}")
+        output = self.session.read()
+        print(output)
+        self.session.close()
+
+    def disable_erps_mode(self):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("no aps ring enable")
+        print(f"ERPS mode has been disabled on DUT {self.ip_session}")
+        output = self.session.read()
+        print(output)
+        self.session.close()
+
+    def delete_erps_group(self, group_id):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"no aps ring group {group_id}")
+        print(f"ERPS Ring Group {group_id} has been deleted on DUT {self.ip_session}")
+        output = self.session.read()
+        print(output)
+        self.session.close()
+
+    def delete_erps_mapped_ports(self, group_id):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"aps ring group {group_id}")
+        self.session.send_cmd(f"no aps working ports")
+        print(f"ERPS Mapped Ports have been deleted on DUT {self.ip_session}")
+        output = self.session.read()
+        print(output)
+        self.session.close()
+
+    def deactivate_erps_group(self, group_id):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"aps ring group {group_id}")
+        self.session.send_cmd("no aps group active")
+        print(f"ERPS Group {group_id} has been deactivated on DUT {self.ip_session}")
+        output = self.session.read()
+        print(output)
+        self.session.close()
+
+    def delete_erps_protected_port(self, group_id):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"aps ring group {group_id}")
+        self.session.send_cmd(f"no aps protect")
+        print(f"ERPS Protected Port has been deleted on DUT {self.ip_session}")
         output = self.session.read()
         print(output)
         self.session.close()
@@ -247,7 +300,7 @@ class ERPS:
 
 ip_session = "10.2.109.232"
 # erps_obj = ERPS(ip_session=ip_session)
-
+#
 # erps_obj.enable_erps_mode()
 # erps_obj.create_erps_group("1")
 # erps_obj.configure_erps_protection_type("1", "port-based")
@@ -263,4 +316,9 @@ ip_session = "10.2.109.232"
 # erps_obj.check_erps_ports_status("1")
 # erps_obj.configure_erps_revertive_mode("1","3000")
 # erps_obj.check_erps_ring_id_information("1")
-
+# erps_obj.disable_erps_mode()
+# erps_obj.create_erps_group("88")
+# erps_obj.delete_erps_group("88")
+# erps_obj.deactivate_erps_group("1")
+# erps_obj.delete_erps_mapped_ports("1")
+# erps_obj.delete_erps_protected_port("1")

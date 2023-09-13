@@ -59,11 +59,15 @@ d = {'15.0.0.0': {'Network': '15.0.0.0', 'Mask': '24', 'AD': '120', 'Metric': '2
 
 x = "Mask"
 ip = "15.0.0.0"
-print(len(d))
-print(len(d.items()))
-print(len(d.keys()))
-print(d.values())
-print(d.keys())
-print(d["15.0.0.0"]["AD"])
-print(d[f'{ip}'][f'{x}'], "-----", ip,x)
+# print(len(d))
+# print(len(d.items()))
+# print(len(d.keys()))
+# print(d.values())
+# print(d.keys())
+# print(d["15.0.0.0"]["AD"])
+# print(d[f'{ip}'][f'{x}'], "-----", ip,x)
 
+d1 = {}
+
+if "0.0.0.0" not in d1.keys():
+    print("Ok", d1)
