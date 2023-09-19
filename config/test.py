@@ -66,8 +66,26 @@ ip = "15.0.0.0"
 # print(d.keys())
 # print(d["15.0.0.0"]["AD"])
 # print(d[f'{ip}'][f'{x}'], "-----", ip,x)
+#
+# d1 = {}
+#
+# if "0.0.0.0" not in d1.keys():
+#     print("Ok", d1)
 
-d1 = {}
+def show_ip_route(ip="10.2.109.206", username="admin", password="Admin1234!"):
 
-if "0.0.0.0" not in d1.keys():
-    print("Ok", d1)
+    ssh = paramiko.SSHClient()
+    ssh.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+
+    # Connect to device
+
+    ssh.connect(ip, username=username, password=password)
+    shell = ssh.invoke_shell()
+    time.sleep(1)
+    shell.send("show ip route rip \r\n")
+    time.sleep(1)
+    output = shell.recv(65535)
+    print(output)
+
+
+show_ip_route()

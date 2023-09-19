@@ -17,8 +17,9 @@ class OSPF:
     def enable_ospf(self):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router ospf\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
+        self.session.send_cmd("exit")
         print("The OSPF process has been enabled")
         output = self.session.read()
         # print(output)
@@ -27,8 +28,9 @@ class OSPF:
     def disable_ospf(self):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("no router ospf\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("no router ospf")
+        self.session.send_cmd("exit")
         print("The OSPF process has been disabled")
         output = self.session.read()
         # print(output)
@@ -37,10 +39,23 @@ class OSPF:
     def advertise_network(self, ip_network=None, area=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router ospf\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
         self.session.send_cmd(f"network {ip_network} area {area}\r\n")
-        print(f"The network {ip_network} has been advertise in ospf on DUT {self.ip_session}")
+        self.session.send_cmd("exit")
+        print(f"The network {ip_network} has been advertised in ospf on DUT {self.ip_session}")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def advertise_networks(self, **kwargs):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
+        for item in kwargs.values():
+            self.session.send_cmd(f"network {item[0]} area {item[1]}")
+            print(f"The network {item[0]} has been advertised in ospf on DUT {self.ip_session}")
         output = self.session.read()
         # print(output)
         self.session.close()
@@ -48,25 +63,38 @@ class OSPF:
     def remove_network(self, ip_network=None, area=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router ospf\r\n")
-        self.session.send_cmd(f"no network {ip_network} area {area}\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
+        self.session.send_cmd(f"no network {ip_network} area {area}")
+        self.session.send_cmd("exit")
         print(f"The network {ip_network} has been removed from ospf process on DUT {self.ip_session}")
         # output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def remove_networks(self, **kwargs):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
+        for item in kwargs.values():
+            self.session.send_cmd(f"no network {item[0]} area {item[1]}")
+            print(f"The network {item[0]} has been removed from ospf on DUT {self.ip_session}")
+        output = self.session.read()
         # print(output)
         self.session.close()
 
     def redistribute_connected(self, metric_type=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router ospf\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
 
         if metric_type is None:
-            self.session.send_cmd("redistribute connected\r\n")
+            self.session.send_cmd("redistribute connected")
         else:
-            self.session.send_cmd(f"redistribute connected metric-type {metric_type}\r\n")
-
+            self.session.send_cmd(f"redistribute connected metric-type {metric_type}")
+        self.session.send_cmd("exit")
         print(f"The connected networks have been redistributed into ospf process on DUT {self.ip_session}")
         # time.sleep(2)
         # output = self.session.read()
@@ -76,14 +104,14 @@ class OSPF:
     def redistribute_static(self, metric_type=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router ospf\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
 
         if metric_type is None:
-            self.session.send_cmd("redistribute static\r\n")
+            self.session.send_cmd("redistribute static")
         else:
-            self.session.send_cmd(f"redistribute static metric-type {metric_type}\r\n")
-
+            self.session.send_cmd(f"redistribute static metric-type {metric_type}")
+        self.session.send_cmd("exit")
         print(f"The static routes have been redistributed into ospf process on DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
@@ -92,14 +120,14 @@ class OSPF:
     def redistribute_all(self, metric_type=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router ospf\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
 
         if metric_type is None:
-            self.session.send_cmd("redistribute all\r\n")
+            self.session.send_cmd("redistribute all")
         else:
-            self.session.send_cmd(f"redistribute all metric-type {metric_type}\r\n")
-
+            self.session.send_cmd(f"redistribute all metric-type {metric_type}")
+        self.session.send_cmd("exit")
         print("All routes have been redistributed into ospf process")
         # output = self.session.read()
         # print(output)
@@ -108,14 +136,14 @@ class OSPF:
     def redistribute_rip(self, metric_type=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router ospf\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
 
         if metric_type is None:
-            self.session.send_cmd("redistribute rip\r\n")
+            self.session.send_cmd("redistribute rip")
         else:
-            self.session.send_cmd(f"redistribute rip metric-type {metric_type}\r\n")
-
+            self.session.send_cmd(f"redistribute rip metric-type {metric_type}")
+        self.session.send_cmd("exit")
         print("RIP routes have been redistributed into ospf process")
         # output = self.session.read()
         # print(output)
@@ -124,9 +152,10 @@ class OSPF:
     def remove_redistribute_connected(self):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router ospf\r\n")
-        self.session.send_cmd("no redistribute connected\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
+        self.session.send_cmd("no redistribute connected")
+        self.session.send_cmd("exit")
         print("The connected networks have been removed from ospf process")
         # output = self.session.read()
         # print(output)
@@ -135,9 +164,10 @@ class OSPF:
     def remove_redistribute_static(self):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router ospf\r\n")
-        self.session.send_cmd("no redistribute static\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
+        self.session.send_cmd("no redistribute static")
+        self.session.send_cmd("exit")
         print("The static routes have been removed from ospf process")
         # output = self.session.read()
         # print(output)
@@ -146,9 +176,10 @@ class OSPF:
     def remove_redistribute_all(self):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router ospf\r\n")
-        self.session.send_cmd("no redistribute all\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
+        self.session.send_cmd("no redistribute all")
+        self.session.send_cmd("exit")
         print("All routes have been removed from ospf process")
         # output = self.session.read()
         # print(output)
@@ -157,9 +188,10 @@ class OSPF:
     def remove_redistribute_rip(self):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router ospf\r\n")
-        self.session.send_cmd("no redistribute rip\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
+        self.session.send_cmd("no redistribute rip")
+        self.session.send_cmd("exit")
         print("RIP routes have been removed from ospf process")
         # output = self.session.read()
         # print(output)
@@ -168,9 +200,10 @@ class OSPF:
     def add_router_id(self, router_id):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router ospf\r\n")
-        self.session.send_cmd(f"router-id {router_id}\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
+        self.session.send_cmd(f"router-id {router_id}")
+        self.session.send_cmd("exit")
         # time.sleep(2)
         print("Router-id has been configured")
         # output = self.session.read()
@@ -180,9 +213,10 @@ class OSPF:
     def remove_router_id(self):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router ospf\r\n")
-        self.session.send_cmd(f"no router-id\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
+        self.session.send_cmd(f"no router-id")
+        self.session.send_cmd("exit")
         print("Router-id has been removed")
         # output = self.session.read()
         # print(output)
@@ -191,9 +225,10 @@ class OSPF:
     def add_nssa_area(self, area):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router ospf\r\n")
-        self.session.send_cmd(f"area {area} nssa\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
+        self.session.send_cmd(f"area {area} nssa")
+        self.session.send_cmd("exit")
         print("The nssa area has been created")
         # output = self.session.read()
         # print(output)
@@ -202,9 +237,10 @@ class OSPF:
     def remove_nssa_area(self, area):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router ospf\r\n")
-        self.session.send_cmd(f"no area {area} nssa\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
+        self.session.send_cmd(f"no area {area} nssa")
+        self.session.send_cmd("exit")
         print("The nssa area has been removed")
         # output = self.session.read()
         # print(output)
@@ -213,17 +249,17 @@ class OSPF:
     def add_passive_interface(self, vlan =None, interface=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router ospf\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
 
         if vlan is None:
 
-            self.session.send_cmd(f"passive-interface {interface}\r\n")
+            self.session.send_cmd(f"passive-interface {interface}")
 
         else:
 
-            self.session.send_cmd(f"passive-interface vlan {vlan}\r\n")
-
+            self.session.send_cmd(f"passive-interface vlan {vlan}")
+        self.session.send_cmd("exit")
         print("The passive-interface has been created")
         # output = self.session.read()
         # print(output)
@@ -232,17 +268,17 @@ class OSPF:
     def remove_passive_interface(self, vlan=None, interface=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router ospf\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
 
         if vlan is None:
 
-            self.session.send_cmd(f"no passive-interface {interface}\r\n")
+            self.session.send_cmd(f"no passive-interface {interface}")
 
         else:
 
-            self.session.send_cmd(f"no passive-interface vlan {vlan}\r\n")
-
+            self.session.send_cmd(f"no passive-interface vlan {vlan}")
+        self.session.send_cmd("exit")
         print("The passive-interface has been removed")
         # output = self.session.read()
         # print(output)
@@ -251,9 +287,10 @@ class OSPF:
     def redist_config(self, network, network_mask, metric_type=None, metric_value=None, tag =None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router ospf\r\n")
-        self.session.send_cmd(f"redist-config {network} {network_mask} tag {tag}\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
+        self.session.send_cmd(f"redist-config {network} {network_mask} tag {tag}")
+        self.session.send_cmd("exit")
         print(f"The network {network} has been redistributed with the tag {tag}")
         # output = self.session.read()
         # print(output)
@@ -262,9 +299,10 @@ class OSPF:
     def remove_redist_config(self, network, network_mask, metric_type=None, metric_value=None, tag=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router ospf\r\n")
-        self.session.send_cmd(f"no redist-config {network} {network_mask}\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
+        self.session.send_cmd(f"no redist-config {network} {network_mask}")
+        self.session.send_cmd("exit")
         print(f"The network {network} with the tag {tag} has been removed from redistribution")
         # output = self.session.read()
         # print(output)
@@ -286,7 +324,7 @@ class OSPF:
         list_ospf_neigbors = list()
 
         self.session.connect()
-        self.session.send_cmd("show ip ospf neighbor\r\n")
+        self.session.send_cmd("show ip ospf neighbor")
         output = self.session.read()
         print(output)
 
@@ -319,12 +357,12 @@ class OSPF:
         list_ospf_database_external = list()
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("set cli pagination off\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("set cli pagination off")
 
         if database == "router":
 
-            self.session.send_cmd(f"do show ip ospf database {database}\r\n")
+            self.session.send_cmd(f"do show ip ospf database {database}")
             output = self.session.read()
             # print(output)
 
@@ -352,7 +390,7 @@ class OSPF:
 
         elif database == "network":
 
-            self.session.send_cmd(f"do show ip ospf database {database}\r\n")
+            self.session.send_cmd(f"do show ip ospf database {database}")
             output = self.session.read()
             # print(output)
 
@@ -380,7 +418,7 @@ class OSPF:
 
         elif database == "summary":
 
-            self.session.send_cmd(f"do show ip ospf database {database}\r\n")
+            self.session.send_cmd(f"do show ip ospf database {database}")
             output = self.session.read()
             # print(output)
 
@@ -408,7 +446,7 @@ class OSPF:
 
         elif database == "asbr":
 
-            self.session.send_cmd(f"do show ip ospf database {database}\r\n")
+            self.session.send_cmd(f"do show ip ospf database {database}")
             output = self.session.read()
             # print(output)
 
@@ -425,7 +463,7 @@ class OSPF:
 
         elif database == "nssa":
 
-            self.session.send_cmd(f"do show ip ospf database {database}\r\n")
+            self.session.send_cmd(f"do show ip ospf database {database}")
             output = self.session.read()
             # print(output)
 
@@ -453,7 +491,7 @@ class OSPF:
 
         elif database == "external":
 
-            self.session.send_cmd(f"do show ip ospf database {database}\r\n")
+            self.session.send_cmd(f"do show ip ospf database {database}")
             output = self.session.read()
             # print(output)
 
@@ -480,7 +518,7 @@ class OSPF:
 
         else:
 
-            self.session.send_cmd(f"do show ip ospf database\r\n")
+            self.session.send_cmd(f"do show ip ospf database")
             output = self.session.read()
             # print(output)
 

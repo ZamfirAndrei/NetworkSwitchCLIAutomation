@@ -329,6 +329,7 @@ class QinQ:
 
         d_bridge_mode["Bridge Mode"] = match[0]
         # print(d_bridge_mode)
+        self.session.close()
 
         return d_bridge_mode
 
@@ -346,6 +347,8 @@ class QinQ:
         # print(match)
         port_type = match[0]+"-edge"
         # print(port_type)
+        self.session.close()
+
         return port_type
 
     def show_ingress_ethertype(self, interface):
@@ -366,6 +369,7 @@ class QinQ:
         else:
             ingress_ethertype = default_ingress_ethertype
         # print(ingress_ethertype)
+        self.session.close()
 
         return ingress_ethertype
 
@@ -387,6 +391,7 @@ class QinQ:
         else:
             egress_ethertype = default_egress_ethertype
         # print(egress_ethertype)
+        self.session.close()
 
         return egress_ethertype
 

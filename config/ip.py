@@ -76,7 +76,7 @@ class IP:
 
                 # print(output)
                 print(f"The inteface vlan {int_vlan} has been removed succesfully")
-
+        self.session.send_cmd("exit")
         self.session.close()
 
         return output
@@ -214,7 +214,7 @@ class IP:
 
             self.session.send_cmd(f"int vlan {int_vlan}\r\n")
             self.session.send_cmd(f"ip add {ip[0]} {ip[1]}")
-            self.session.send_cmd("!\r\n")
+            self.session.send_cmd("!")
             print(f"The int vlan {int_vlan} has now the ip {ip[0]} and mask {ip[1]}")
 
         output = self.session.read()
@@ -406,22 +406,27 @@ class IP:
 
         return output
 
-    def add_static_route(self, network_dest=None, mask_dest=None, next_hop=None):
+    def add_static_route(self, network_dest=None, mask_dest=None, next_hop=None, distance_metric=None):
 
         output = ""
 
         if network_dest is not None and mask_dest is not None and next_hop is not None:
 
             self.session.connect()
-            self.session.send_cmd("conf t\r\n")
-            self.session.send_cmd(f"ip route {network_dest} {mask_dest} {next_hop}\r\n")
-            output = self.session.read()
-            # print(output)
+            self.session.send_cmd("conf t")
+
+            if distance_metric is None:
+                self.session.send_cmd(f"ip route {network_dest} {mask_dest} {next_hop}")
+
+            else:
+                self.session.send_cmd(f"ip route {network_dest} {mask_dest} {next_hop} {distance_metric}")
 
         else:
 
             print("Tete")
-
+        self.session.send_cmd("exit")
+        output = self.session.read()
+        # print(output)
         self.session.close()
 
         return output

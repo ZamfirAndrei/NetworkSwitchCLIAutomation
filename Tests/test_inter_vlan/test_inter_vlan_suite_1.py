@@ -1,11 +1,12 @@
 import time
 import pytest
 
-from config import ip, vlan, interfaces, ping
+from config import ip, vlan, interfaces, ping, stp
 from Management import ssh
 
 ip_session_1 = "10.2.109.206"
 ip_session_2 = "10.2.109.83"
+ip_session_3 = "10.2.109.232"
 
 # DUT 1 Objects
 
@@ -13,6 +14,7 @@ int1 = interfaces.Interface(ip_session=ip_session_1)
 vl1 = vlan.VLAN(ip_session=ip_session_1)
 ip1 = ip.IP(ip_session=ip_session_1)
 ping1 = ping.PING(ip_session=ip_session_1)
+stp1 = stp.STP(ip_session=ip_session_1)
 
 # DUT 2 Objects
 
@@ -20,6 +22,18 @@ int2 = interfaces.Interface(ip_session=ip_session_2)
 vl2 = vlan.VLAN(ip_session=ip_session_2)
 ip2 = ip.IP(ip_session=ip_session_2)
 ping2 = ping.PING(ip_session=ip_session_2)
+stp2 = stp.STP(ip_session=ip_session_2)
+
+# DUT 3 Objects
+
+int3 = interfaces.Interface(ip_session=ip_session_3)
+vl3 = vlan.VLAN(ip_session=ip_session_3)
+stp3 = stp.STP(ip_session=ip_session_3)
+# fdb3 = fdb.FDB(ip_session=ip_session_3)
+ip3 = ip.IP(ip_session=ip_session_3)
+# rip3 = rip.RIP(ip_session=ip_session_3)
+ping3 = ping.PING(ip_session=ip_session_3)
+# ospf3 = ospf.OSPF(ip_session=ip_session_3)
 
 
 class TestInterVlanRoutingSuite1:
@@ -316,8 +330,8 @@ class TestInterVlanRoutingSuite1:
                                             int_vlan2_ip=[ip_2, mask_2])
         ip1.no_shut_int_vlans(vlan1, vlan2)
 
-        ip_route_1, networks_1, networks_connected_1 = ip1.show_ip_route(network=ip_1)
-        ip_route_2, networks_2, networks_connected_2 = ip1.show_ip_route(network=ip_2)
+        ip_route_1, networks_1, networks_connected_1, dict_of_networks_1 = ip1.show_ip_route(network=ip_1)
+        ip_route_2, networks_2, networks_connected_2, dict_of_networks_1 = ip1.show_ip_route(network=ip_2)
 
         print(ip_route_1)
         print(ip_route_2)
@@ -358,7 +372,7 @@ class TestInterVlanRoutingSuite1:
 
         ip1.add_static_route(network_dest=network_destination, mask_dest=mask_destination, next_hop=next_hop)
 
-        ip_route_1, networks_1, networks_connected_1 = ip1.show_ip_route(network=network_destination)
+        ip_route_1, networks_1, networks_connected_1, dict_of_networks_1 = ip1.show_ip_route(network=network_destination)
 
         print(ip_route_1)
 
@@ -371,9 +385,128 @@ class TestInterVlanRoutingSuite1:
         ip1.remove_vlan_interfaces(vlan1)
         ip1.remove_static_route(network_dest=network_destination, mask_dest=mask_destination, next_hop=next_hop)
 
-    # Mai e de facut cu show ip route sa le vad pe alea connected si static in acelasi timp test
+    # Mai e de facut un test cu show ip route (sa le vad pe alea connected si static in acelasi timp)
 
+    def test_func_10(self):
 
+        # LOKI-551
+
+        print("###### Test_func_10 ######")
+        print("########## Check if there is connectivity when the same static routes are configured with different outbounds #############")
+        print("###### 3 DUTs ######")
+
+        int1.no_shut_interfaces("Ex 0/1", "Gi 0/9")
+        int2.no_shut_interfaces("Gi 0/9", "Gi 0/5", "Gi 0/4")
+        int3.no_shut_interfaces("Gi 0/4", "Gi 0/9")
+
+        # Creating VLANs
+
+        vl1.create_vlans("20", "40")
+        vl2.create_vlans("15", "30", "20")
+        vl3.create_vlans("30", "40")
+
+        # Adding the ports to the VLANs
+
+        vl1.add_ports_to_vlan(ports="Ex 0/1", vlan="20")
+        vl1.add_ports_to_vlan(ports="Gi 0/9", vlan="40")
+        vl2.add_ports_to_vlan(ports="Gi 0/9", vlan="20")
+        vl2.add_ports_to_vlan(ports="Gi 0/5", vlan="15")
+        vl2.add_ports_to_vlan(ports="Gi 0/4", vlan="30")
+        vl3.add_ports_to_vlan(ports="Gi 0/4", vlan="30")
+        vl3.add_ports_to_vlan(ports="Gi 0/9", vlan="40")
+
+        # Creating INT VLANs on all DUTs
+
+        ip1.add_ip_interfaces("20", "40", int_vlan20=["20.0.0.2", "255.255.255.0"],
+                              int_vlan40=["40.0.0.2", "255.255.255.0"])
+        ip2.add_ip_interfaces("15", "30", "20", int_vlan15=["15.0.0.1", "255.255.255.0"],
+                              int_vlan30=["30.0.0.1", "255.255.255.0"], int_vlan20=["20.0.0.1", "255.255.255.0"])
+        ip3.add_ip_interfaces("30", "40", int_vlan30=["30.0.0.2", "255.255.255.0"],
+                              int_vlan40=["40.0.0.1", "255.255.255.0"])
+
+        ip1.no_shut_int_vlans("20", "40")
+        ip2.no_shut_int_vlans("20", "30", "15")
+        ip3.no_shut_int_vlans("30", "40")
+
+        # Configuring static routes on DUTs
+
+        ip1.add_static_route(network_dest="15.0.0.0", mask_dest="255.255.255.0", next_hop="20.0.0.1")
+        ip1.add_static_route(network_dest="15.0.0.0", mask_dest="255.255.255.0", next_hop="40.0.0.1",distance_metric="2")
+        ip1.add_static_route(network_dest="30.0.0.0", mask_dest="255.255.255.0", next_hop="20.0.0.1")
+        ip1.add_static_route(network_dest="30.0.0.0", mask_dest="255.255.255.0", next_hop="40.0.0.1",distance_metric="2")
+
+        ip2.add_static_route(network_dest="40.0.0.0", mask_dest="255.255.255.0", next_hop="20.0.0.2")
+        ip2.add_static_route(network_dest="40.0.0.0", mask_dest="255.255.255.0", next_hop="30.0.0.2",distance_metric="2")
+
+        ip3.add_static_route(network_dest="15.0.0.0", mask_dest="255.255.255.0", next_hop="30.0.0.1")
+        ip3.add_static_route(network_dest="15.0.0.0", mask_dest="255.255.255.0", next_hop="40.0.0.2",distance_metric="2")
+        ip3.add_static_route(network_dest="20.0.0.0", mask_dest="255.255.255.0", next_hop="30.0.0.1")
+        ip3.add_static_route(network_dest="20.0.0.0", mask_dest="255.255.255.0", next_hop="40.0.0.2",distance_metric="2")
+
+        # Checking that the Static Routes are installed
+
+        ip_route, networks, networks_connected, dict_of_networks = ip1.show_ip_route()
+        print(dict_of_networks)
+
+        d_root_id, d_bridge_id, ports, dict_of_ports = stp1.show_spanning_tree_rstp()
+        print(dict_of_ports)
+
+        assert "15.0.0.0" in dict_of_networks and "30.0.0.0" in dict_of_networks
+        assert dict_of_networks["15.0.0.0"]["Protocol"] == "S" and dict_of_networks["15.0.0.0"]["Next Hop"] == "20.0.0.1"
+        assert dict_of_networks["30.0.0.0"]["Protocol"] == "S" and dict_of_networks["30.0.0.0"]["Next Hop"] == "20.0.0.1"
+        assert "Ex0/1" in dict_of_ports and dict_of_ports["Ex0/1"]["Role"] == "Root"
+
+        response = ping1.ping_more("15.0.0.1", "30.0.0.1")
+
+        assert "15.0.0.1" in response and "30.0.0.1" in response
+
+        # Change the cost of the port Ex 0/1 (the stp will change the role of the port to ALTN) so that the traffic will be redirected trough int vlan 40.
+
+        stp1.add_rstp_port_cost(port="Ex 0/1", cost="50000")
+
+        ip_route, networks, networks_connected, dict_of_networks = ip1.show_ip_route()
+        print(dict_of_networks)
+
+        d_root_id, d_bridge_id, ports, dict_of_ports = stp1.show_spanning_tree_rstp()
+        print(dict_of_ports)
+
+        assert "15.0.0.0" in dict_of_networks and "30.0.0.0" in dict_of_networks
+        assert dict_of_networks["15.0.0.0"]["Protocol"] == "S" and dict_of_networks["15.0.0.0"]["Next Hop"] == "40.0.0.1"
+        assert dict_of_networks["30.0.0.0"]["Protocol"] == "S" and dict_of_networks["30.0.0.0"]["Next Hop"] == "40.0.0.1"
+        assert "Ex0/1" in dict_of_ports and dict_of_ports["Ex0/1"]["Role"] == "Alternate"
+
+        response = ping1.ping_more("15.0.0.1", "30.0.0.1")
+
+        assert "15.0.0.1" in response and "30.0.0.1" in response
+
+        print("########## Removing the config from DUT #############")
+
+        stp1.remove_rstp_port_cost(port="Ex 0/1")
+
+        ip1.remove_static_route(network_dest="15.0.0.0", mask_dest="255.255.255.0", next_hop="20.0.0.1")
+        ip1.remove_static_route(network_dest="15.0.0.0", mask_dest="255.255.255.0", next_hop="40.0.0.1")
+        ip1.remove_static_route(network_dest="30.0.0.0", mask_dest="255.255.255.0", next_hop="20.0.0.1")
+        ip1.remove_static_route(network_dest="30.0.0.0", mask_dest="255.255.255.0", next_hop="40.0.0.1")
+
+        ip2.remove_static_route(network_dest="40.0.0.0", mask_dest="255.255.255.0", next_hop="20.0.0.2")
+        ip2.remove_static_route(network_dest="40.0.0.0", mask_dest="255.255.255.0", next_hop="30.0.0.2")
+
+        ip3.remove_static_route(network_dest="15.0.0.0", mask_dest="255.255.255.0", next_hop="30.0.0.1")
+        ip3.remove_static_route(network_dest="15.0.0.0", mask_dest="255.255.255.0", next_hop="40.0.0.2")
+        ip3.remove_static_route(network_dest="20.0.0.0", mask_dest="255.255.255.0", next_hop="30.0.0.1")
+        ip3.remove_static_route(network_dest="20.0.0.0", mask_dest="255.255.255.0", next_hop="40.0.0.2")
+
+        ip1.remove_vlan_interfaces("20","40")
+        ip2.remove_vlan_interfaces("15","20","30")
+        ip3.remove_vlan_interfaces("30", "40")
+
+        vl1.remove_vlans("20", "40")
+        vl2.remove_vlans("15", "20", "30")
+        vl3.remove_vlans("30", "40")
+
+        int1.shut_interfaces("Ex 0/1", "Gi 0/9")
+        int2.shut_interfaces("Gi 0/4", "Gi 0/5", "Gi 0/9")
+        int3.shut_interfaces("Gi 0/4", "Gi 0/9")
 
 
 

@@ -17,7 +17,7 @@ class PING:
     def ping(self, ip_dest):
 
         self.session.connect()
-        self.session.send_cmd(f"ping {ip_dest}\r\n")
+        self.session.send_cmd(f"ping {ip_dest}")
         output = self.session.read()
         # print(output)
 

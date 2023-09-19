@@ -104,7 +104,7 @@ class STP:
 
         self.session.connect()
         self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"no spanning-tree priority \r\n")
+        self.session.send_cmd(f"no spanning-tree priority")
         print(f"The bridge priority of the switch {self.ip_session} was changed to default")
         # output = self.session.read()
         # print(output)
@@ -113,11 +113,11 @@ class STP:
     def add_rstp_port_cost(self, port=None, cost=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"int {port}\r\n")
-        self.session.send_cmd(f"spanning-tree cost {cost}\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"int {port}")
+        self.session.send_cmd(f"spanning-tree cost {cost}")
         self.session.send_cmd("!")
-        print(f"The cost for {port} was changed to {cost}")
+        print(f"The cost for {port} was changed to {cost} on DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
         self.session.close()
@@ -125,11 +125,11 @@ class STP:
     def remove_rstp_port_cost(self, port=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"int {port}\r\n")
-        self.session.send_cmd(f"no spanning-tree cost\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"int {port}")
+        self.session.send_cmd(f"no spanning-tree cost")
         self.session.send_cmd("!")
-        print(f"The cost for {port} has been removed")
+        print(f"The cost for {port} has been removed from DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
         self.session.close()
@@ -141,7 +141,7 @@ class STP:
         self.session.send_cmd(f"int {port}\r\n")
         self.session.send_cmd(f"spanning-tree port-priority {port_priority}\r\n")
         self.session.send_cmd("!")
-        print(f"The port-priority for {port} has been changed to {port_priority}")
+        print(f"The port-priority for {port} has been changed to {port_priority} on DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
         self.session.close()
@@ -153,7 +153,7 @@ class STP:
         self.session.send_cmd(f"int {port}\r\n")
         self.session.send_cmd(f"no spanning-tree port-priority\r\n")
         self.session.send_cmd("!")
-        print(f"The port-priority for {port} has been removed")
+        print(f"The port-priority for {port} has been removed from DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
         self.session.close()
@@ -162,6 +162,7 @@ class STP:
 
         d_root_id = {}
         d_bridge_id = {}
+        dict_of_ports = {}
         d1 = {
             "Name":"",
             "Role":"",
@@ -205,10 +206,12 @@ class STP:
                 # print(key,attribute)
                 d2[key] = attribute
             ports.append(d2)
+            dict_of_ports[d2["Name"]] = d2
         # print(ports)
+        # print(dict_of_ports)
         self.session.close()
 
-        return d_root_id, d_bridge_id, ports
+        return d_root_id, d_bridge_id, ports, dict_of_ports
 
     def add_pvrst_bridge_priority(self, vlan=None, brg_priority=None):
 

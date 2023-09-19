@@ -20,7 +20,7 @@ class ERPS:
         self.session.send_cmd("aps ring enable")
         print(f"ERPS mode has been enabled on DUT {self.ip_session}")
         output = self.session.read()
-        print(output)
+        # print(output)
         self.session.close()
 
     def create_erps_group(self, group_id):
@@ -30,7 +30,7 @@ class ERPS:
         self.session.send_cmd(f"aps ring group {group_id}")
         print(f"ERPS Ring Group {group_id} has been created on DUT {self.ip_session}")
         output = self.session.read()
-        print(output)
+        # print(output)
         self.session.close()
 
     def configure_erps_protection_type(self, group_id, protection_type):
@@ -41,7 +41,7 @@ class ERPS:
         self.session.send_cmd(f"aps protection-type {protection_type}")
         print(f"ERPS Protection-Type {protection_type} has been configured on DUT {self.ip_session}")
         output = self.session.read()
-        print(output)
+        # print(output)
         self.session.close()
 
     def configure_erps_mapped_ports(self, group_id, port1, port2, vlan, local_mep1, remote_mep1, local_mep2, remote_mep2):
@@ -54,7 +54,7 @@ class ERPS:
         self.session.send_cmd(f"aps working port2 local-mep {local_mep2} remote-mep {remote_mep2}")
         print(f"ERPS Mapped Ports {port1} and {port2} have been configured on DUT {self.ip_session}")
         output = self.session.read()
-        print(output)
+        # print(output)
         self.session.close()
 
     def configure_erps_protected_port(self, group_id, protected_port):
@@ -65,7 +65,7 @@ class ERPS:
         self.session.send_cmd(f"aps protect {protected_port}")
         print(f"ERPS Protected Port {protected_port} has been configured on DUT {self.ip_session}")
         output = self.session.read()
-        print(output)
+        # print(output)
         self.session.close()
 
     def configure_erps_revertive_mode(self, group_id, wtr_timer):
@@ -76,7 +76,7 @@ class ERPS:
         self.session.send_cmd(f"aps revert wtr {wtr_timer}")
         print(f"ERPS Revertive Mode has been configured on DUT {self.ip_session}")
         output = self.session.read()
-        print(output)
+        # print(output)
         self.session.close()
 
     def activate_erps_group(self, group_id):
@@ -87,7 +87,7 @@ class ERPS:
         self.session.send_cmd("aps group active")
         print(f"ERPS Group {group_id} has been activated on DUT {self.ip_session}")
         output = self.session.read()
-        print(output)
+        # print(output)
         self.session.close()
 
     def disable_erps_mode(self):
@@ -97,7 +97,7 @@ class ERPS:
         self.session.send_cmd("no aps ring enable")
         print(f"ERPS mode has been disabled on DUT {self.ip_session}")
         output = self.session.read()
-        print(output)
+        # print(output)
         self.session.close()
 
     def delete_erps_group(self, group_id):
@@ -107,7 +107,7 @@ class ERPS:
         self.session.send_cmd(f"no aps ring group {group_id}")
         print(f"ERPS Ring Group {group_id} has been deleted on DUT {self.ip_session}")
         output = self.session.read()
-        print(output)
+        # print(output)
         self.session.close()
 
     def delete_erps_mapped_ports(self, group_id):
@@ -118,7 +118,7 @@ class ERPS:
         self.session.send_cmd(f"no aps working ports")
         print(f"ERPS Mapped Ports have been deleted on DUT {self.ip_session}")
         output = self.session.read()
-        print(output)
+        # print(output)
         self.session.close()
 
     def deactivate_erps_group(self, group_id):
@@ -129,7 +129,7 @@ class ERPS:
         self.session.send_cmd("no aps group active")
         print(f"ERPS Group {group_id} has been deactivated on DUT {self.ip_session}")
         output = self.session.read()
-        print(output)
+        # print(output)
         self.session.close()
 
     def delete_erps_protected_port(self, group_id):
@@ -140,7 +140,7 @@ class ERPS:
         self.session.send_cmd(f"no aps protect")
         print(f"ERPS Protected Port has been deleted on DUT {self.ip_session}")
         output = self.session.read()
-        print(output)
+        # print(output)
         self.session.close()
 
     def check_rpl_owner(self, group_id):
@@ -153,14 +153,16 @@ class ERPS:
         match = re.findall(r"This node is RPL Owner", output)
         # print(match)
 
-        rpl_owner = False
+        is_rpl_owner = False
 
         if len(match) != 0:
-            rpl_owner = True
+            is_rpl_owner = True
         else:
-            rpl_owner = False
+            is_rpl_owner = False
 
-        return rpl_owner
+        self.session.close()
+
+        return is_rpl_owner
 
     def check_rpl_port(self, group_id):
 
@@ -178,6 +180,8 @@ class ERPS:
             rpl_port = match[0]
         else:
             rpl_port = "There is no RPL Port"
+
+        self.session.close()
 
         return rpl_port
 
@@ -200,8 +204,8 @@ class ERPS:
 
         d = dict()
 
-        match = re.findall(r"([GEix]{2}\d/\d+)\s+(\w+)\s+(\w+)\s+(\w+)", output)
-        print(match)
+        match = re.findall(r"([GEix]{2}\d/\d+)\s+([\sNotFailedRemoteFailure]+)\s+(\w+)\s+(\w+)", output)
+        # print(match)
 
         for port in match:
 
@@ -209,15 +213,18 @@ class ERPS:
 
             for key, value in zip(d_port.keys(), port):
 
-                print(key, value)
-                d[key] = value
-            print(d)
+                # print(key, value)
+                d[key] = value.strip()
+
+            # print(d)
             list_ports.append(d)
 
-        print(list_ports)
+        # print(list_ports)
 
         # SAU merge asa --> d["Port"] = match[i][0] ... daca reinitializezi mereu d-ul la inceput
         # de for astfel incat sa fie gol dictionarul si sa nu se mai suprascrie
+        self.session.close()
+
         return list_ports
 
     def check_erps_ports_status(self, group_id):
@@ -228,7 +235,7 @@ class ERPS:
         self.session.send_cmd(f"do show aps ring group {group_id}")
         output = self.session.read()
 
-        print(output)
+        # print(output)
         d_ports = {
             'Port 1': '',
             'Port 2': ''
@@ -253,6 +260,8 @@ class ERPS:
         # print(d_ports)
         # print(d_ports['Port 2']['Last MEP change'])
 
+        self.session.close()
+
         return d_ports
 
     def check_erps_ring_id_information(self, group_id):
@@ -263,7 +272,7 @@ class ERPS:
         self.session.send_cmd(f"do show aps ring group {group_id}")
         output = self.session.read()
 
-        print(output)
+        # print(output)
         d_ring_info = {
             'Ring Name': '',
             'RAPS Vlan Id': '',
@@ -292,7 +301,9 @@ class ERPS:
             d_ring_info['Hold timer'] = info[7]
             d_ring_info['Guard timer'] = info[8]
 
-        print(d_ring_info)
+        # print(d_ring_info)
+
+        self.session.close()
 
         return d_ring_info
 

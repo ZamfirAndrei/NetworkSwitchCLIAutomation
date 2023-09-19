@@ -20,9 +20,10 @@ class Interface:
         self.session.send_cmd(cmd="conf t\r\n")
         self.session.send_cmd(cmd=f"int {interface}\r\n")
         self.session.send_cmd(cmd="shut\r\n")
+        self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)
-        print(f"The interface {interface} has been shut")
+        print(f"The interface {interface} has been shut on DUT {self.ip_session}")
         self.session.close()
 
     def shut_interfaces(self, *args):
@@ -35,8 +36,8 @@ class Interface:
             self.session.send_cmd(cmd=f"int {interface}\r\n")
             self.session.send_cmd(cmd="shut\r\n")
             self.session.send_cmd(cmd="!")
-            print(f"The interface {interface} has been shut")
-
+            print(f"The interface {interface} has been shut on DUT {self.ip_session}")
+        self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)
         self.session.close()
@@ -47,9 +48,10 @@ class Interface:
         self.session.send_cmd(cmd="conf t\r\n")
         self.session.send_cmd(cmd=f"int {interface}\r\n")
         self.session.send_cmd(cmd="no shut\r\n")
+        self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)
-        print(f"The interface {interface} has been no-shut")
+        print(f"The interface {interface} has been no-shut on DUT {self.ip_session}")
         self.session.close()
 
     def no_shut_interfaces(self, *args):
@@ -62,8 +64,8 @@ class Interface:
             self.session.send_cmd(cmd=f"int {interface}\r\n")
             self.session.send_cmd(cmd="no shut\r\n")
             self.session.send_cmd(cmd="!")
-            print(f"The interface {interface} has been no-shut")
-
+            print(f"The interface {interface} has been no-shut on DUT {self.ip_session}")
+        self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)
         self.session.close()
@@ -75,9 +77,10 @@ class Interface:
         self.session.send_cmd(cmd=f"int {interface}\r\n")
         self.session.send_cmd(cmd="shut\r\n")
         self.session.send_cmd(cmd="no sw\r\n")
+        self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)
-        print(f"The routed port {interface} has been created")
+        print(f"The routed port {interface} has been created on DUT {self.ip_session}")
         self.session.close()
 
     def remove_routed_port(self, interface):
@@ -87,9 +90,10 @@ class Interface:
         self.session.send_cmd(cmd=f"int {interface}\r\n")
         self.session.send_cmd(cmd="shut\r\n")
         self.session.send_cmd(cmd="sw\r\n")
+        self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)
-        print(f"The routed port {interface} has been removed")
+        print(f"The routed port {interface} has been removed from DUT {self.ip_session}")
         self.session.close()
 
     def add_routed_ports(self, *args):
@@ -102,8 +106,8 @@ class Interface:
             self.session.send_cmd(cmd=f"int {interface}\r\n")
             self.session.send_cmd(cmd="shut\r\n")
             self.session.send_cmd(cmd="no sw\r\n")
-            print(f"The routed port {interface} has been created")
-
+            print(f"The routed port {interface} has been created on DUT {self.ip_session}")
+        self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)
 
@@ -119,8 +123,8 @@ class Interface:
             self.session.send_cmd(cmd=f"int {interface}\r\n")
             self.session.send_cmd(cmd="shut\r\n")
             self.session.send_cmd(cmd="sw\r\n")
-            print(f"The routed port {interface} has been removed")
-
+            print(f"The routed port {interface} has been removed from DUT {self.ip_session}")
+        self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)
 

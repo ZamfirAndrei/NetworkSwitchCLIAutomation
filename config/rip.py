@@ -20,7 +20,7 @@ class RIP:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd("router rip\r\n")
         print("The RIP process has been enabled")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 
@@ -30,7 +30,7 @@ class RIP:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd("no router rip\r\n")
         print("The RIP process has been disabled")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 
@@ -41,8 +41,9 @@ class RIP:
         self.session.send_cmd("router rip\r\n")
         self.session.send_cmd(f"network {ip_network}\r\n")
         self.session.send_cmd("version 2")
+        self.session.send_cmd("exit")
         print(f"The network {ip_network} has been advertise in rip")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 
@@ -56,7 +57,8 @@ class RIP:
             self.session.send_cmd(f"network {ip_network}\r\n")
             self.session.send_cmd("version 2")
             print(f"The network {ip_network} has been advertise in rip on DUT {self.ip_session}")
-        # output = self.session.read()
+        self.session.send_cmd("exit")
+        output = self.session.read()
         # print(output)
         self.session.close()
 
@@ -66,8 +68,9 @@ class RIP:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd("router rip\r\n")
         self.session.send_cmd(f"no network {ip_network}\r\n")
+        self.session.send_cmd("exit")
         print(f"The network {ip_network} has been removed from rip process on DUT {self.ip_session}")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 
@@ -79,7 +82,8 @@ class RIP:
         for ip_network in args:
             self.session.send_cmd(f"no network {ip_network}\r\n")
             print(f"The network {ip_network} has been removed from rip process")
-        # output = self.session.read()
+        self.session.send_cmd("exit")
+        output = self.session.read()
         # print(output)
         self.session.close()
 
@@ -96,7 +100,7 @@ class RIP:
         else:
 
             self.session.send_cmd(f"passive-interface vlan {vlan}\r\n")
-
+        self.session.send_cmd("exit")
         print(f"The passive-interface has been created on vlan {vlan} on DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
@@ -115,7 +119,7 @@ class RIP:
         else:
 
             self.session.send_cmd(f"no passive-interface vlan {vlan}\r\n")
-
+        self.session.send_cmd("exit")
         print(f"The passive-interface {vlan} has been removed from DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
@@ -127,6 +131,7 @@ class RIP:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd("router rip\r\n")
         self.session.send_cmd("redistribute connected\r\n")
+        self.session.send_cmd("exit")
         print(f"The connected networks have been redistributed into RIP process on DUT {self.ip_session}")
         # time.sleep(2)
         # output = self.session.read()
@@ -139,6 +144,7 @@ class RIP:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd("router rip\r\n")
         self.session.send_cmd("redistribute static\r\n")
+        self.session.send_cmd("exit")
         print(f"The static routes have been redistributed into RIP process on DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
@@ -150,6 +156,7 @@ class RIP:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd("router rip\r\n")
         self.session.send_cmd("redistribute all\r\n")
+        self.session.send_cmd("exit")
         print(f"All routes have been redistributed into RIP process on DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
@@ -161,6 +168,7 @@ class RIP:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd("router rip\r\n")
         self.session.send_cmd("redistribute ospf\r\n")
+        self.session.send_cmd("exit")
         print(f"OSPF routes have been redistributed into RIP process on DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
@@ -172,6 +180,7 @@ class RIP:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd("router rip\r\n")
         self.session.send_cmd("no redistribute connected\r\n")
+        self.session.send_cmd("exit")
         print(f"The connected networks have been removed from RIP process on DUT {self.ip_session}")
         # time.sleep(2)
         # output = self.session.read()
@@ -185,6 +194,7 @@ class RIP:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd("router rip\r\n")
         self.session.send_cmd("no redistribute static\r\n")
+        self.session.send_cmd("exit")
         print(f"The static routes have been removed from RIP process on DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
@@ -196,6 +206,7 @@ class RIP:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd("router rip\r\n")
         self.session.send_cmd("no redistribute all\r\n")
+        self.session.send_cmd("exit")
         print(f"All routes have been removed from RIP process on DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
@@ -207,6 +218,7 @@ class RIP:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd("router rip\r\n")
         self.session.send_cmd("no redistribute ospf\r\n")
+        self.session.send_cmd("exit")
         print(f"OSPF routes have been removed from RIP process on DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
@@ -218,6 +230,7 @@ class RIP:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd("router rip\r\n")
         self.session.send_cmd(f"default-metric {metric}\r\n")
+        self.session.send_cmd("exit")
         print(f"Default metric {metric} has been configured on DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
@@ -229,6 +242,7 @@ class RIP:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd("router rip\r\n")
         self.session.send_cmd(f"no default-metric\r\n")
+        self.session.send_cmd("exit")
         print(f"Default metric has been removed on DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
@@ -240,6 +254,7 @@ class RIP:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd("router rip\r\n")
         self.session.send_cmd(f"distance {distance}\r\n")
+        self.session.send_cmd("exit")
         print(f"AD {distance} has been added")
         # output = self.session.read()
         # print(output)
@@ -251,6 +266,7 @@ class RIP:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd("router rip\r\n")
         self.session.send_cmd(f"no distance\r\n")
+        self.session.send_cmd("exit")
         print(f"The configured AD has been removed")
         # output = self.session.read()
         # print(output)
@@ -262,6 +278,7 @@ class RIP:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd("router rip\r\n")
         self.session.send_cmd(f"auto-summary enable\r\n")
+        self.session.send_cmd("exit")
         print(f"The auto-summary has been added")
         # output = self.session.read()
         # print(output)
@@ -273,6 +290,7 @@ class RIP:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd("router rip\r\n")
         self.session.send_cmd(f"auto-summary disable\r\n")
+        self.session.send_cmd("exit")
         print(f"The auto-summary has been removed on dut {self.ip_session}")
         # output = self.session.read()
         # print(output)
@@ -297,7 +315,7 @@ class RIP:
         else:
 
             print("You have to specify an int_vlan/interface")
-
+        self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)
         self.session.close()
@@ -323,7 +341,7 @@ class RIP:
         else:
 
             print("You have to specify an int_vlan/interface")
-
+        self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)
         self.session.close()
@@ -349,7 +367,7 @@ class RIP:
         else:
 
             print("You have to specify an int_vlan/interface")
-
+        self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)
         self.session.close()
@@ -375,14 +393,14 @@ class RIP:
         else:
 
             print("You have to specify an int_vlan/interface")
-
+        self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)
         self.session.close()
 
         return output
 
-    def add_ip_rip_auth_type_mode(self, int_vlan, mode=None, key_chain=None, key_id=None):
+    def add_ip_rip_auth_type_mode(self, int_vlan, mode=None, key_chain=None, key_id=None, key=None):
 
         self.session.connect()
         self.session.send_cmd(cmd="conf t")
@@ -391,7 +409,13 @@ class RIP:
 
         if key_chain is not None:
             self.session.send_cmd(cmd=f"ip rip authentication key-chain {key_chain}")
-            print(f"The mode {mode} and key-chain {key_chain} have been configured on vlan {int_vlan} on DUT {self.ip_session}")
+            print(f"The mode {mode} and key-chain {key_chain} have been configured on int_vlan {int_vlan} on DUT {self.ip_session}")
+
+        if key_id is not None:
+            if key is not None:
+                self.session.send_cmd(cmd=f"ip rip authentication key-id {key_id} key {key}")
+                print(f"The mode {mode}, key_id {key_id} and key {key} have been configured on int_vlan {int_vlan} on DUT {self.ip_session}")
+        self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)
 
@@ -403,7 +427,8 @@ class RIP:
         self.session.send_cmd(cmd="conf t")
         self.session.send_cmd(cmd=f"int vlan {int_vlan}")
         self.session.send_cmd(cmd=f"no ip rip authentication")
-        print(f"The RIP authentication have been removed on vlan {int_vlan} on DUT {self.ip_session}")
+        self.session.send_cmd("exit")
+        print(f"The RIP authentication have been removed from int_vlan {int_vlan} on DUT {self.ip_session}")
         output = self.session.read()
         # print(output)
 
@@ -418,9 +443,47 @@ class RIP:
 
         if key_chain is not None:
             self.session.send_cmd(cmd=f"ip rip authentication key-chain {key_chain}")
-            print(
-                f"The mode {mode} and key-chain {key_chain} have been configured on vlan {int_vlan} on DUT {self.ip_session}")
+            print(f"The mode {mode} and key-chain {key_chain} have been configured on int_vlan {int_vlan} on DUT {self.ip_session}")
+        self.session.send_cmd("exit")
+        output = self.session.read()
+        # print(output)
 
+        self.session.close()
+
+    def remove_ip_rip_authentication_key(self, int_vlan, key_id):
+
+        self.session.connect()
+        self.session.send_cmd(cmd="conf t")
+        self.session.send_cmd(cmd=f"int vlan {int_vlan}")
+        self.session.send_cmd(cmd=f"no ip rip authentication key-id {key_id}")
+        self.session.send_cmd("exit")
+        print(f"The RIP authentication key-id {key_id} have been removed from int_vlan {int_vlan} on DUT {self.ip_session}")
+        output = self.session.read()
+        # print(output)
+
+        self.session.close()
+
+    def configure_rip_timers(self, int_vlan, update_timer,  routage_timer, garbage_timer):
+
+        self.session.connect()
+        self.session.send_cmd(cmd="conf t")
+        self.session.send_cmd(cmd=f"int vlan {int_vlan}")
+        self.session.send_cmd(cmd=f"timers basic {update_timer} {routage_timer} {garbage_timer}")
+        self.session.send_cmd("exit")
+        print(f"The timers of int_vlan {int_vlan} have been configured to {update_timer},{routage_timer},{garbage_timer} on DUT {self.ip_session}")
+        output = self.session.read()
+        # print(output)
+
+        self.session.close()
+
+    def remove_rip_timers(self, int_vlan):
+
+        self.session.connect()
+        self.session.send_cmd(cmd="conf t")
+        self.session.send_cmd(cmd=f"int vlan {int_vlan}")
+        self.session.send_cmd(cmd=f"no timers basic")
+        self.session.send_cmd("exit")
+        print(f"The timers of int_vlan {int_vlan} have been removed to from DUT {self.ip_session}")
         output = self.session.read()
         # print(output)
 
@@ -433,6 +496,7 @@ class RIP:
 
         self.session.connect()
         self.session.send_cmd(cmd="show ip rip authentication")
+        self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)
 
@@ -469,6 +533,9 @@ class RIP:
 
     def show_rip_database(self):
 
+        dict_of_via = {}
+        dict_of_directly_connected = {}
+        dict_of_auto_summary = {}
         list_rip_database = list()
         list_of_auto_summary = list()
         list_of_directly_connected = list()
@@ -476,18 +543,19 @@ class RIP:
 
         self.session.connect()
         self.session.send_cmd("show ip rip database\r\n")
+        self.session.send_cmd("exit")
         output = self.session.read()
-        print(output)
+        # print(output)
 
         match_total_count = re.findall(r"Total Count :\s+(\d+)", output)
         match_auto_summary = re.findall(r"(\d+.\d+.\d+.\d+)/(\d+)\s+\S(\d+)\S\s+(auto-summary)", output)
         match_directly_connected = re.findall(r"(\d+.\d+.\d+.\d+)/(\d+)\s+\S(\d+)\S\s+(directly connected)\S+\s+([vlanGimgt]+)([/\d]+)", output)
         match_via = re.findall(r"(\d+.\d+.\d+.\d+)/(\d+)\s+\S(\d+)\S\s+via\s+(\d+.\d+.\d+.\d+)\S+\s+([vlanGimgt]+)([/\d]+)", output)
 
-        print(match_total_count)
-        print(match_auto_summary)
-        print(match_directly_connected)
-        print(match_via)
+        # print(match_total_count)
+        # print(match_auto_summary)
+        # print(match_directly_connected)
+        # print(match_via)
 
         print("#############################")
 
@@ -501,10 +569,12 @@ class RIP:
             d["Type"] = attribute[3]
             # print(d)
             list_of_auto_summary.append(d)
+            dict_of_auto_summary[attribute[0]] = d
             d = {}
 
         # print(len(list_of_auto_summary))
-        print(list_of_auto_summary)
+        # print(list_of_auto_summary)
+        print(dict_of_auto_summary)
 
         for attribute in match_directly_connected:
 
@@ -515,10 +585,12 @@ class RIP:
             d["Interface"] = attribute[4]+attribute[5]
             # print(d)
             list_of_directly_connected.append(d)
+            dict_of_directly_connected[attribute[0]] = d
             d = {}
 
         # print(len(list_of_directly_connected))
-        print(list_of_directly_connected)
+        # print(list_of_directly_connected)
+        print(dict_of_directly_connected)
 
         for attribute in match_via:
 
@@ -529,14 +601,16 @@ class RIP:
             d["via Interface"] = attribute[4]+attribute[5]
             # print(d)
             list_of_via.append(d)
+            dict_of_via[attribute[0]] = d
             d = {}
 
         # print(len(list_of_via))
-        print(list_of_via)
+        # print(list_of_via)
+        print(dict_of_via)
 
         self.session.close()
 
-        return match_total_count,  list_of_auto_summary, list_of_directly_connected, list_of_via
+        return match_total_count,  dict_of_auto_summary, dict_of_directly_connected, dict_of_via
 
     def show_ip_route_rip(self):
 
@@ -544,6 +618,7 @@ class RIP:
 
         self.session.connect()
         self.session.send_cmd(cmd="show ip route rip")
+        self.session.send_cmd(cmd="exit")
         output = self.session.read()
         # print(output)
 
@@ -568,8 +643,39 @@ class RIP:
 
         return dict_rip_routes
 
+    def show_ip_rip_statistics(self):
 
+        dict_rip_statistics = {}
 
+        self.session.connect()
+        self.session.send_cmd(cmd="conf t")
+        self.session.send_cmd(cmd="set cli pagination off")
+        self.session.send_cmd(cmd="do sh ip rip statistics")
+        self.session.send_cmd(cmd="exit")
+        output = self.session.read()
+        # print(output)
+
+        # updates_sent = re.findall(r'Periodic Updates Sent\s+:\s+(\d+)', output)
+        # updates_received = re.findall(r'Response Received\s+:\s+(\d+)',output)
+
+        match = re.findall(r'(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3})\s+(\d+)', output)
+
+        # print(updates_sent)
+        # print(updates_received)
+        # print(match)
+
+        d = {}
+
+        for item in match:
+
+            d["Interface VLAN"] = item[0]
+            d["Updates Sent"] = item[1]
+            dict_rip_statistics[item[0]] = d
+            d = {}
+        print(dict_rip_statistics)
+        self.session.close()
+
+        return dict_rip_statistics
 
 
 ip_session = "10.2.109.238"

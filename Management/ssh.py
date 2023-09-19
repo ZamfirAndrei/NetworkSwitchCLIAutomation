@@ -31,7 +31,7 @@ class SSH:
             time.sleep(2)
 
         except Exception as e:
-            return e
+            print(e)
 
     def close(self):
 

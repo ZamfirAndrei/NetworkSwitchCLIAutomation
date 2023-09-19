@@ -55,17 +55,17 @@ class VLAN:
 
         else:
             if "config" not in conf:
-                self.session.send_cmd("!\r\n")
+                self.session.send_cmd("!")
                 self.session.send_cmd("conf t")
-                self.session.send_cmd(f"vlan {vlan}\r\n")
-                self.session.send_cmd("!\r\n")
+                self.session.send_cmd(f"vlan {vlan}")
+                self.session.send_cmd("!")
                 # print("1")
             else:
-                self.session.send_cmd("!\r\n")
-                self.session.send_cmd(f"vlan {vlan}\r\n")
+                self.session.send_cmd("!")
+                self.session.send_cmd(f"vlan {vlan}")
                 # print("2")
-            print(f"The VLAN {vlan} was created")
-
+            print(f"The VLAN {vlan} was created on DUT {self.ip_session}")
+        self.session.send_cmd("exit")
         self.session.close()
 
         return output
@@ -85,17 +85,17 @@ class VLAN:
 
             else:
                 if "config" not in conf:
-                    self.session.send_cmd("!\r\n")
+                    self.session.send_cmd("!")
                     self.session.send_cmd("conf t")
-                    self.session.send_cmd(f"vlan {vlan}\r\n")
-                    self.session.send_cmd("!\r\n")
+                    self.session.send_cmd(f"vlan {vlan}")
+                    self.session.send_cmd("!")
                     # print("1")
                 else:
-                    self.session.send_cmd("!\r\n")
-                    self.session.send_cmd(f"vlan {vlan}\r\n")
+                    self.session.send_cmd("!")
+                    self.session.send_cmd(f"vlan {vlan}")
                     # print("2")
-                print(f"The VLAN {vlan} was created")
-
+                print(f"The VLAN {vlan} was created on DUT {self.ip_session}")
+        self.session.send_cmd("exit")
         self.session.close()
 
         return output
@@ -103,8 +103,9 @@ class VLAN:
     def remove_vlan(self, vlan):
 
         self.session.connect("admin", "Admin1234!")
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"no vlan {vlan}\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"no vlan {vlan}")
+        self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)
         error = re.findall("% Vlan does not exist", output)
@@ -112,8 +113,8 @@ class VLAN:
         if "% Vlan does not exist" in error:
             print("The VLAN does not exist")
         else:
-            print(f"The VLAN {vlan} has been removed succesfully")
-
+            print(f"The VLAN {vlan} has been removed succesfully from DUT {self.ip_session}")
+        self.session.send_cmd("exit")
         self.session.close()
 
         return output
@@ -121,12 +122,12 @@ class VLAN:
     def remove_vlans(self, *args):
 
         self.session.connect("admin", "Admin1234!")
-        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd("conf t")
         output = ""
 
         for vlan in args:
 
-            self.session.send_cmd(f"no vlan {vlan}\r\n")
+            self.session.send_cmd(f"no vlan {vlan}")
             output = self.session.read()
             # print(output)
             error = re.findall("% Vlan does not exist", output)
@@ -134,8 +135,8 @@ class VLAN:
             if "% Vlan does not exist" in error:
                 print("The VLAN does not exist")
             else:
-                print(f"The VLAN {vlan} has been removed succesfully")
-
+                print(f"The VLAN {vlan} has been removed succesfully from DUT {self.ip_session}")
+        self.session.send_cmd("exit")
         self.session.close()
 
         return output
@@ -143,9 +144,9 @@ class VLAN:
     def add_ports_to_vlan(self, ports, vlan):
 
         self.session.connect("admin", "Admin1234!")
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"vlan {vlan}\r\n")
-        self.session.send_cmd(f"port add {ports}\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"vlan {vlan}")
+        self.session.send_cmd(f"port add {ports}")
         self.session.send_cmd("!\r\n")
         output = self.session.read()
         error = re.findall(r"% Invalid interface type", output)
@@ -153,8 +154,8 @@ class VLAN:
         if "% Invalid interface type" in error:
             print("The interface does not exist")
         else:
-            print("The port is added succesfully")
-
+            print(f"The port {ports} is added succesfully on DUT {self.ip_session}")
+        self.session.send_cmd("exit")
         self.session.close()
 
         return output
@@ -162,9 +163,9 @@ class VLAN:
     def remove_ports_from_vlan(self, ports, vlan):
 
         self.session.connect("admin","Admin1234!")
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"vlan {vlan}\r\n")
-        self.session.send_cmd(f"no port {ports}\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"vlan {vlan}")
+        self.session.send_cmd(f"no port {ports}")
         output = self.session.read()
         print(output)
         error1 = re.findall("Invalid portlist", output)
@@ -177,23 +178,24 @@ class VLAN:
         if "Invalid portlist" in error1:
             if "Port list has a port configured as trunk port" in error2:
                 print("We have to configure the port to be hybrid")
-                self.session.send_cmd("!\r\n")
-                self.session.send_cmd(f"int {ports}\r\n")
-                self.session.send_cmd("sw mo hybrid\r\n")
-                self.session.send_cmd("!\r\n")
+                self.session.send_cmd("!")
+                self.session.send_cmd(f"int {ports}")
+                self.session.send_cmd("sw mo hybrid")
+                self.session.send_cmd("!")
 
             else:
                 print("The port is not part of the VLAN membership")
 
         elif "One of the egress ports is also a member of the untagged port list" in error3:
             print("We have to remove the port from the untagged list too")
-            self.session.send_cmd(f"no port {ports} untagged {ports}\r\n")
-            self.session.send_cmd("!\r\n")
+            self.session.send_cmd(f"no port {ports} untagged {ports}")
+            self.session.send_cmd("!")
 
         else:
             print(f"The port {ports} has been removed from the VLAN {vlan}")
-
+        self.session.send_cmd("exit")
         self.session.close()
+
         return output
 
     def show_vlan(self, vlan=None):
@@ -211,7 +213,7 @@ class VLAN:
         all_out = ""
 
         if vlan is not None:
-            self.session.send_cmd(f"show vlan id {vlan}\r\n")
+            self.session.send_cmd(f"show vlan id {vlan}")
             output = self.session.read()
             match = re.findall(r"VLAN ID\s+:\s+(\d+)\S+Member Ports\s+:\s+([\w/,\s]+)[\S\s]+Untagged Ports\s+:\s+([\w/,\s]+)\S+"
                                r"PBA Ports\s+:\s+([\w/,\s]+)\S+Name\s+:([\s\w]+)\S+Status\s+:\s+(\w+)\S+"
@@ -303,13 +305,13 @@ class VLAN:
     def add_more_ports_to_vlan(self, *args, vlan):
 
         self.session.connect("admin", "Admin1234!")
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"vlan {vlan}\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"vlan {vlan}")
 
         for arg in args:
-            self.session.send_cmd(f"port add {arg}\r\n")
+            self.session.send_cmd(f"port add {arg}")
 
-        self.session.send_cmd("!\r\n")
+        self.session.send_cmd("!")
         output = self.session.read()
         # print(output)
         error = re.findall(r"% Invalid interface type", output)
@@ -317,7 +319,7 @@ class VLAN:
         if "% Invalid interface type" in error:
             print("The interface does not exist")
         else:
-            print("The port is added succesfully")
+            print(f"The port is added succesfully on DUT {self.ip_session}")
 
         self.session.close()
 
@@ -326,17 +328,17 @@ class VLAN:
     def add_more_ports_to_more_vlans(self, *args, **kwargs):
 
         self.session.connect("admin", "Admin1234!")
-        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd("conf t")
 
         for vlan in kwargs.values():
 
             print(vlan)
-            self.session.send_cmd(f"vlan {vlan}\r\n")
+            self.session.send_cmd(f"vlan {vlan}")
 
             for arg in args:
-                self.session.send_cmd(f"port add {arg}\r\n")
+                self.session.send_cmd(f"port add {arg}")
 
-            self.session.send_cmd("!\r\n")
+            self.session.send_cmd("!")
 
         output = self.session.read()
         # print(output)
