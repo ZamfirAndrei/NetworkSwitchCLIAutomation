@@ -6,7 +6,7 @@ class Telnet:
 
     def __init__(self, ip):
 
-        self.telnet = telnetlib.Telnet(ip)
+        self.ip_session = ip
 
     def connect(self, username, password):
 
@@ -14,6 +14,7 @@ class Telnet:
 
             #Connect to the device
 
+            self.telnet = telnetlib.Telnet(self.ip_session)
             self.telnet.read_until(b"login: ", timeout=5)
             self.telnet.write(username.encode('ascii') + b"\r\n")
             self.telnet.read_until(b"Password: ", timeout=5)

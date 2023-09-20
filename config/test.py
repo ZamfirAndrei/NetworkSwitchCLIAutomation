@@ -1,6 +1,7 @@
 import paramiko
 import time
 from config import vlan, interfaces, ip, ping
+from Management import telnet
 
 
 def connection(ip="10.2.109.238", username="admin", password="Admin1234!"):
@@ -17,6 +18,8 @@ def connection(ip="10.2.109.238", username="admin", password="Admin1234!"):
     time.sleep(1)
     output = shell.recv(65535)
     print(output)
+
+
 
 
 def show_vlan_pagination_enable_disable(ip="10.2.109.198",username="admin", password = "Admin1234!"):
@@ -88,4 +91,17 @@ def show_ip_route(ip="10.2.109.206", username="admin", password="Admin1234!"):
     print(output)
 
 
-show_ip_route()
+# show_ip_route()
+tn = telnet.Telnet(ip="10.2.109.206")
+def show_ip_route_telnet(ip="10.2.109.206", username="admin", password="Admin1234!"):
+
+    tn.connect(username=username, password=password)
+    time.sleep(1)
+    tn.write_cmd("conf t")
+    tn.write_cmd("set cli pagination off")
+    tn.write_cmd("do show ip route")
+    time.sleep(2)
+    output = tn.read()
+    print(output)
+
+show_ip_route_telnet()
