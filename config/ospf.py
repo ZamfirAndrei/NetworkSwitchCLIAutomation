@@ -84,37 +84,64 @@ class OSPF:
         # print(output)
         self.session.close()
 
-    def redistribute_connected(self, metric_type=None):
+    def redistribute_connected(self, metric_type=None, metric=None):
 
         self.session.connect()
         self.session.send_cmd("conf t")
         self.session.send_cmd("router ospf")
 
-        if metric_type is None:
+        if metric is None and metric_type is None:
             self.session.send_cmd("redistribute connected")
-        else:
+            print(f"The connected routes have been redistributed into ospf process on DUT {self.ip_session}")
+
+        if metric is not None:
+
+            if metric_type is not None:
+
+                self.session.send_cmd(f"redistribute connected metric {metric} metric-type {metric_type}")
+                print(f"The connected routes have been redistributed into ospf process on DUT {self.ip_session} with metric {metric} and metric_type {metric_type}")
+            else:
+                self.session.send_cmd(f"redistribute connected metric {metric}")
+                print(f"The connected routes have been redistributed into ospf process on DUT {self.ip_session} with metric {metric}")
+
+        if metric_type is not None and metric is None:
             self.session.send_cmd(f"redistribute connected metric-type {metric_type}")
-        self.session.send_cmd("exit")
-        print(f"The connected networks have been redistributed into ospf process on DUT {self.ip_session}")
+            print(f"The connected routes have been redistributed into ospf process on DUT {self.ip_session} with metric_type {metric_type}")
+
         # time.sleep(2)
-        # output = self.session.read()
-        # print(output)
+        output = self.session.read()
+        print(output)
         # self.session.close()
 
-    def redistribute_static(self, metric_type=None):
+    def redistribute_static(self, metric_type=None,metric=None):
 
         self.session.connect()
         self.session.send_cmd("conf t")
         self.session.send_cmd("router ospf")
 
-        if metric_type is None:
+        if metric is None and metric_type is None:
+
             self.session.send_cmd("redistribute static")
-        else:
+            print(f"The static routes have been redistributed into ospf process on DUT {self.ip_session}")
+
+        if metric is not None:
+
+            if metric_type is not None:
+
+                self.session.send_cmd(f"redistribute static metric {metric} metric-type {metric_type}")
+                print(f"The static routes have been redistributed into ospf process on DUT {self.ip_session} with metric {metric} and metric_type {metric_type}")
+            else:
+                self.session.send_cmd(f"redistribute static metric {metric}")
+                print(f"The static routes have been redistributed into ospf process on DUT {self.ip_session} with metric {metric}")
+
+        if metric_type is not None and metric is None:
+
             self.session.send_cmd(f"redistribute static metric-type {metric_type}")
+            print(f"The static routes have been redistributed into ospf process on DUT {self.ip_session} with metric_type {metric_type}")
+
         self.session.send_cmd("exit")
-        print(f"The static routes have been redistributed into ospf process on DUT {self.ip_session}")
-        # output = self.session.read()
-        # print(output)
+        output = self.session.read()
+        print(output)
         self.session.close()
 
     def redistribute_all(self, metric_type=None):
@@ -308,7 +335,91 @@ class OSPF:
         # print(output)
         self.session.close()
 
+    def add_ip_ospf_authentication(self, int_vlan, authentication=None, authentication_key=None, message_digest_key=None, message_digest=None):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"int vlan {int_vlan}")
+
+        if authentication == "simple" and message_digest_key is None:
+
+            self.session.send_cmd(f"ip ospf authentication {authentication}")
+            self.session.send_cmd(f"ip ospf authentication-key {authentication_key}")
+            print(f"The mode {authentication} and key {authentication_key} have been configured on int_vlan {int_vlan} on DUT {self.ip_session}")
+
+        if message_digest_key is not None:
+
+            if message_digest is not None:
+
+                self.session.send_cmd(f"ip ospf message-digest-key {message_digest_key} {authentication} {authentication_key}")
+                self.session.send_cmd(f"ip ospf authentication message-digest")
+                print(f"The mode message-digest, key {authentication_key} and message-digest-key {message_digest_key} have been configured on int_vlan {int_vlan} on DUT {self.ip_session}")
+
+            else:
+
+                self.session.send_cmd(f"ip ospf message-digest-key {message_digest_key} {authentication} {authentication_key}")
+                self.session.send_cmd(f"ip ospf authentication {authentication}")
+                print(f"The mode {authentication}, key {authentication_key} and message-digest-key {message_digest_key} have been configured on int_vlan {int_vlan} on DUT {self.ip_session}")
+
+        self.session.send_cmd("exit")
+        output = self.session.read()
+        # print(output)
+
+        self.session.close()
+
+    def add_ip_ospf_authentication_key(self, int_vlan, authentication_key=None):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"int vlan {int_vlan}")
+        self.session.send_cmd(f"ip ospf authentication-key {authentication_key}")
+        print(f"The key {authentication_key} have been configured on int_vlan {int_vlan} on DUT {self.ip_session}")
+
+        self.session.send_cmd("exit")
+        output = self.session.read()
+        # print(output)
+
+        self.session.close()
+
+    def remove_ip_ospf_authentication(self, int_vlan):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"int vlan {int_vlan}")
+        self.session.send_cmd(f"no ip ospf authentication")
+        print(f"The authentication has been removed from int_vlan {int_vlan} on DUT {self.ip_session}")
+
+        self.session.send_cmd("exit")
+        output = self.session.read()
+        # print(output)
+
+        self.session.close()
+
+    def remove_ip_ospf_authentication_key(self, int_vlan, message_digest_key=None):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"int vlan {int_vlan}")
+
+        if message_digest_key is None:
+
+            self.session.send_cmd(f"no ip ospf authentication-key")
+            print(f"The authentication key has been removed from int_vlan {int_vlan} on DUT {self.ip_session}")
+
+        else:
+
+            self.session.send_cmd(f"no ip ospf message-digest-key {message_digest_key}")
+            print(f"The message-digest-key {message_digest_key} has been removed from int_vlan {int_vlan} on DUT {self.ip_session}")
+
+        self.session.send_cmd("exit")
+        output = self.session.read()
+        # print(output)
+
+        self.session.close()
+
     def show_ospf_neighbors(self):
+
+        dict_of_ospf_neighbors = {}
 
         d_ospf_neighbors = {
 
@@ -326,10 +437,10 @@ class OSPF:
         self.session.connect()
         self.session.send_cmd("show ip ospf neighbor")
         output = self.session.read()
-        print(output)
+        # print(output)
 
         match = re.findall(r"(\d+.\d+.\d+.\d+)\s+(\d+)\s+(\w+/\w+)\s+(\d+)\s+(\d+.\d+.\d+.\d+)\s+([\w\d]+)", output)
-        print(match)
+        # print(match)
 
         for attribute in match:
 
@@ -340,11 +451,12 @@ class OSPF:
                 d[key] = value
 
             list_ospf_neigbors.append(d)
-        print(list_ospf_neigbors)
+            dict_of_ospf_neighbors[d["Neighbor-ID"]] = d
+        # print(list_ospf_neigbors)
 
         self.session.close()
 
-        return list_ospf_neigbors
+        return list_ospf_neigbors, dict_of_ospf_neighbors
 
     def show_ospf_database(self, database=None):
 

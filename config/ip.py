@@ -39,8 +39,6 @@ class IP:
             print("The interface VLAN was created succesfully")
             self.session.close()
 
-        return output
-
     def remove_int_vlan(self, int_vlan=None):
 
         output = ""
@@ -78,8 +76,6 @@ class IP:
                 print(f"The inteface vlan {int_vlan} has been removed succesfully")
         self.session.send_cmd("exit")
         self.session.close()
-
-        return output
 
     def show_ip_int(self, int_vlan=None, mgmt=None):
 
@@ -201,8 +197,6 @@ class IP:
 
         self.session.close()
 
-        return output
-
     def add_ip_interfaces(self, *args, **kwargs):
 
         self.session.connect()
@@ -222,8 +216,6 @@ class IP:
 
         self.session.close()
 
-        return output
-
     def remove_ip_interface(self, int_vlan=None):
 
         output = ""
@@ -239,8 +231,6 @@ class IP:
             print(f"The ip from int vlan {int_vlan} of DUT {self.ip_session} has been removed")
 
         self.session.close()
-
-        return output
 
     def remove_vlan_interfaces(self, *args):
 
@@ -262,8 +252,6 @@ class IP:
 
         self.session.close()
 
-        return output
-
     def add_ip_routed_port(self, interface, ip, mask):
 
         self.session.connect()
@@ -278,8 +266,6 @@ class IP:
 
         self.session.close()
 
-        return output
-
     def remove_ip_routed_port(self, interface):
 
         output = ""
@@ -293,8 +279,6 @@ class IP:
         print(f"The ip of interface {interface} has been removed")
 
         self.session.close()
-
-        return output
 
     def add_ip_routed_ports(self, *args, **kwargs):
 
@@ -313,8 +297,6 @@ class IP:
         # print(output)
 
         self.session.close()
-
-        return output
 
     def remove_ip_routed_ports(self, *args):
 
@@ -335,8 +317,6 @@ class IP:
         # print(output)
 
         self.session.close()
-
-        return output
 
     def shut_int_vlan(self, int_vlan):
 
@@ -370,8 +350,6 @@ class IP:
 
         self.session.close()
 
-        return output
-
     def no_shut_int_vlan(self, int_vlan):
 
         self.session.connect()
@@ -404,8 +382,6 @@ class IP:
 
         self.session.close()
 
-        return output
-
     def add_static_route(self, network_dest=None, mask_dest=None, next_hop=None, distance_metric=None):
 
         output = ""
@@ -425,11 +401,10 @@ class IP:
 
             print("Tete")
         self.session.send_cmd("exit")
+        print(f"The static route for {network_dest} has been installed with next hope {next_hop} and distance metric {distance_metric}")
         output = self.session.read()
         # print(output)
         self.session.close()
-
-        return output
 
     def remove_static_route(self, network_dest=None, mask_dest=None, next_hop=None):
 
@@ -445,15 +420,12 @@ class IP:
 
             if "% Route entry not Present" in output:
 
-                print("The route does not exist!")
+                print(f"The route does not exist on DUT {self.ip_session}!")
 
             else:
 
-                print("The route was removed succesfully!")
-
+                print(f"The static route for {network_dest} with next hope {next_hop}was removed succesfully from DUT {self.ip_session}")
         self.session.close()
-
-        return output
 
     def show_ip_route(self,network = None):
 

@@ -292,7 +292,7 @@ class TestRIPSuite1:
         assert "16.0.0.0" in dict_rip_routes_1.keys()
         assert "100.0.0.0" in dict_rip_routes_1.keys()
 
-        # Remove the connected routes on DUT2 and check if the connect routes are not anymore in the routing table of DUT1
+        # Remove redistribution on DUT2 and check if the connected routes are not anymore in the routing table of DUT1
 
         rip2.remove_redistribute_connected()
 
@@ -361,7 +361,7 @@ class TestRIPSuite1:
 
         # Creating a static route
 
-        ip2.add_static_route(network_dest="100.0.0.0", mask_dest="255.255.0.0", next_hop="15.0.0.80")
+        ip2.add_static_route(network_dest="100.0.0.0", mask_dest="255.255.0.0", next_hop="15.0.0.100")
 
         # Redistributing the static network on DUT2 and installing it on DUT1
 
@@ -397,7 +397,7 @@ class TestRIPSuite1:
         rip1.disable_rip()
         rip2.disable_rip()
 
-        ip2.remove_static_route(network_dest="100.0.0.0", mask_dest="255.255.0.0", next_hop="15.0.0.80")
+        ip2.remove_static_route(network_dest="100.0.0.0", mask_dest="255.255.0.0", next_hop="15.0.0.100")
 
         ip1.remove_int_vlan(int_vlan="20")
         ip2.remove_vlan_interfaces("20", "15")
@@ -447,7 +447,7 @@ class TestRIPSuite1:
 
         # Creating a static route
 
-        ip2.add_static_route(network_dest="88.88.88.0", mask_dest="255.255.255.128", next_hop="15.0.0.80")
+        ip2.add_static_route(network_dest="88.88.88.0", mask_dest="255.255.255.128", next_hop="15.0.0.100")
 
         # Disabling no-autosummary on DUT2 so it will redistribute classless subnets
 
@@ -486,7 +486,7 @@ class TestRIPSuite1:
         rip1.disable_rip()
         rip2.disable_rip()
 
-        ip2.remove_static_route(network_dest="88.88.88.0", mask_dest="255.255.255.128", next_hop="15.0.0.80")
+        ip2.remove_static_route(network_dest="88.88.88.0", mask_dest="255.255.255.128", next_hop="15.0.0.100")
 
         ip1.remove_int_vlan(int_vlan="20")
         ip2.remove_vlan_interfaces("20", "15")
@@ -723,7 +723,7 @@ class TestRIPSuite1:
 
         # Configuring static routes, redistribute static and redistribute connected on DUT2 towards DUT1
 
-        ip2.add_static_route(network_dest="88.0.0.0", mask_dest="255.255.255.0", next_hop="15.0.0.80")
+        ip2.add_static_route(network_dest="88.0.0.0", mask_dest="255.255.255.0", next_hop="15.0.0.100")
 
         rip2.redistribute_static()
         rip2.redistribute_connected()
@@ -794,7 +794,7 @@ class TestRIPSuite1:
         ip1.remove_int_vlan(int_vlan="20")
         ip2.remove_vlan_interfaces("20", "15")
 
-        ip2.remove_static_route(network_dest="88.0.0.0", mask_dest="255.255.255.0", next_hop="15.0.0.80")
+        ip2.remove_static_route(network_dest="88.0.0.0", mask_dest="255.255.255.0", next_hop="15.0.0.100")
 
         int1.shut_interface(interface="Ex 0/1")
         int2.shut_interfaces("Gi 0/9", "Gi 0/5")
@@ -1761,7 +1761,7 @@ class TestRIPSuite1:
 
         # Creating a static route on DUT 2
 
-        ip2.add_static_route(network_dest="88.0.0.0", mask_dest="255.255.255.0", next_hop="15.0.0.80")
+        ip2.add_static_route(network_dest="88.0.0.0", mask_dest="255.255.255.0", next_hop="15.0.0.100")
 
         # Redistributing all into RIP on DUT2 and installing it on DUT1
 
@@ -1811,7 +1811,7 @@ class TestRIPSuite1:
         ospf2.disable_ospf()
         ospf3.disable_ospf()
 
-        ip2.remove_static_route(network_dest="88.0.0.0", mask_dest="255.255.255.0", next_hop="15.0.0.80")
+        ip2.remove_static_route(network_dest="88.0.0.0", mask_dest="255.255.255.0", next_hop="15.0.0.100")
 
         ip1.remove_int_vlan(int_vlan="20")
         ip2.remove_vlan_interfaces("20", "15", "12")

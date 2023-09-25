@@ -48,7 +48,6 @@ class VLAN:
         self.session.connect("admin", "Admin1234!")
         output = self.session.read()
         conf = re.findall(r"config", output)
-        #print(output)
         #print(conf)
         if int(vlan) >= 4094:
             print("The limit is 4094")
@@ -66,16 +65,15 @@ class VLAN:
                 # print("2")
             print(f"The VLAN {vlan} was created on DUT {self.ip_session}")
         self.session.send_cmd("exit")
+        # print(output)
         self.session.close()
 
-        return output
 
     def create_vlans(self, *args):
 
         self.session.connect("admin", "Admin1234!")
         output = self.session.read()
         conf = re.findall(r"config", output)
-        # print(output)
         # print(conf)
 
         for vlan in args:
@@ -96,9 +94,8 @@ class VLAN:
                     # print("2")
                 print(f"The VLAN {vlan} was created on DUT {self.ip_session}")
         self.session.send_cmd("exit")
+        # print(output)
         self.session.close()
-
-        return output
 
     def remove_vlan(self, vlan):
 
@@ -107,7 +104,6 @@ class VLAN:
         self.session.send_cmd(f"no vlan {vlan}")
         self.session.send_cmd("exit")
         output = self.session.read()
-        # print(output)
         error = re.findall("% Vlan does not exist", output)
         # print(error)
         if "% Vlan does not exist" in error:
@@ -115,9 +111,8 @@ class VLAN:
         else:
             print(f"The VLAN {vlan} has been removed succesfully from DUT {self.ip_session}")
         self.session.send_cmd("exit")
+        # print(output)
         self.session.close()
-
-        return output
 
     def remove_vlans(self, *args):
 
@@ -129,7 +124,6 @@ class VLAN:
 
             self.session.send_cmd(f"no vlan {vlan}")
             output = self.session.read()
-            # print(output)
             error = re.findall("% Vlan does not exist", output)
             # print(error)
             if "% Vlan does not exist" in error:
@@ -137,9 +131,8 @@ class VLAN:
             else:
                 print(f"The VLAN {vlan} has been removed succesfully from DUT {self.ip_session}")
         self.session.send_cmd("exit")
+        # print(output)
         self.session.close()
-
-        return output
 
     def add_ports_to_vlan(self, ports, vlan):
 
@@ -147,18 +140,18 @@ class VLAN:
         self.session.send_cmd("conf t")
         self.session.send_cmd(f"vlan {vlan}")
         self.session.send_cmd(f"port add {ports}")
-        self.session.send_cmd("!\r\n")
+        self.session.send_cmd("!")
         output = self.session.read()
         error = re.findall(r"% Invalid interface type", output)
         #print(error)
         if "% Invalid interface type" in error:
             print("The interface does not exist")
         else:
-            print(f"The port {ports} is added succesfully on DUT {self.ip_session}")
+            print(f"The port {ports} is added succesfully on DUT {self.ip_session} for vlan {vlan}")
+        # print(output)
         self.session.send_cmd("exit")
+        # print(output)
         self.session.close()
-
-        return output
 
     def remove_ports_from_vlan(self, ports, vlan):
 
@@ -194,9 +187,8 @@ class VLAN:
         else:
             print(f"The port {ports} has been removed from the VLAN {vlan}")
         self.session.send_cmd("exit")
+        # print(output)
         self.session.close()
-
-        return output
 
     def show_vlan(self, vlan=None):
 
@@ -262,11 +254,11 @@ class VLAN:
             self.session.send_cmd("set cli pagination off\r\n")
             self.session.send_cmd("do show vlan\r\n")
             output = self.session.read()
-            print(output)
+            # print(output)
 
         self.session.close()
 
-        return d, output
+        return d
 
     def show_vlan_port(self, port):
 
@@ -313,17 +305,14 @@ class VLAN:
 
         self.session.send_cmd("!")
         output = self.session.read()
-        # print(output)
         error = re.findall(r"% Invalid interface type", output)
         #print(error)
         if "% Invalid interface type" in error:
             print("The interface does not exist")
         else:
             print(f"The port is added succesfully on DUT {self.ip_session}")
-
+        # print(output)
         self.session.close()
-
-        return output
 
     def add_more_ports_to_more_vlans(self, *args, **kwargs):
 
@@ -341,17 +330,14 @@ class VLAN:
             self.session.send_cmd("!")
 
         output = self.session.read()
-        # print(output)
         error = re.findall(r"% Invalid interface type", output)
         # print(error)
         if "% Invalid interface type" in error:
             print("The interface does not exist")
         else:
             print("The port is added succesfully")
-
+        # print(output)
         self.session.close()
-
-        return output
 
 
 ip = "10.2.109.238"

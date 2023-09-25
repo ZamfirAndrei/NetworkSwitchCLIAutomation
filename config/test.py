@@ -104,4 +104,12 @@ def show_ip_route_telnet(ip="10.2.109.206", username="admin", password="Admin123
     output = tn.read()
     print(output)
 
-show_ip_route_telnet()
+# show_ip_route_telnet()
+
+
+d["Tete"] = "FULL/BACKUP"
+
+if "FUL" in d["Tete"]:
+    print("Yes")
+else:
+    print("No")
