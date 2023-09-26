@@ -872,3 +872,567 @@ class TestOSPFSuite1:
 
         DUT1.vl.remove_vlan(vlan="20")
         DUT2.vl.remove_vlans("20", "15")
+
+    def test_func_9(self):
+
+        print("###### Test_func_9 ######")
+        print("########## Verify OSPF  Authentication using SHA-224 algorithm  #############")
+        print("###### 2 DUTs ######")
+
+        DUT1.int.no_shut_interfaces("Ex 0/1")
+        DUT2.int.no_shut_interfaces("Gi 0/5", "Gi 0/9")
+
+        # Adding the ports to the VLAN
+
+        DUT1.vl.add_ports_to_vlan(ports="Ex 0/1", vlan="20")
+
+        DUT2.vl.add_ports_to_vlan(ports="Gi 0/5", vlan="15")
+        DUT2.vl.add_ports_to_vlan(ports="Gi 0/9", vlan="20")
+
+        # Create IP interfaces on all DUTs for the specific VLANs
+
+        DUT1.ip.add_ip_interfaces("20", int_vlan20=["20.0.0.2", "255.255.255.0"])
+        DUT1.ip.no_shut_int_vlans("20")
+
+        DUT2.ip.add_ip_interfaces("20", "15", int_vlan20=["20.0.0.1", "255.255.255.0"], int_vlan15=["15.0.0.1", "255.255.255.0"])
+        DUT2.ip.no_shut_int_vlans("15", "20")
+
+        # Enable ospf on all DUTs and advertise the IPs
+
+        DUT1.ospf.enable_ospf()
+        DUT2.ospf.enable_ospf()
+
+        DUT1.ospf.advertise_networks(int_vlan20=["20.0.0.2", "0.0.0.0"])
+        DUT2.ospf.advertise_networks(int_vlan15=["15.0.0.1", "0.0.0.0"], int_vlan20=["20.0.0.1", "0.0.0.0"])
+
+        # Configure the authentication sha-224 on the int-vlan between the DUTs and configure the key. Check that the adjencency occurs
+
+        DUT1.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-224", authentication_key="1234", message_digest_key="1")
+        DUT2.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-224", authentication_key="1234", message_digest_key="1")
+
+        time.sleep(45)
+
+        ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
+        print(dict_of_networks)
+
+        list_ospf_neigbors, dict_of_ospf_neighbors = DUT1.ospf.show_ospf_neighbors()
+        print(dict_of_ospf_neighbors)
+
+        assert "15.0.0.0" in dict_of_networks.keys() and dict_of_networks["15.0.0.0"]["Protocol"] == "O"
+        assert ip_session_2 in dict_of_ospf_neighbors.keys() and dict_of_ospf_neighbors[ip_session_2]["Neighbor-ID"] == ip_session_2
+        assert "FULL" in dict_of_ospf_neighbors[ip_session_2]["State"]
+
+        # Change the key for DUT1 and check that there is no adjencency and the routes are not installed
+
+        DUT1.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
+        DUT1.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-224", authentication_key="12345", message_digest_key="1")
+
+        time.sleep(45)
+
+        ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
+        print(dict_of_networks)
+
+        list_ospf_neigbors, dict_of_ospf_neighbors = DUT1.ospf.show_ospf_neighbors()
+        print(dict_of_ospf_neighbors)
+
+        assert "15.0.0.0" not in dict_of_networks.keys()
+        assert ip_session_2 in dict_of_ospf_neighbors.keys() and "DOWN" in dict_of_ospf_neighbors[ip_session_2]["State"]
+
+        # Change the key for DUT2 and check that there is adjencency and the routes are learned
+
+        DUT2.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
+        DUT2.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-224", authentication_key="12345",message_digest_key="1")
+
+        time.sleep(45)
+
+        ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
+        print(dict_of_networks)
+
+        list_ospf_neigbors, dict_of_ospf_neighbors = DUT1.ospf.show_ospf_neighbors()
+        print(dict_of_ospf_neighbors)
+
+        assert "15.0.0.0" in dict_of_networks.keys() and dict_of_networks["15.0.0.0"]["Protocol"] == "O"
+        assert ip_session_2 in dict_of_ospf_neighbors.keys() and dict_of_ospf_neighbors[ip_session_2]["Neighbor-ID"] == ip_session_2
+        assert "FULL" in dict_of_ospf_neighbors[ip_session_2]["State"]
+
+        # Remove the authentication and authentication-keys on both DUTs and check that there is adjencency and the routes are learned
+
+        DUT1.ospf.remove_ip_ospf_authentication(int_vlan="20")
+        DUT1.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
+
+        DUT2.ospf.remove_ip_ospf_authentication(int_vlan="20")
+        DUT2.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
+
+        time.sleep(45)
+
+        ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
+        print(dict_of_networks)
+
+        list_ospf_neigbors, dict_of_ospf_neighbors = DUT1.ospf.show_ospf_neighbors()
+        print(dict_of_ospf_neighbors)
+
+        assert "15.0.0.0" in dict_of_networks.keys() and dict_of_networks["15.0.0.0"]["Protocol"] == "O"
+        assert ip_session_2 in dict_of_ospf_neighbors.keys() and dict_of_ospf_neighbors[ip_session_2]["Neighbor-ID"] == ip_session_2
+        assert "FULL" in dict_of_ospf_neighbors[ip_session_2]["State"]
+
+        print("########## Removing the config #############")
+
+        DUT1.ospf.remove_networks(int_vlan20=["20.0.0.2", "0.0.0.0"])
+        DUT2.ospf.remove_networks(int_vlan15=["15.0.0.1", "0.0.0.0"], int_vlan20=["20.0.0.1", "0.0.0.0"])
+
+        DUT1.ospf.disable_ospf()
+        DUT2.ospf.disable_ospf()
+
+        DUT1.ip.remove_int_vlan(int_vlan="20")
+        DUT2.ip.remove_vlan_interfaces("20", "15")
+
+        DUT1.int.shut_interface(interface="Ex 0/1")
+        DUT2.int.shut_interfaces("Gi 0/9", "Gi 0/5")
+
+        DUT1.vl.remove_vlan(vlan="20")
+        DUT2.vl.remove_vlans("20", "15")
+
+    def test_func_10(self):
+
+        print("###### Test_func_10 ######")
+        print("########## Verify OSPF  Authentication using SHA-256 algorithm  #############")
+        print("###### 2 DUTs ######")
+
+        DUT1.int.no_shut_interfaces("Ex 0/1")
+        DUT2.int.no_shut_interfaces("Gi 0/5", "Gi 0/9")
+
+        # Adding the ports to the VLAN
+
+        DUT1.vl.add_ports_to_vlan(ports="Ex 0/1", vlan="20")
+
+        DUT2.vl.add_ports_to_vlan(ports="Gi 0/5", vlan="15")
+        DUT2.vl.add_ports_to_vlan(ports="Gi 0/9", vlan="20")
+
+        # Create IP interfaces on all DUTs for the specific VLANs
+
+        DUT1.ip.add_ip_interfaces("20", int_vlan20=["20.0.0.2", "255.255.255.0"])
+        DUT1.ip.no_shut_int_vlans("20")
+
+        DUT2.ip.add_ip_interfaces("20", "15", int_vlan20=["20.0.0.1", "255.255.255.0"], int_vlan15=["15.0.0.1", "255.255.255.0"])
+        DUT2.ip.no_shut_int_vlans("15", "20")
+
+        # Enable ospf on all DUTs and advertise the IPs
+
+        DUT1.ospf.enable_ospf()
+        DUT2.ospf.enable_ospf()
+
+        DUT1.ospf.advertise_networks(int_vlan20=["20.0.0.2", "0.0.0.0"])
+        DUT2.ospf.advertise_networks(int_vlan15=["15.0.0.1", "0.0.0.0"], int_vlan20=["20.0.0.1", "0.0.0.0"])
+
+        # Configure the authentication sha-256 on the int-vlan between the DUTs and configure the key. Check that the adjencency occurs
+
+        DUT1.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-256", authentication_key="1234", message_digest_key="1")
+        DUT2.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-256", authentication_key="1234", message_digest_key="1")
+
+        time.sleep(45)
+
+        ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
+        print(dict_of_networks)
+
+        list_ospf_neigbors, dict_of_ospf_neighbors = DUT1.ospf.show_ospf_neighbors()
+        print(dict_of_ospf_neighbors)
+
+        assert "15.0.0.0" in dict_of_networks.keys() and dict_of_networks["15.0.0.0"]["Protocol"] == "O"
+        assert ip_session_2 in dict_of_ospf_neighbors.keys() and dict_of_ospf_neighbors[ip_session_2]["Neighbor-ID"] == ip_session_2
+        assert "FULL" in dict_of_ospf_neighbors[ip_session_2]["State"]
+
+        # Change the key for DUT1 and check that there is no adjencency and the routes are not installed
+
+        DUT1.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
+        DUT1.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-256", authentication_key="12345", message_digest_key="1")
+
+        time.sleep(45)
+
+        ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
+        print(dict_of_networks)
+
+        list_ospf_neigbors, dict_of_ospf_neighbors = DUT1.ospf.show_ospf_neighbors()
+        print(dict_of_ospf_neighbors)
+
+        assert "15.0.0.0" not in dict_of_networks.keys()
+        assert ip_session_2 in dict_of_ospf_neighbors.keys() and "DOWN" in dict_of_ospf_neighbors[ip_session_2]["State"]
+
+        # Change the key for DUT2 and check that there is adjencency and the routes are learned
+
+        DUT2.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
+        DUT2.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-256", authentication_key="12345",message_digest_key="1")
+
+        time.sleep(45)
+
+        ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
+        print(dict_of_networks)
+
+        list_ospf_neigbors, dict_of_ospf_neighbors = DUT1.ospf.show_ospf_neighbors()
+        print(dict_of_ospf_neighbors)
+
+        assert "15.0.0.0" in dict_of_networks.keys() and dict_of_networks["15.0.0.0"]["Protocol"] == "O"
+        assert ip_session_2 in dict_of_ospf_neighbors.keys() and dict_of_ospf_neighbors[ip_session_2]["Neighbor-ID"] == ip_session_2
+        assert "FULL" in dict_of_ospf_neighbors[ip_session_2]["State"]
+
+        # Remove the authentication and authentication-keys on both DUTs and check that there is adjencency and the routes are learned
+
+        DUT1.ospf.remove_ip_ospf_authentication(int_vlan="20")
+        DUT1.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
+
+        DUT2.ospf.remove_ip_ospf_authentication(int_vlan="20")
+        DUT2.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
+
+        time.sleep(45)
+
+        ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
+        print(dict_of_networks)
+
+        list_ospf_neigbors, dict_of_ospf_neighbors = DUT1.ospf.show_ospf_neighbors()
+        print(dict_of_ospf_neighbors)
+
+        assert "15.0.0.0" in dict_of_networks.keys() and dict_of_networks["15.0.0.0"]["Protocol"] == "O"
+        assert ip_session_2 in dict_of_ospf_neighbors.keys() and dict_of_ospf_neighbors[ip_session_2]["Neighbor-ID"] == ip_session_2
+        assert "FULL" in dict_of_ospf_neighbors[ip_session_2]["State"]
+
+        print("########## Removing the config #############")
+
+        DUT1.ospf.remove_networks(int_vlan20=["20.0.0.2", "0.0.0.0"])
+        DUT2.ospf.remove_networks(int_vlan15=["15.0.0.1", "0.0.0.0"], int_vlan20=["20.0.0.1", "0.0.0.0"])
+
+        DUT1.ospf.disable_ospf()
+        DUT2.ospf.disable_ospf()
+
+        DUT1.ip.remove_int_vlan(int_vlan="20")
+        DUT2.ip.remove_vlan_interfaces("20", "15")
+
+        DUT1.int.shut_interface(interface="Ex 0/1")
+        DUT2.int.shut_interfaces("Gi 0/9", "Gi 0/5")
+
+        DUT1.vl.remove_vlan(vlan="20")
+        DUT2.vl.remove_vlans("20", "15")
+
+    def test_func_11(self):
+
+        print("###### Test_func_11 ######")
+        print("########## Verify OSPF  Authentication using SHA-384 algorithm  #############")
+        print("###### 2 DUTs ######")
+
+        DUT1.int.no_shut_interfaces("Ex 0/1")
+        DUT2.int.no_shut_interfaces("Gi 0/5", "Gi 0/9")
+
+        # Adding the ports to the VLAN
+
+        DUT1.vl.add_ports_to_vlan(ports="Ex 0/1", vlan="20")
+
+        DUT2.vl.add_ports_to_vlan(ports="Gi 0/5", vlan="15")
+        DUT2.vl.add_ports_to_vlan(ports="Gi 0/9", vlan="20")
+
+        # Create IP interfaces on all DUTs for the specific VLANs
+
+        DUT1.ip.add_ip_interfaces("20", int_vlan20=["20.0.0.2", "255.255.255.0"])
+        DUT1.ip.no_shut_int_vlans("20")
+
+        DUT2.ip.add_ip_interfaces("20", "15", int_vlan20=["20.0.0.1", "255.255.255.0"], int_vlan15=["15.0.0.1", "255.255.255.0"])
+        DUT2.ip.no_shut_int_vlans("15", "20")
+
+        # Enable ospf on all DUTs and advertise the IPs
+
+        DUT1.ospf.enable_ospf()
+        DUT2.ospf.enable_ospf()
+
+        DUT1.ospf.advertise_networks(int_vlan20=["20.0.0.2", "0.0.0.0"])
+        DUT2.ospf.advertise_networks(int_vlan15=["15.0.0.1", "0.0.0.0"], int_vlan20=["20.0.0.1", "0.0.0.0"])
+
+        # Configure the authentication sha-384 on the int-vlan between the DUTs and configure the key. Check that the adjencency occurs
+
+        DUT1.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-384", authentication_key="1234", message_digest_key="1")
+        DUT2.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-384", authentication_key="1234", message_digest_key="1")
+
+        time.sleep(45)
+
+        ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
+        print(dict_of_networks)
+
+        list_ospf_neigbors, dict_of_ospf_neighbors = DUT1.ospf.show_ospf_neighbors()
+        print(dict_of_ospf_neighbors)
+
+        assert "15.0.0.0" in dict_of_networks.keys() and dict_of_networks["15.0.0.0"]["Protocol"] == "O"
+        assert ip_session_2 in dict_of_ospf_neighbors.keys() and dict_of_ospf_neighbors[ip_session_2]["Neighbor-ID"] == ip_session_2
+        assert "FULL" in dict_of_ospf_neighbors[ip_session_2]["State"]
+
+        # Change the key for DUT1 and check that there is no adjencency and the routes are not installed
+
+        DUT1.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
+        DUT1.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-384", authentication_key="12345", message_digest_key="1")
+
+        time.sleep(45)
+
+        ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
+        print(dict_of_networks)
+
+        list_ospf_neigbors, dict_of_ospf_neighbors = DUT1.ospf.show_ospf_neighbors()
+        print(dict_of_ospf_neighbors)
+
+        assert "15.0.0.0" not in dict_of_networks.keys()
+        assert ip_session_2 in dict_of_ospf_neighbors.keys() and "DOWN" in dict_of_ospf_neighbors[ip_session_2]["State"]
+
+        # Change the key for DUT2 and check that there is adjencency and the routes are learned
+
+        DUT2.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
+        DUT2.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-384", authentication_key="12345", message_digest_key="1")
+
+        time.sleep(45)
+
+        ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
+        print(dict_of_networks)
+
+        list_ospf_neigbors, dict_of_ospf_neighbors = DUT1.ospf.show_ospf_neighbors()
+        print(dict_of_ospf_neighbors)
+
+        assert "15.0.0.0" in dict_of_networks.keys() and dict_of_networks["15.0.0.0"]["Protocol"] == "O"
+        assert ip_session_2 in dict_of_ospf_neighbors.keys() and dict_of_ospf_neighbors[ip_session_2]["Neighbor-ID"] == ip_session_2
+        assert "FULL" in dict_of_ospf_neighbors[ip_session_2]["State"]
+
+        # Remove the authentication and authentication-keys on both DUTs and check that there is adjencency and the routes are learned
+
+        DUT1.ospf.remove_ip_ospf_authentication(int_vlan="20")
+        DUT1.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
+
+        DUT2.ospf.remove_ip_ospf_authentication(int_vlan="20")
+        DUT2.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
+
+        time.sleep(45)
+
+        ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
+        print(dict_of_networks)
+
+        list_ospf_neigbors, dict_of_ospf_neighbors = DUT1.ospf.show_ospf_neighbors()
+        print(dict_of_ospf_neighbors)
+
+        assert "15.0.0.0" in dict_of_networks.keys() and dict_of_networks["15.0.0.0"]["Protocol"] == "O"
+        assert ip_session_2 in dict_of_ospf_neighbors.keys() and dict_of_ospf_neighbors[ip_session_2]["Neighbor-ID"] == ip_session_2
+        assert "FULL" in dict_of_ospf_neighbors[ip_session_2]["State"]
+
+        print("########## Removing the config #############")
+
+        DUT1.ospf.remove_networks(int_vlan20=["20.0.0.2", "0.0.0.0"])
+        DUT2.ospf.remove_networks(int_vlan15=["15.0.0.1", "0.0.0.0"], int_vlan20=["20.0.0.1", "0.0.0.0"])
+
+        DUT1.ospf.disable_ospf()
+        DUT2.ospf.disable_ospf()
+
+        DUT1.ip.remove_int_vlan(int_vlan="20")
+        DUT2.ip.remove_vlan_interfaces("20", "15")
+
+        DUT1.int.shut_interface(interface="Ex 0/1")
+        DUT2.int.shut_interfaces("Gi 0/9", "Gi 0/5")
+
+        DUT1.vl.remove_vlan(vlan="20")
+        DUT2.vl.remove_vlans("20", "15")
+
+    def test_func_12(self):
+
+        print("###### Test_func_12 ######")
+        print("########## Verify OSPF  Authentication using SHA-512 algorithm  #############")
+        print("###### 2 DUTs ######")
+
+        DUT1.int.no_shut_interfaces("Ex 0/1")
+        DUT2.int.no_shut_interfaces("Gi 0/5", "Gi 0/9")
+
+        # Adding the ports to the VLAN
+
+        DUT1.vl.add_ports_to_vlan(ports="Ex 0/1", vlan="20")
+
+        DUT2.vl.add_ports_to_vlan(ports="Gi 0/5", vlan="15")
+        DUT2.vl.add_ports_to_vlan(ports="Gi 0/9", vlan="20")
+
+        # Create IP interfaces on all DUTs for the specific VLANs
+
+        DUT1.ip.add_ip_interfaces("20", int_vlan20=["20.0.0.2", "255.255.255.0"])
+        DUT1.ip.no_shut_int_vlans("20")
+
+        DUT2.ip.add_ip_interfaces("20", "15", int_vlan20=["20.0.0.1", "255.255.255.0"], int_vlan15=["15.0.0.1", "255.255.255.0"])
+        DUT2.ip.no_shut_int_vlans("15", "20")
+
+        # Enable ospf on all DUTs and advertise the IPs
+
+        DUT1.ospf.enable_ospf()
+        DUT2.ospf.enable_ospf()
+
+        DUT1.ospf.advertise_networks(int_vlan20=["20.0.0.2", "0.0.0.0"])
+        DUT2.ospf.advertise_networks(int_vlan15=["15.0.0.1", "0.0.0.0"], int_vlan20=["20.0.0.1", "0.0.0.0"])
+
+        # Configure the authentication sha-512 on the int-vlan between the DUTs and configure the key. Check that the adjencency occurs
+
+        DUT1.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-512", authentication_key="1234", message_digest_key="1")
+        DUT2.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-512", authentication_key="1234", message_digest_key="1")
+
+        time.sleep(45)
+
+        ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
+        print(dict_of_networks)
+
+        list_ospf_neigbors, dict_of_ospf_neighbors = DUT1.ospf.show_ospf_neighbors()
+        print(dict_of_ospf_neighbors)
+
+        assert "15.0.0.0" in dict_of_networks.keys() and dict_of_networks["15.0.0.0"]["Protocol"] == "O"
+        assert ip_session_2 in dict_of_ospf_neighbors.keys() and dict_of_ospf_neighbors[ip_session_2]["Neighbor-ID"] == ip_session_2
+        assert "FULL" in dict_of_ospf_neighbors[ip_session_2]["State"]
+
+        # Change the key for DUT1 and check that there is no adjencency and the routes are not installed
+
+        DUT1.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
+        DUT1.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-512", authentication_key="12345", message_digest_key="1")
+
+        time.sleep(45)
+
+        ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
+        print(dict_of_networks)
+
+        list_ospf_neigbors, dict_of_ospf_neighbors = DUT1.ospf.show_ospf_neighbors()
+        print(dict_of_ospf_neighbors)
+
+        assert "15.0.0.0" not in dict_of_networks.keys()
+        assert ip_session_2 in dict_of_ospf_neighbors.keys() and "DOWN" in dict_of_ospf_neighbors[ip_session_2]["State"]
+
+        # Change the key for DUT2 and check that there is adjencency and the routes are learned
+
+        DUT2.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
+        DUT2.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-512", authentication_key="12345",message_digest_key="1")
+
+        time.sleep(45)
+
+        ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
+        print(dict_of_networks)
+
+        list_ospf_neigbors, dict_of_ospf_neighbors = DUT1.ospf.show_ospf_neighbors()
+        print(dict_of_ospf_neighbors)
+
+        assert "15.0.0.0" in dict_of_networks.keys() and dict_of_networks["15.0.0.0"]["Protocol"] == "O"
+        assert ip_session_2 in dict_of_ospf_neighbors.keys() and dict_of_ospf_neighbors[ip_session_2]["Neighbor-ID"] == ip_session_2
+        assert "FULL" in dict_of_ospf_neighbors[ip_session_2]["State"]
+
+        # Remove the authentication and authentication-keys on both DUTs and check that there is adjencency and the routes are learned
+
+        DUT1.ospf.remove_ip_ospf_authentication(int_vlan="20")
+        DUT1.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
+
+        DUT2.ospf.remove_ip_ospf_authentication(int_vlan="20")
+        DUT2.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
+
+        time.sleep(45)
+
+        ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
+        print(dict_of_networks)
+
+        list_ospf_neigbors, dict_of_ospf_neighbors = DUT1.ospf.show_ospf_neighbors()
+        print(dict_of_ospf_neighbors)
+
+        assert "15.0.0.0" in dict_of_networks.keys() and dict_of_networks["15.0.0.0"]["Protocol"] == "O"
+        assert ip_session_2 in dict_of_ospf_neighbors.keys() and dict_of_ospf_neighbors[ip_session_2]["Neighbor-ID"] == ip_session_2
+        assert "FULL" in dict_of_ospf_neighbors[ip_session_2]["State"]
+
+        print("########## Removing the config #############")
+
+        DUT1.ospf.remove_networks(int_vlan20=["20.0.0.2", "0.0.0.0"])
+        DUT2.ospf.remove_networks(int_vlan15=["15.0.0.1", "0.0.0.0"], int_vlan20=["20.0.0.1", "0.0.0.0"])
+
+        DUT1.ospf.disable_ospf()
+        DUT2.ospf.disable_ospf()
+
+        DUT1.ip.remove_int_vlan(int_vlan="20")
+        DUT2.ip.remove_vlan_interfaces("20", "15")
+
+        DUT1.int.shut_interface(interface="Ex 0/1")
+        DUT2.int.shut_interfaces("Gi 0/9", "Gi 0/5")
+
+        DUT1.vl.remove_vlan(vlan="20")
+        DUT2.vl.remove_vlans("20", "15")
+
+    def test_func_13(self):
+
+        print("###### Test_func_13 ######")
+        print("########## Verify if OSPF adjacencies cannot be formed when Secret Key ID is different  #############")
+        print("###### 2 DUTs ######")
+
+        DUT1.int.no_shut_interfaces("Ex 0/1")
+        DUT2.int.no_shut_interfaces("Gi 0/5", "Gi 0/9")
+
+        # Adding the ports to the VLAN
+
+        DUT1.vl.add_ports_to_vlan(ports="Ex 0/1", vlan="20")
+
+        DUT2.vl.add_ports_to_vlan(ports="Gi 0/5", vlan="15")
+        DUT2.vl.add_ports_to_vlan(ports="Gi 0/9", vlan="20")
+
+        # Create IP interfaces on all DUTs for the specific VLANs
+
+        DUT1.ip.add_ip_interfaces("20", int_vlan20=["20.0.0.2", "255.255.255.0"])
+        DUT1.ip.no_shut_int_vlans("20")
+
+        DUT2.ip.add_ip_interfaces("20", "15", int_vlan20=["20.0.0.1", "255.255.255.0"], int_vlan15=["15.0.0.1", "255.255.255.0"])
+        DUT2.ip.no_shut_int_vlans("15", "20")
+
+        # Enable ospf on all DUTs and advertise the IPs
+
+        DUT1.ospf.enable_ospf()
+        DUT2.ospf.enable_ospf()
+
+        DUT1.ospf.advertise_networks(int_vlan20=["20.0.0.2", "0.0.0.0"])
+        DUT2.ospf.advertise_networks(int_vlan15=["15.0.0.1", "0.0.0.0"], int_vlan20=["20.0.0.1", "0.0.0.0"])
+
+        # Configure the authentication sha-384 on the int-vlan between the DUTs and configure the key. Check that the adjencency occurs
+
+        DUT1.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-384", authentication_key="1234", message_digest_key="1")
+        DUT2.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-384", authentication_key="12345", message_digest_key="1")
+
+        time.sleep(45)
+
+        ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
+        print(dict_of_networks)
+
+        list_ospf_neigbors, dict_of_ospf_neighbors = DUT1.ospf.show_ospf_neighbors()
+        print(dict_of_ospf_neighbors)
+
+        assert "15.0.0.0" not in dict_of_networks.keys()
+        assert ip_session_2 in dict_of_ospf_neighbors.keys() and "DOWN" in dict_of_ospf_neighbors[ip_session_2]["State"]
+
+        # Change the key for DUT1 and check that the adjencency is restarted
+
+        DUT1.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
+        DUT1.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-384", authentication_key="12345", message_digest_key="1")
+
+        time.sleep(45)
+
+        ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
+        print(dict_of_networks)
+
+        list_ospf_neigbors, dict_of_ospf_neighbors = DUT1.ospf.show_ospf_neighbors()
+        print(dict_of_ospf_neighbors)
+
+        assert "15.0.0.0" in dict_of_networks.keys() and dict_of_networks["15.0.0.0"]["Protocol"] == "O"
+        assert ip_session_2 in dict_of_ospf_neighbors.keys() and dict_of_ospf_neighbors[ip_session_2]["Neighbor-ID"] == ip_session_2
+        assert "FULL" in dict_of_ospf_neighbors[ip_session_2]["State"]
+
+        print("########## Removing the config #############")
+
+        DUT1.ospf.remove_ip_ospf_authentication(int_vlan="20")
+        DUT1.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
+
+        DUT2.ospf.remove_ip_ospf_authentication(int_vlan="20")
+        DUT2.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
+
+        DUT1.ospf.remove_networks(int_vlan20=["20.0.0.2", "0.0.0.0"])
+        DUT2.ospf.remove_networks(int_vlan15=["15.0.0.1", "0.0.0.0"], int_vlan20=["20.0.0.1", "0.0.0.0"])
+
+        DUT1.ospf.disable_ospf()
+        DUT2.ospf.disable_ospf()
+
+        DUT1.ip.remove_int_vlan(int_vlan="20")
+        DUT2.ip.remove_vlan_interfaces("20", "15")
+
+        DUT1.int.shut_interface(interface="Ex 0/1")
+        DUT2.int.shut_interfaces("Gi 0/9", "Gi 0/5")
+
+        DUT1.vl.remove_vlan(vlan="20")
+        DUT2.vl.remove_vlans("20", "15")
