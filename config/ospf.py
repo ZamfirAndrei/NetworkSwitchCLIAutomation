@@ -20,7 +20,7 @@ class OSPF:
         self.session.send_cmd("conf t")
         self.session.send_cmd("router ospf")
         self.session.send_cmd("exit")
-        print("The OSPF process has been enabled")
+        print(f"The OSPF process has been enabled on DUT {self.ip_session}")
         output = self.session.read()
         # print(output)
         self.session.close()
@@ -31,7 +31,7 @@ class OSPF:
         self.session.send_cmd("conf t")
         self.session.send_cmd("no router ospf")
         self.session.send_cmd("exit")
-        print("The OSPF process has been disabled")
+        print(f"The OSPF process has been disabled on DUT {self.ip_session}")
         output = self.session.read()
         # print(output)
         self.session.close()
@@ -417,6 +417,32 @@ class OSPF:
 
         self.session.close()
 
+    def add_ip_ospf_hello_interval(self, int_vlan, interval):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"int vlan {int_vlan}")
+        self.session.send_cmd(f"ip ospf hello-interval {interval}")
+        print(f"The hello-interval {interval} has been added on DUT {self.ip_session}")
+        self.session.send_cmd("exit")
+        output = self.session.read()
+        # print(output)
+
+        self.session.close()
+
+    def remove_ip_ospf_hello_interval(self, int_vlan):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"int vlan {int_vlan}")
+        self.session.send_cmd(f"no ip ospf hello-interval")
+        print(f"The hello-interval has been removed from DUT {self.ip_session}")
+        self.session.send_cmd("exit")
+        output = self.session.read()
+        # print(output)
+
+        self.session.close()
+
     def show_ospf_neighbors(self):
 
         dict_of_ospf_neighbors = {}
@@ -432,14 +458,14 @@ class OSPF:
 
         }
 
-        list_ospf_neigbors = list()
+        list_ospf_neighbors = list()
 
         self.session.connect()
         self.session.send_cmd("show ip ospf neighbor")
         output = self.session.read()
         # print(output)
 
-        match = re.findall(r"(\d+.\d+.\d+.\d+)\s+(\d+)\s+(\w+/\w+)\s+(\d+)\s+(\d+.\d+.\d+.\d+)\s+([\w\d]+)", output)
+        match = re.findall(r"(\d+.\d+.\d+.\d+)\s+(\d+)\s+(\w+/\w+)\s+(\d+)\s+(\d+.\d+.\d+.\d+)\s+([\w\d/]+)", output)
         # print(match)
 
         for attribute in match:
@@ -450,13 +476,41 @@ class OSPF:
 
                 d[key] = value
 
-            list_ospf_neigbors.append(d)
+            list_ospf_neighbors.append(d)
             dict_of_ospf_neighbors[d["Neighbor-ID"]] = d
-        # print(list_ospf_neigbors)
+        # print(list_ospf_neighbors)
 
         self.session.close()
 
-        return list_ospf_neigbors, dict_of_ospf_neighbors
+        return list_ospf_neighbors, dict_of_ospf_neighbors
+
+    def show_run_ospf_key(self):
+
+        dict_key = {}
+        dict_of_keys = {}
+        self.session.connect()
+        self.session.send_cmd("show run ospf")
+        output = self.session.read()
+        # print(output)
+
+        match = re.findall(r'ip ospf message-digest-key\s+(\d)+\s+([shamd5\S\d]+)([\s\w]+)', output)
+        print(match)
+        # print(len(match[0][2]))
+        # key_text = match[0][2]
+
+        for item in range(len(match)):
+
+            dict_key[f"key {match[item][0]}"] = match[item][0]
+            dict_key["Authentication"] = match[item][1]
+            dict_key["key_Text"] = match[item][2]
+
+            dict_of_keys[f"key {match[item][0]}"] = dict_key
+            dict_key = {}
+
+        # print(dict_of_keys)
+        self.session.close()
+
+        return dict_key, dict_of_keys
 
     def show_ospf_database(self, database=None):
 
@@ -639,6 +693,37 @@ class OSPF:
         return list_ospf_database_router, list_ospf_database_network, \
                list_ospf_database_summary, list_ospf_database_asbr, \
                list_ospf_database_nssa, list_ospf_database_external
+
+    def show_ip_route_ospf(self):
+
+        dict_ospf_routes = {}
+
+        self.session.connect()
+        self.session.send_cmd(cmd="show ip route ospf")
+        self.session.send_cmd(cmd="exit")
+        output = self.session.read()
+        # print(output)
+
+        match = re.findall(r"(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3})/(\d{1,2})\s+\S(\d{1,3})/(\d+)\S\s+via\s+(\d{1,3}.\d{1,3}.\d{1,3}.\d{1,3})", output)
+        # print(match)
+
+        for item in match:
+
+            dict_ospf_route = {}
+
+            dict_ospf_route["Network"] = item[0]
+            dict_ospf_route["Mask"] = item[1]
+            dict_ospf_route["AD"] = item[2]
+            dict_ospf_route["Metric"] = item[3]
+            dict_ospf_route["Learned From"] = item[4]
+
+            # print(dict_rip_route)
+            dict_ospf_routes[item[0]] = dict_ospf_route
+
+        # print(dict_ospf_routes)
+        self.session.close()
+
+        return dict_ospf_routes
 
 
 ip = "10.2.109.238"

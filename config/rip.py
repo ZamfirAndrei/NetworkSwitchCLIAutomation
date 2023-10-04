@@ -638,7 +638,7 @@ class RIP:
             # print(dict_rip_route)
             dict_rip_routes[item[0]] = dict_rip_route
 
-        print(dict_rip_routes)
+        # print(dict_rip_routes)
         self.session.close()
 
         return dict_rip_routes

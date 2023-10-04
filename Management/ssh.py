@@ -9,7 +9,7 @@ import time
 
 class SSH:
 
-    # Functia de initializare in care  initializez variabilele ssh si ip. Pe acestea le voi utilia in
+    # Functia de initializare in care  initializez variabilele ssh si ip. Pe acestea le voi utiliza in
     # functiile de mai jos
 
     def __init__(self, ip):
