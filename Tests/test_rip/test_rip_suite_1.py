@@ -288,7 +288,7 @@ class TestRIPSuite1:
         time.sleep(30)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
-        # print(dict_rip_routes_1)
+        print(dict_rip_routes_1)
 
         assert "15.0.0.0" in dict_rip_routes_1.keys()
         assert "16.0.0.0" in dict_rip_routes_1.keys()
@@ -304,7 +304,7 @@ class TestRIPSuite1:
         time.sleep(30)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
-        # print(dict_rip_routes_1)
+        print(dict_rip_routes_1)
 
         assert "15.0.0.0" not in dict_rip_routes_1.keys()
         assert "16.0.0.0" not in dict_rip_routes_1.keys()
@@ -374,7 +374,7 @@ class TestRIPSuite1:
         time.sleep(30)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
-        # print(dict_rip_routes_1)
+        print(dict_rip_routes_1)
 
         assert "15.0.0.0" in dict_rip_routes_1.keys()
         assert "100.0.0.0" in dict_rip_routes_1.keys()
@@ -389,7 +389,7 @@ class TestRIPSuite1:
         time.sleep(30)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
-        # print(dict_rip_routes_1)
+        print(dict_rip_routes_1)
 
         assert "15.0.0.0" in dict_rip_routes_1.keys()
         assert "100.0.0.0" not in dict_rip_routes_1.keys()
@@ -646,7 +646,7 @@ class TestRIPSuite1:
         time.sleep(45)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
-        # print(dict_rip_routes_1)
+        print(dict_rip_routes_1)
 
         assert "15.0.0.0" not in dict_rip_routes_1.keys()
 
@@ -660,7 +660,7 @@ class TestRIPSuite1:
         time.sleep(45)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
-        # print(dict_rip_routes_1)
+        print(dict_rip_routes_1)
 
         assert "15.0.0.0" in dict_rip_routes_1.keys()
 
@@ -853,7 +853,7 @@ class TestRIPSuite1:
         time.sleep(45)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
-        # print(dict_rip_routes_1)
+        print(dict_rip_routes_1)
         dict_of_int_vlans_authentication_2 = DUT2.rip.show_ip_rip_authentication()
         dict_of_int_vlans_authentication_1 = DUT1.rip.show_ip_rip_authentication()
         print(dict_of_int_vlans_authentication_2)
@@ -873,7 +873,7 @@ class TestRIPSuite1:
         time.sleep(30)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
-        # print(dict_rip_routes_1)
+        print(dict_rip_routes_1)
         dict_of_int_vlans_authentication_2 = DUT2.rip.show_ip_rip_authentication()
         dict_of_int_vlans_authentication_1 = DUT1.rip.show_ip_rip_authentication()
         print(dict_of_int_vlans_authentication_2)
@@ -968,7 +968,7 @@ class TestRIPSuite1:
         time.sleep(45)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
-        # print(dict_rip_routes_1)
+        print(dict_rip_routes_1)
         dict_of_int_vlans_authentication_2 = DUT2.rip.show_ip_rip_authentication()
         dict_of_int_vlans_authentication_1 = DUT1.rip.show_ip_rip_authentication()
         print(dict_of_int_vlans_authentication_2)
@@ -989,7 +989,7 @@ class TestRIPSuite1:
         time.sleep(30)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
-        # print(dict_rip_routes_1)
+        print(dict_rip_routes_1)
         dict_of_int_vlans_authentication_2 = DUT2.rip.show_ip_rip_authentication()
         dict_of_int_vlans_authentication_1 = DUT1.rip.show_ip_rip_authentication()
         print(dict_of_int_vlans_authentication_2)
@@ -1011,7 +1011,7 @@ class TestRIPSuite1:
         time.sleep(35)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
-        # print(dict_rip_routes_1)
+        print(dict_rip_routes_1)
         dict_of_int_vlans_authentication_2 = DUT2.rip.show_ip_rip_authentication()
         dict_of_int_vlans_authentication_1 = DUT1.rip.show_ip_rip_authentication()
         print(dict_of_int_vlans_authentication_2)
@@ -1084,7 +1084,7 @@ class TestRIPSuite1:
         time.sleep(45)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
-        # print(dict_rip_routes_1)
+        print(dict_rip_routes_1)
         dict_of_int_vlans_authentication_2 = DUT2.rip.show_ip_rip_authentication()
         dict_of_int_vlans_authentication_1 = DUT1.rip.show_ip_rip_authentication()
         print(dict_of_int_vlans_authentication_2)
@@ -1104,7 +1104,7 @@ class TestRIPSuite1:
         time.sleep(30)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
-        # print(dict_rip_routes_1)
+        print(dict_rip_routes_1)
         dict_of_int_vlans_authentication_2 = DUT2.rip.show_ip_rip_authentication()
         dict_of_int_vlans_authentication_1 = DUT1.rip.show_ip_rip_authentication()
         print(dict_of_int_vlans_authentication_2)
@@ -1126,7 +1126,7 @@ class TestRIPSuite1:
         time.sleep(35)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
-        # print(dict_rip_routes_1)
+        print(dict_rip_routes_1)
         dict_of_int_vlans_authentication_2 = DUT2.rip.show_ip_rip_authentication()
         dict_of_int_vlans_authentication_1 = DUT1.rip.show_ip_rip_authentication()
         print(dict_of_int_vlans_authentication_2)
@@ -1219,7 +1219,7 @@ class TestRIPSuite1:
         time.sleep(30)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
-        # print(dict_rip_routes_1)
+        print(dict_rip_routes_1)
         dict_of_int_vlans_authentication_2 = DUT2.rip.show_ip_rip_authentication()
         dict_of_int_vlans_authentication_1 = DUT1.rip.show_ip_rip_authentication()
         print(dict_of_int_vlans_authentication_2)
@@ -1241,7 +1241,7 @@ class TestRIPSuite1:
         time.sleep(35)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
-        # print(dict_rip_routes_1)
+        print(dict_rip_routes_1)
         dict_of_int_vlans_authentication_2 = DUT2.rip.show_ip_rip_authentication()
         dict_of_int_vlans_authentication_1 = DUT1.rip.show_ip_rip_authentication()
         print(dict_of_int_vlans_authentication_2)
@@ -1315,7 +1315,7 @@ class TestRIPSuite1:
         time.sleep(35)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
-        # print(dict_rip_routes_1)
+        print(dict_rip_routes_1)
         dict_of_int_vlans_authentication_2 = DUT2.rip.show_ip_rip_authentication()
         dict_of_int_vlans_authentication_1 = DUT1.rip.show_ip_rip_authentication()
         print(dict_of_int_vlans_authentication_2)
@@ -1336,7 +1336,7 @@ class TestRIPSuite1:
         time.sleep(30)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
-        # print(dict_rip_routes_1)
+        print(dict_rip_routes_1)
         dict_of_int_vlans_authentication_2 = DUT2.rip.show_ip_rip_authentication()
         dict_of_int_vlans_authentication_1 = DUT1.rip.show_ip_rip_authentication()
         print(dict_of_int_vlans_authentication_2)
@@ -1358,7 +1358,7 @@ class TestRIPSuite1:
         time.sleep(35)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
-        # print(dict_rip_routes_1)
+        print(dict_rip_routes_1)
         dict_of_int_vlans_authentication_2 = DUT2.rip.show_ip_rip_authentication()
         dict_of_int_vlans_authentication_1 = DUT1.rip.show_ip_rip_authentication()
         print(dict_of_int_vlans_authentication_2)
@@ -1380,7 +1380,7 @@ class TestRIPSuite1:
         time.sleep(35)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
-        # print(dict_rip_routes_1)
+        print(dict_rip_routes_1)
         dict_of_int_vlans_authentication_2 = DUT2.rip.show_ip_rip_authentication()
         dict_of_int_vlans_authentication_1 = DUT1.rip.show_ip_rip_authentication()
         print(dict_of_int_vlans_authentication_2)
@@ -1475,6 +1475,7 @@ class TestRIPSuite1:
         dict_rip_routes_2 = DUT2.rip.show_ip_route_rip()
         dict_rip_routes_3 = DUT3.rip.show_ip_route_rip()
         # print(dict_rip_routes_1["15.0.0.0"]["Learned From"])
+        print(dict_rip_routes_1)
 
         # Check if the routes are learned and instaled in RIP routes
 
@@ -1572,6 +1573,7 @@ class TestRIPSuite1:
         time.sleep(45)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
+        print(dict_rip_routes_1)
 
         assert "15.0.0.0" in dict_rip_routes_1.keys() and "12.0.0.0" in dict_rip_routes_1.keys() # Trb "in" in loc de "not in"
 
@@ -1582,6 +1584,7 @@ class TestRIPSuite1:
         time.sleep(45)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
+        print(dict_rip_routes_1)
 
         assert "15.0.0.0" in dict_rip_routes_1.keys() and "12.0.0.0" in dict_rip_routes_1.keys()
 
@@ -1662,7 +1665,7 @@ class TestRIPSuite1:
         time.sleep(45)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
-        # print(dict_rip_routes_1)
+        print(dict_rip_routes_1)
 
         assert "15.0.0.0" in dict_rip_routes_1.keys()
         assert "100.0.0.0" in dict_rip_routes_1.keys()
@@ -1677,7 +1680,7 @@ class TestRIPSuite1:
         time.sleep(30)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
-        # print(dict_rip_routes_1)
+        print(dict_rip_routes_1)
 
         if len(dict_rip_routes_1.keys()) == 0:
             assert True
@@ -1778,7 +1781,7 @@ class TestRIPSuite1:
         time.sleep(45)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
-        # print(dict_rip_routes_1)
+        print(dict_rip_routes_1)
 
         assert "15.0.0.0" in dict_rip_routes_1.keys()
         assert "12.0.0.0" in dict_rip_routes_1.keys()
@@ -1795,7 +1798,7 @@ class TestRIPSuite1:
         time.sleep(30)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
-        # print(dict_rip_routes_1)
+        print(dict_rip_routes_1)
 
         if len(dict_rip_routes_1.keys()) == 0:
             assert True
@@ -1871,6 +1874,7 @@ class TestRIPSuite1:
         # Shut the in vlan between the DUTs. Check the route is present in the Routing Table
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
+        print(dict_rip_routes_1)
         assert "15.0.0.0" in dict_rip_routes_1.keys()
 
         DUT2.ip.shut_int_vlan(int_vlan="20")
@@ -1881,6 +1885,8 @@ class TestRIPSuite1:
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
         match_total_count, dict_of_auto_summary, dict_of_directly_connected, dict_of_via = DUT1.rip.show_rip_database()
+        print(dict_rip_routes_1)
+        print(dict_of_via)
 
         assert "15.0.0.0" not in dict_rip_routes_1.keys()
         assert "15.0.0.0" in dict_of_via.keys() and dict_of_via["15.0.0.0"]["Metric"] == "16"
@@ -1891,6 +1897,8 @@ class TestRIPSuite1:
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
         match_total_count, dict_of_auto_summary, dict_of_directly_connected, dict_of_via = DUT1.rip.show_rip_database()
+        print(dict_rip_routes_1)
+        print(dict_of_via)
 
         assert "15.0.0.0" not in dict_rip_routes_1.keys()
         assert "15.0.0.0" not in dict_of_via.keys()
@@ -1908,6 +1916,7 @@ class TestRIPSuite1:
         time.sleep(20)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
+        print(dict_rip_routes_1)
         assert "15.0.0.0" in dict_rip_routes_1.keys()
 
         DUT2.ip.shut_int_vlan(int_vlan="20")
@@ -1918,6 +1927,8 @@ class TestRIPSuite1:
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
         match_total_count, dict_of_auto_summary, dict_of_directly_connected, dict_of_via = DUT1.rip.show_rip_database()
+        print(dict_rip_routes_1)
+        print(dict_of_via)
 
         assert "15.0.0.0" not in dict_rip_routes_1.keys()
         assert "15.0.0.0" in dict_of_via.keys() and dict_of_via["15.0.0.0"]["Metric"] == "16"
@@ -1928,6 +1939,8 @@ class TestRIPSuite1:
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
         match_total_count, dict_of_auto_summary, dict_of_directly_connected, dict_of_via = DUT1.rip.show_rip_database()
+        print(dict_rip_routes_1)
+        print(dict_of_via)
 
         assert "15.0.0.0" not in dict_rip_routes_1.keys()
         assert "15.0.0.0" not in dict_of_via.keys()
@@ -1990,7 +2003,7 @@ class TestRIPSuite1:
         time.sleep(60)
 
         dict_rip_statistics = DUT1.rip.show_ip_rip_statistics()
-
+        print(dict_rip_statistics)
         # The number should be 2 (30sx2)
 
         assert dict_rip_statistics["20.0.0.2"]["Updates Sent"] == "3"  # 2 in 60s + 1 that is sent after 60s
@@ -2006,7 +2019,7 @@ class TestRIPSuite1:
         time.sleep(53)
 
         dict_rip_statistics = DUT1.rip.show_ip_rip_statistics()
-
+        print(dict_rip_statistics)
         # The number should be 6 (10sx6)
 
         assert dict_rip_statistics["20.0.0.2"]["Updates Sent"] == "7"  # 6 in 60s + 1 that is sent after 60s
