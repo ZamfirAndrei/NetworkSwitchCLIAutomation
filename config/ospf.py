@@ -110,8 +110,8 @@ class OSPF:
 
         # time.sleep(2)
         output = self.session.read()
-        print(output)
-        # self.session.close()
+        # print(output)
+        self.session.close()
 
     def redistribute_static(self, metric_type=None,metric=None):
 
@@ -141,7 +141,7 @@ class OSPF:
 
         self.session.send_cmd("exit")
         output = self.session.read()
-        print(output)
+        # print(output)
         self.session.close()
 
     def redistribute_all(self, metric_type=None):
@@ -156,7 +156,7 @@ class OSPF:
             self.session.send_cmd(f"redistribute all metric-type {metric_type}")
         self.session.send_cmd("exit")
         print("All routes have been redistributed into ospf process")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 
@@ -172,7 +172,7 @@ class OSPF:
             self.session.send_cmd(f"redistribute rip metric-type {metric_type}")
         self.session.send_cmd("exit")
         print("RIP routes have been redistributed into ospf process")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 
@@ -184,7 +184,7 @@ class OSPF:
         self.session.send_cmd("no redistribute connected")
         self.session.send_cmd("exit")
         print("The connected networks have been removed from ospf process")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 
@@ -196,7 +196,7 @@ class OSPF:
         self.session.send_cmd("no redistribute static")
         self.session.send_cmd("exit")
         print("The static routes have been removed from ospf process")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 
@@ -208,7 +208,7 @@ class OSPF:
         self.session.send_cmd("no redistribute all")
         self.session.send_cmd("exit")
         print("All routes have been removed from ospf process")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 
@@ -220,7 +220,7 @@ class OSPF:
         self.session.send_cmd("no redistribute rip")
         self.session.send_cmd("exit")
         print("RIP routes have been removed from ospf process")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 
@@ -233,7 +233,7 @@ class OSPF:
         self.session.send_cmd("exit")
         # time.sleep(2)
         print("Router-id has been configured")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 
@@ -245,7 +245,7 @@ class OSPF:
         self.session.send_cmd(f"no router-id")
         self.session.send_cmd("exit")
         print("Router-id has been removed")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 
@@ -257,7 +257,7 @@ class OSPF:
         self.session.send_cmd(f"area {area} nssa")
         self.session.send_cmd("exit")
         print("The nssa area has been created")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 
@@ -269,7 +269,7 @@ class OSPF:
         self.session.send_cmd(f"no area {area} nssa")
         self.session.send_cmd("exit")
         print("The nssa area has been removed")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 
@@ -288,7 +288,7 @@ class OSPF:
             self.session.send_cmd(f"passive-interface vlan {vlan}")
         self.session.send_cmd("exit")
         print("The passive-interface has been created")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 
@@ -307,19 +307,36 @@ class OSPF:
             self.session.send_cmd(f"no passive-interface vlan {vlan}")
         self.session.send_cmd("exit")
         print("The passive-interface has been removed")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 
-    def redist_config(self, network, network_mask, metric_type=None, metric_value=None, tag =None):
+    def redist_config(self, network, network_mask, metric_type=None, metric_value=None, tag=None):
 
         self.session.connect()
         self.session.send_cmd("conf t")
         self.session.send_cmd("router ospf")
-        self.session.send_cmd(f"redist-config {network} {network_mask} tag {tag}")
+
+        if metric_type is None and metric_value is None and tag is None:
+
+            self.session.send_cmd(f"redist-config {network} {network_mask}")
+            print(f"The network {network} has been redistributed")
+
+        if metric_value is not None:
+
+            self.session.send_cmd(f"redist-config {network} {network_mask} metric-value {metric_value}")
+            print(f"The network {network} has been redistributed with the metric-value {metric_value}")
+
+        if tag is not None:
+            self.session.send_cmd(f"redist-config {network} {network_mask} tag {tag}")
+            print(f"The network {network} has been redistributed with the tag {tag}")
+
+        if metric_type is not None:
+            self.session.send_cmd(f"redist-config {network} {network_mask} metric-type {metric_type}")
+            print(f"The network {network} has been redistributed with the metric-type {metric_type}")
+
         self.session.send_cmd("exit")
-        print(f"The network {network} has been redistributed with the tag {tag}")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 
@@ -331,7 +348,7 @@ class OSPF:
         self.session.send_cmd(f"no redist-config {network} {network_mask}")
         self.session.send_cmd("exit")
         print(f"The network {network} with the tag {tag} has been removed from redistribution")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 
@@ -512,15 +529,15 @@ class OSPF:
 
         return dict_key, dict_of_keys
 
-    def show_ospf_database(self, database=None):
+    def show_ip_ospf_database(self, database=None):
 
-        list_ospf_database = list()
-        list_ospf_database_router = list()
-        list_ospf_database_network = list()
-        list_ospf_database_summary = list()
-        list_ospf_database_asbr = list()
-        list_ospf_database_nssa = list()
-        list_ospf_database_external = list()
+        # list_ospf_database = list()
+        dict_ospf_database_router = dict()
+        dict_ospf_database_network = dict()
+        dict_ospf_database_summary = dict()
+        dict_ospf_database_asbr = dict()
+        dict_ospf_database_nssa = dict()
+        dict_ospf_database_external = dict()
 
         self.session.connect()
         self.session.send_cmd("conf t")
@@ -536,9 +553,9 @@ class OSPF:
             link_state_id = re.findall(r"Link State ID\s+:\s+(\d+.\d+.\d+.\d+)", output)
             adv_router = re.findall(r"Advertising Router\s+:\s+(\d+.\d+.\d+.\d+)", output)
 
-            print(area)
-            print(link_state_id)
-            print(adv_router)
+            # print(area)
+            # print(link_state_id)
+            # print(adv_router)
 
             d = {}
 
@@ -549,10 +566,10 @@ class OSPF:
                 d["Advertising Router"] = adv
 
                 # print(d)
-                list_ospf_database_router.append(d)
+                dict_ospf_database_router[id] = d
                 d = {}
 
-            print(list_ospf_database_router)
+            # print(dict_ospf_database_router)
 
         elif database == "network":
 
@@ -564,9 +581,9 @@ class OSPF:
             link_state_id = re.findall(r"Link State ID\s+:\s+(\d+.\d+.\d+.\d+)", output)
             adv_router = re.findall(r"Advertising Router\s+:\s+(\d+.\d+.\d+.\d+)", output)
 
-            print(area)
-            print(link_state_id)
-            print(adv_router)
+            # print(area)
+            # print(link_state_id)
+            # print(adv_router)
 
             d = {}
 
@@ -577,10 +594,10 @@ class OSPF:
                 d["Advertising Router"] = adv
 
                 # print(d)
-                list_ospf_database_network.append(d)
+                dict_ospf_database_network[id] = d
                 d = {}
 
-            print(list_ospf_database_network)
+            # print(dict_ospf_database_network)
 
         elif database == "summary":
 
@@ -592,9 +609,9 @@ class OSPF:
             link_state_id = re.findall(r"Link State ID\s+:\s+(\d+.\d+.\d+.\d+)", output)
             adv_router = re.findall(r"Advertising Router\s+:\s+(\d+.\d+.\d+.\d+)", output)
 
-            print(area)
-            print(link_state_id)
-            print(adv_router)
+            # print(area)
+            # print(link_state_id)
+            # print(adv_router)
 
             d = {}
 
@@ -605,10 +622,10 @@ class OSPF:
                 d["Advertising Router"] = adv
 
                 # print(d)
-                list_ospf_database_summary.append(d)
+                dict_ospf_database_summary[id] = d
                 d = {}
 
-            print(list_ospf_database_summary)
+            # print(dict_ospf_database_summary)
 
         elif database == "asbr":
 
@@ -617,15 +634,15 @@ class OSPF:
             # print(output)
 
             router_id = re.findall(r"Router with ID\s+\S(\d+.\d+.\d+.\d+)", output)
-            print(router_id)
+            # print(router_id)
 
             d = {}
 
             d["Router ID"] = router_id[0]
             # print(d)
-            list_ospf_database_asbr.append(d)
+            dict_ospf_database_asbr[router_id[0]] = d
 
-            print(list_ospf_database_asbr)
+            # print(dict_ospf_database_asbr)
 
         elif database == "nssa":
 
@@ -637,9 +654,9 @@ class OSPF:
             link_state_id = re.findall(r"Link State ID\s+:\s+(\d+.\d+.\d+.\d+)", output)
             adv_router = re.findall(r"Advertising Router\s+:\s+(\d+.\d+.\d+.\d+)", output)
 
-            print(area)
-            print(link_state_id)
-            print(adv_router)
+            # print(area)
+            # print(link_state_id)
+            # print(adv_router)
 
             d = {}
 
@@ -650,10 +667,10 @@ class OSPF:
                 d["Advertising Router"] = adv
 
                 # print(d)
-                list_ospf_database_nssa.append(d)
+                dict_ospf_database_nssa[id] = d
                 d = {}
 
-            print(list_ospf_database_nssa)
+            # print(dict_ospf_database_nssa)
 
         elif database == "external":
 
@@ -666,8 +683,8 @@ class OSPF:
             adv_router = re.findall(r"Advertising Router\s+:\s+(\d+.\d+.\d+.\d+)", output)
 
 
-            print(link_state_id)
-            print(adv_router)
+            # print(link_state_id)
+            # print(adv_router)
 
             d = {}
 
@@ -677,10 +694,10 @@ class OSPF:
                 d["Advertising Router"] = adv
 
                 # print(d)
-                list_ospf_database_external.append(d)
+                dict_ospf_database_external[id] = d
                 d = {}
 
-            print(list_ospf_database_external)
+            # print(dict_ospf_database_external)
 
         else:
 
@@ -690,9 +707,9 @@ class OSPF:
 
         self.session.close()
 
-        return list_ospf_database_router, list_ospf_database_network, \
-               list_ospf_database_summary, list_ospf_database_asbr, \
-               list_ospf_database_nssa, list_ospf_database_external
+        return dict_ospf_database_router, dict_ospf_database_network, \
+               dict_ospf_database_summary, dict_ospf_database_asbr, \
+               dict_ospf_database_nssa, dict_ospf_database_external
 
     def show_ip_route_ospf(self):
 

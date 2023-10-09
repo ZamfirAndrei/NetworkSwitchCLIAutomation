@@ -427,7 +427,7 @@ class IP:
                 print(f"The static route for {network_dest} with next hope {next_hop}was removed succesfully from DUT {self.ip_session}")
         self.session.close()
 
-    def show_ip_route(self,network = None):
+    def show_ip_route(self, network = None):
 
         output = ""
 
@@ -521,7 +521,7 @@ class IP:
             if "is directly connected" not in output:
 
                 match = re.findall(r"([SRO\sIANE12]+)\s+(\d+.\d+.\d+.\d+)/(\d+)\s+\S(\d+)/(\d+)\S via (\d+.\d+.\d+.\d+)",output)
-                # print(match)
+                print(match)
 
                 ip_route["Protocol"] = match[1][0]
                 ip_route["Network"] = match[1][1]
@@ -546,6 +546,46 @@ class IP:
         self.session.close()
 
         return ip_route, networks, networks_connected, dict_of_networks
+
+    def show_ip_route_tag(self, network):
+
+        ip_route = {}
+        self.session.connect()
+        self.session.send_cmd(f"show ip route {network}")
+        output = self.session.read()
+        # print(output)
+
+        if "is directly connected" not in output:
+
+            match = re.findall(r"([SRO\sIANE12]+)\s+(\d+.\d+.\d+.\d+)/(\d+)\s+\S(\d+)/(\d+)\S via (\d+.\d+.\d+.\d+)\S+Known\s+via\s+OSPF,\s+tag\s+(\d+)", output)
+            # print(match)
+
+            ip_route["Protocol"] = match[0][0]
+            ip_route["Network"] = match[0][1]
+            ip_route["Mask"] = match[0][2]
+            ip_route["AD"] = match[0][3]
+            ip_route["Metric"] = match[0][4]
+            ip_route["Next Hop"] = match[0][5]
+            ip_route["Route Tag"] = match[0][6]
+
+            # print(ip_route)
+
+        else:
+
+            match = re.findall(r"(C)\s(\d+.\d+.\d+.\d+)/(\d+)\s+is (directly connected), ([\w/\d]+)\S+Redistributed\s+via\s+OSPF,\s+tag\s+(\d+)", output)
+            # print(match)
+
+            ip_route["Protocol"] = match[0][0]
+            ip_route["Network"] = match[0][1]
+            ip_route["Mask"] = match[0][2]
+            ip_route["Vlan/Port"] = match[0][4]
+            ip_route["Route Tag"] = match[0][5]
+
+            # print(ip_route)
+
+        self.session.close()
+
+        return ip_route
 
 
 ip = "10.2.109.238"

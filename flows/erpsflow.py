@@ -95,14 +95,6 @@ class ERPSFlow:
 
         print("Successfully asserting")
 
-    def assert_ports_status_after_shutting_down_a_ring_port(self, d_ports_after_shut):
-
-        print(d_ports_after_shut)
-        assert d_ports_after_shut['Port 1']['MEP Status'] == "Failed"
-        assert d_ports_after_shut['Port 2']['MEP Status'] == "Ok"
-
-        print("Successfully asserting")
-
     def assert_rpl_port(self, configured_rpl_port, rpl_port):
         print(rpl_port)
         if rpl_port != "There is no RPL Port":

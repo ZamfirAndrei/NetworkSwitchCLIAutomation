@@ -1864,9 +1864,18 @@ class TestOSPFSuite1:
         time.sleep(45)
 
         dict_ospf_routes_1 = DUT1.ospf.show_ip_route_ospf()
-        print(dict_ospf_routes_1)
+        dict_ospf_routes_2 = DUT2.ospf.show_ip_route_ospf()
+        dict_ospf_routes_3 = DUT3.ospf.show_ip_route_ospf()
 
-        assert "15.0.0.0" in dict_ospf_routes_1.keys() and "12.0.0.0" in dict_ospf_routes_1.keys()  # Trb "in" in loc de "not in"
+        print(dict_ospf_routes_1)
+        print(dict_ospf_routes_2)
+        print(dict_ospf_routes_3)
+
+        # Check if the routes are learned and installed in OSPF routes
+
+        assert "15.0.0.0" in dict_ospf_routes_1.keys() and "12.0.0.0" in dict_ospf_routes_1.keys() # Trb "in" in loc de "not in"
+        assert "13.0.0.0" in dict_ospf_routes_2.keys()
+        assert "15.0.0.0" in dict_ospf_routes_3.keys()
 
         # No shut the port on DUT1 and check that RIP routes are not missing
 
@@ -1875,9 +1884,18 @@ class TestOSPFSuite1:
         time.sleep(45)
 
         dict_ospf_routes_1 = DUT1.ospf.show_ip_route_ospf()
-        print(dict_ospf_routes_1)
+        dict_ospf_routes_2 = DUT2.ospf.show_ip_route_ospf()
+        dict_ospf_routes_3 = DUT3.ospf.show_ip_route_ospf()
 
-        assert "15.0.0.0" in dict_ospf_routes_1.keys() and "12.0.0.0" in dict_ospf_routes_1.keys()
+        print(dict_ospf_routes_1)
+        print(dict_ospf_routes_2)
+        print(dict_ospf_routes_3)
+
+        # Check if the routes are learned and installed in OSPF routes
+
+        assert "15.0.0.0" in dict_ospf_routes_1.keys() and "12.0.0.0" in dict_ospf_routes_1.keys()  # Trb "in" in loc de "not in"
+        assert "13.0.0.0" in dict_ospf_routes_2.keys()
+        assert "15.0.0.0" in dict_ospf_routes_3.keys()
 
         print("########## Removing the config #############")
 
@@ -2111,3 +2129,156 @@ class TestOSPFSuite1:
         DUT2.int.shut_interfaces("Gi 0/5")
         DUT3.int.shut_interfaces("Gi 0/3", "Gi 0/10", "Gi 0/11")
         DUT4.int.shut_interfaces("Gi 0/11")
+
+    def test_func_21(self):
+
+        # LOKI-1457 : OSPF - ip route is not showing info about the redist-config tag command
+
+        print("###### Test_func_21 ######")
+        print("########## Verify that you can redist-config a network with route Tag  #############")
+        print("###### 2 DUTs ######")
+
+        DUT1.int.no_shut_interfaces("Ex 0/1")
+        DUT2.int.no_shut_interfaces("Gi 0/5", "Gi 0/9")
+
+        # Adding the ports to the VLAN
+
+        DUT1.vl.add_ports_to_vlan(ports="Ex 0/1", vlan="20")
+
+        DUT2.vl.add_ports_to_vlan(ports="Gi 0/5", vlan="15")
+        DUT2.vl.add_ports_to_vlan(ports="Gi 0/9", vlan="20")
+
+        # Create IP interfaces on all DUTs for the specific VLANs
+
+        DUT1.ip.add_ip_interfaces("20", int_vlan20=["20.0.0.2", "255.255.255.0"])
+        DUT1.ip.no_shut_int_vlans("20")
+
+        DUT2.ip.add_ip_interfaces("20", "15", int_vlan20=["20.0.0.1", "255.255.255.0"],
+                                  int_vlan15=["15.0.0.1", "255.255.255.0"])
+        DUT2.ip.no_shut_int_vlans("15", "20")
+
+        # Enable ospf on all DUTs and advertise the IPs
+
+        DUT1.ospf.enable_ospf()
+        DUT2.ospf.enable_ospf()
+
+        DUT1.ospf.advertise_networks(int_vlan20=["20.0.0.2", "0.0.0.0"])
+        DUT2.ospf.advertise_networks(int_vlan20=["20.0.0.1", "0.0.0.0"])
+
+        # Redistribute connected so that DUT2 is an ASBR
+
+        DUT2.ospf.redistribute_connected()
+
+        # Redist-config the network with a Route Tag
+
+        DUT2.ospf.redist_config(network="15.0.0.0", network_mask="255.255.255.0", tag="150")
+
+        time.sleep(45)
+
+        ip_route_1 = DUT1.ip.show_ip_route_tag(network="15.0.0.0")
+        print(ip_route_1)
+
+        ip_route_2 = DUT2.ip.show_ip_route_tag(network="15.0.0.0")
+        print(ip_route_2)
+
+        assert ip_route_1["Network"] == "15.0.0.0" and ip_route_1["Route Tag"] == "150" and ip_route_1["Protocol"] == "O E2"
+        assert ip_route_2["Network"] == "15.0.0.0" and ip_route_2["Route Tag"] == "150" and ip_route_2["Protocol"] == "C"
+
+        # Configure another Route Tag, and change the metric and metric-type
+
+        DUT2.ospf.redist_config(network="15.0.0.0", network_mask="255.255.255.0", tag="200", metric_type="asExttype1", metric_value="1000")
+
+        time.sleep(10)
+
+        ip_route_1 = DUT1.ip.show_ip_route_tag(network="15.0.0.0")
+        print(ip_route_1)
+
+        ip_route_2 = DUT2.ip.show_ip_route_tag(network="15.0.0.0")
+        print(ip_route_2)
+
+        assert ip_route_1["Network"] == "15.0.0.0" and ip_route_1["Route Tag"] == "200" and ip_route_1["Protocol"] == "O E1" and ip_route_1["Metric"] == "1001"
+        assert ip_route_2["Network"] == "15.0.0.0" and ip_route_2["Route Tag"] == "200" and ip_route_2["Protocol"] == "C"
+
+        print("########## Removing the config #############")
+
+        DUT2.ospf.remove_redist_config(network="15.0.0.0", network_mask="255.255.255.0", tag="200")
+        DUT2.ospf.remove_redistribute_connected()
+
+        DUT1.ospf.remove_networks(int_vlan20=["20.0.0.2", "0.0.0.0"])
+        DUT2.ospf.remove_networks(int_vlan20=["20.0.0.1", "0.0.0.0"])
+
+        DUT1.ospf.disable_ospf()
+        DUT2.ospf.disable_ospf()
+
+        DUT1.ip.remove_int_vlan(int_vlan="20")
+        DUT2.ip.remove_vlan_interfaces("20", "15")
+
+        DUT1.int.shut_interface(interface="Ex 0/1")
+        DUT2.int.shut_interfaces("Gi 0/9", "Gi 0/5")
+
+        DUT1.vl.remove_vlan(vlan="20")
+        DUT2.vl.remove_vlans("20", "15")
+
+    def test_func_22(self):
+
+        print("###### Test_func_22 ######")
+        print("########## Verify if ABR sends TYPE 3 LSAs  #############")
+        print("###### 2 DUTs ######")
+
+        DUT1.int.no_shut_interfaces("Ex 0/1")
+        DUT2.int.no_shut_interfaces("Gi 0/5", "Gi 0/9")
+
+        # Adding the ports to the VLAN
+
+        DUT1.vl.add_ports_to_vlan(ports="Ex 0/1", vlan="20")
+
+        DUT2.vl.add_ports_to_vlan(ports="Gi 0/5", vlan="15")
+        DUT2.vl.add_ports_to_vlan(ports="Gi 0/9", vlan="20")
+
+        # Create IP interfaces on all DUTs for the specific VLANs
+
+        DUT1.ip.add_ip_interfaces("20", int_vlan20=["20.0.0.2", "255.255.255.0"])
+        DUT1.ip.no_shut_int_vlans("20")
+
+        DUT2.ip.add_ip_interfaces("20", "15", int_vlan20=["20.0.0.1", "255.255.255.0"],
+                                  int_vlan15=["15.0.0.1", "255.255.255.0"])
+        DUT2.ip.no_shut_int_vlans("15", "20")
+
+        # Enable ospf on all DUTs and advertise the IPs
+
+        DUT1.ospf.enable_ospf()
+        DUT2.ospf.enable_ospf()
+
+        DUT1.ospf.advertise_networks(int_vlan20=["20.0.0.2", "0.0.0.0"])
+        DUT2.ospf.advertise_networks(int_vlan20=["20.0.0.1", "0.0.0.0"], int_vlan15=["15.0.0.1", "0.0.0.1"])
+
+        # Check the OSPF database on DUT1 for LSA Type 3 (Summary Link States)
+
+        time.sleep(45)
+
+        dict_ospf_database_router, dict_ospf_database_network,dict_ospf_database_summary, dict_ospf_database_asbr, dict_ospf_database_nssa, dict_ospf_database_external = DUT1.ospf.show_ip_ospf_database(database="summary")
+
+        print(dict_ospf_database_summary)
+
+        ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route(network="15.0.0.0")
+        print(ip_route)
+
+        assert ip_route["Network"] == "15.0.0.0" and ip_route["Protocol"] == "O IA"
+        assert "15.0.0.0" in dict_ospf_database_summary.keys()
+
+        print("########## Removing the config #############")
+
+        DUT1.ospf.remove_networks(int_vlan20=["20.0.0.2", "0.0.0.0"])
+        DUT2.ospf.remove_networks(int_vlan20=["20.0.0.1", "0.0.0.0"], int_vlan15=["15.0.0.1", "0.0.0.1"])
+
+        DUT1.ospf.disable_ospf()
+        DUT2.ospf.disable_ospf()
+
+        DUT1.ip.remove_int_vlan(int_vlan="20")
+        DUT2.ip.remove_vlan_interfaces("20", "15")
+
+        DUT1.int.shut_interface(interface="Ex 0/1")
+        DUT2.int.shut_interfaces("Gi 0/9", "Gi 0/5")
+
+        DUT1.vl.remove_vlan(vlan="20")
+        DUT2.vl.remove_vlans("20", "15")

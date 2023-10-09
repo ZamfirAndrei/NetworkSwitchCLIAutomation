@@ -1573,9 +1573,16 @@ class TestRIPSuite1:
         time.sleep(45)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
+        dict_rip_routes_2 = DUT2.rip.show_ip_route_rip()
+        dict_rip_routes_3 = DUT3.rip.show_ip_route_rip()
+
         print(dict_rip_routes_1)
+        print(dict_rip_routes_2)
+        print(dict_rip_routes_3)
 
         assert "15.0.0.0" in dict_rip_routes_1.keys() and "12.0.0.0" in dict_rip_routes_1.keys() # Trb "in" in loc de "not in"
+        assert "13.0.0.0" in dict_rip_routes_2.keys()
+        assert "15.0.0.0" in dict_rip_routes_3.keys()
 
         # No shut the port on DUT1 and check that RIP routes are not missing
 
@@ -1584,9 +1591,16 @@ class TestRIPSuite1:
         time.sleep(45)
 
         dict_rip_routes_1 = DUT1.rip.show_ip_route_rip()
+        dict_rip_routes_2 = DUT2.rip.show_ip_route_rip()
+        dict_rip_routes_3 = DUT3.rip.show_ip_route_rip()
+
         print(dict_rip_routes_1)
+        print(dict_rip_routes_2)
+        print(dict_rip_routes_3)
 
         assert "15.0.0.0" in dict_rip_routes_1.keys() and "12.0.0.0" in dict_rip_routes_1.keys()
+        assert "13.0.0.0" in dict_rip_routes_2.keys()
+        assert "15.0.0.0" in dict_rip_routes_3.keys() and "14.0.0.0" in dict_rip_routes_3.keys()
 
         print("########## Removing the config #############")
 
