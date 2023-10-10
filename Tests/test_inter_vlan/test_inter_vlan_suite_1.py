@@ -417,93 +417,93 @@ class TestInterVlanRoutingSuite1:
         DUT3.ip.add_static_route(network_dest="20.0.0.0", mask_dest="255.255.255.0", next_hop="30.0.0.1")
         DUT3.ip.add_static_route(network_dest="20.0.0.0", mask_dest="255.255.255.0", next_hop="40.0.0.2",distance_metric="2")
 
-        # # Checking that the Static Routes are installed
-        #
-        # time.sleep(15)
-        #
-        # ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
-        # print(dict_of_networks)
-        #
-        # d_root_id, d_bridge_id, ports, dict_of_ports = DUT1.stp.show_spanning_tree_rstp()
-        # print(dict_of_ports)
-        #
-        # assert "15.0.0.0" in dict_of_networks and "30.0.0.0" in dict_of_networks
-        # assert dict_of_networks["15.0.0.0"]["Protocol"] == "S" and dict_of_networks["15.0.0.0"]["Next Hop"] == "20.0.0.1"
-        # assert dict_of_networks["30.0.0.0"]["Protocol"] == "S" and dict_of_networks["30.0.0.0"]["Next Hop"] == "20.0.0.1"
-        # assert "Ex0/1" in dict_of_ports and dict_of_ports["Ex0/1"]["Role"] == "Root"
-        #
-        # response = DUT1.ping.ping_more("15.0.0.1", "30.0.0.1")
-        #
-        # assert "15.0.0.1" in response and "30.0.0.1" in response
-        #
-        # # Change the cost of the port Ex 0/1 (the stp will change the role of the port to ALTN) so that the traffic will be redirected trough int vlan 40.
-        #
-        # DUT1.stp.add_rstp_port_cost(port="Ex 0/1", cost="50000")
-        #
-        # time.sleep(60)
-        #
-        # ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
-        # print(dict_of_networks)
-        #
-        # d_root_id, d_bridge_id, ports, dict_of_ports = DUT1.stp.show_spanning_tree_rstp()
-        # print(dict_of_ports)
-        #
-        # assert "15.0.0.0" in dict_of_networks and "30.0.0.0" in dict_of_networks
-        # assert dict_of_networks["15.0.0.0"]["Protocol"] == "S" and dict_of_networks["15.0.0.0"]["Next Hop"] == "40.0.0.1"
-        # assert dict_of_networks["30.0.0.0"]["Protocol"] == "S" and dict_of_networks["30.0.0.0"]["Next Hop"] == "40.0.0.1"
-        # assert "Ex0/1" in dict_of_ports and dict_of_ports["Ex0/1"]["Role"] == "Alternate"
-        #
-        # response = DUT1.ping.ping_more("15.0.0.1", "30.0.0.1")
-        #
-        # assert "15.0.0.1" in response and "30.0.0.1" in response
-        #
-        # # Remove to cost and check that the routes are back in the initial state
-        #
-        # DUT1.stp.remove_rstp_port_cost(port="Ex 0/1")
-        #
-        # time.sleep(60)
-        #
-        # ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
-        # print(dict_of_networks)
-        #
-        # d_root_id, d_bridge_id, ports, dict_of_ports = DUT1.stp.show_spanning_tree_rstp()
-        # print(dict_of_ports)
-        #
-        # assert "15.0.0.0" in dict_of_networks and "30.0.0.0" in dict_of_networks
-        # assert dict_of_networks["15.0.0.0"]["Protocol"] == "S" and dict_of_networks["15.0.0.0"]["Next Hop"] == "20.0.0.1"
-        # assert dict_of_networks["30.0.0.0"]["Protocol"] == "S" and dict_of_networks["30.0.0.0"]["Next Hop"] == "20.0.0.1"
-        # assert "Ex0/1" in dict_of_ports and dict_of_ports["Ex0/1"]["Role"] == "Root"
-        #
-        # response = DUT1.ping.ping_more("15.0.0.1", "30.0.0.1")
-        #
-        # assert "15.0.0.1" in response and "30.0.0.1" in response
-        #
-        # print("########## Removing the config from DUT #############")
-        #
-        # DUT1.ip.remove_static_route(network_dest="15.0.0.0", mask_dest="255.255.255.0", next_hop="20.0.0.1")
-        # DUT1.ip.remove_static_route(network_dest="15.0.0.0", mask_dest="255.255.255.0", next_hop="40.0.0.1")
-        # DUT1.ip.remove_static_route(network_dest="30.0.0.0", mask_dest="255.255.255.0", next_hop="20.0.0.1")
-        # DUT1.ip.remove_static_route(network_dest="30.0.0.0", mask_dest="255.255.255.0", next_hop="40.0.0.1")
-        #
-        # DUT2.ip.remove_static_route(network_dest="40.0.0.0", mask_dest="255.255.255.0", next_hop="20.0.0.2")
-        # DUT2.ip.remove_static_route(network_dest="40.0.0.0", mask_dest="255.255.255.0", next_hop="30.0.0.2")
-        #
-        # DUT3.ip.remove_static_route(network_dest="15.0.0.0", mask_dest="255.255.255.0", next_hop="30.0.0.1")
-        # DUT3.ip.remove_static_route(network_dest="15.0.0.0", mask_dest="255.255.255.0", next_hop="40.0.0.2")
-        # DUT3.ip.remove_static_route(network_dest="20.0.0.0", mask_dest="255.255.255.0", next_hop="30.0.0.1")
-        # DUT3.ip.remove_static_route(network_dest="20.0.0.0", mask_dest="255.255.255.0", next_hop="40.0.0.2")
-        #
-        # DUT1.ip.remove_vlan_interfaces("20","40")
-        # DUT2.ip.remove_vlan_interfaces("15","20","30")
-        # DUT3.ip.remove_vlan_interfaces("30", "40")
-        #
-        # DUT1.vl.remove_vlans("20", "40")
-        # DUT2.vl.remove_vlans("15", "20", "30")
-        # DUT3.vl.remove_vlans("30", "40")
-        #
-        # DUT1.int.shut_interfaces("Ex 0/1", "Gi 0/9")
-        # DUT2.int.shut_interfaces("Gi 0/4", "Gi 0/5", "Gi 0/9")
-        # DUT3.int.shut_interfaces("Gi 0/4", "Gi 0/9")
+        # Checking that the Static Routes are installed
+
+        time.sleep(15)
+
+        ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
+        print(dict_of_networks)
+
+        d_root_id, d_bridge_id, ports, dict_of_ports = DUT1.stp.show_spanning_tree_rstp()
+        print(dict_of_ports)
+
+        assert "15.0.0.0" in dict_of_networks and "30.0.0.0" in dict_of_networks
+        assert dict_of_networks["15.0.0.0"]["Protocol"] == "S" and dict_of_networks["15.0.0.0"]["Next Hop"] == "20.0.0.1"
+        assert dict_of_networks["30.0.0.0"]["Protocol"] == "S" and dict_of_networks["30.0.0.0"]["Next Hop"] == "20.0.0.1"
+        assert "Ex0/1" in dict_of_ports and dict_of_ports["Ex0/1"]["Role"] == "Root"
+
+        response = DUT1.ping.ping_more("15.0.0.1", "30.0.0.1")
+
+        assert "15.0.0.1" in response and "30.0.0.1" in response
+
+        # Change the cost of the port Ex 0/1 (the stp will change the role of the port to ALTN) so that the traffic will be redirected trough int vlan 40.
+
+        DUT1.stp.add_rstp_port_cost(port="Ex 0/1", cost="50000")
+
+        time.sleep(60)
+
+        ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
+        print(dict_of_networks)
+
+        d_root_id, d_bridge_id, ports, dict_of_ports = DUT1.stp.show_spanning_tree_rstp()
+        print(dict_of_ports)
+
+        assert "15.0.0.0" in dict_of_networks and "30.0.0.0" in dict_of_networks
+        assert dict_of_networks["15.0.0.0"]["Protocol"] == "S" and dict_of_networks["15.0.0.0"]["Next Hop"] == "40.0.0.1"
+        assert dict_of_networks["30.0.0.0"]["Protocol"] == "S" and dict_of_networks["30.0.0.0"]["Next Hop"] == "40.0.0.1"
+        assert "Ex0/1" in dict_of_ports and dict_of_ports["Ex0/1"]["Role"] == "Alternate"
+
+        response = DUT1.ping.ping_more("15.0.0.1", "30.0.0.1")
+
+        assert "15.0.0.1" in response and "30.0.0.1" in response
+
+        # Remove to cost and check that the routes are back in the initial state
+
+        DUT1.stp.remove_rstp_port_cost(port="Ex 0/1")
+
+        time.sleep(60)
+
+        ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
+        print(dict_of_networks)
+
+        d_root_id, d_bridge_id, ports, dict_of_ports = DUT1.stp.show_spanning_tree_rstp()
+        print(dict_of_ports)
+
+        assert "15.0.0.0" in dict_of_networks and "30.0.0.0" in dict_of_networks
+        assert dict_of_networks["15.0.0.0"]["Protocol"] == "S" and dict_of_networks["15.0.0.0"]["Next Hop"] == "20.0.0.1"
+        assert dict_of_networks["30.0.0.0"]["Protocol"] == "S" and dict_of_networks["30.0.0.0"]["Next Hop"] == "20.0.0.1"
+        assert "Ex0/1" in dict_of_ports and dict_of_ports["Ex0/1"]["Role"] == "Root"
+
+        response = DUT1.ping.ping_more("15.0.0.1", "30.0.0.1")
+
+        assert "15.0.0.1" in response and "30.0.0.1" in response
+
+        print("########## Removing the config from DUT #############")
+
+        DUT1.ip.remove_static_route(network_dest="15.0.0.0", mask_dest="255.255.255.0", next_hop="20.0.0.1")
+        DUT1.ip.remove_static_route(network_dest="15.0.0.0", mask_dest="255.255.255.0", next_hop="40.0.0.1")
+        DUT1.ip.remove_static_route(network_dest="30.0.0.0", mask_dest="255.255.255.0", next_hop="20.0.0.1")
+        DUT1.ip.remove_static_route(network_dest="30.0.0.0", mask_dest="255.255.255.0", next_hop="40.0.0.1")
+
+        DUT2.ip.remove_static_route(network_dest="40.0.0.0", mask_dest="255.255.255.0", next_hop="20.0.0.2")
+        DUT2.ip.remove_static_route(network_dest="40.0.0.0", mask_dest="255.255.255.0", next_hop="30.0.0.2")
+
+        DUT3.ip.remove_static_route(network_dest="15.0.0.0", mask_dest="255.255.255.0", next_hop="30.0.0.1")
+        DUT3.ip.remove_static_route(network_dest="15.0.0.0", mask_dest="255.255.255.0", next_hop="40.0.0.2")
+        DUT3.ip.remove_static_route(network_dest="20.0.0.0", mask_dest="255.255.255.0", next_hop="30.0.0.1")
+        DUT3.ip.remove_static_route(network_dest="20.0.0.0", mask_dest="255.255.255.0", next_hop="40.0.0.2")
+
+        DUT1.ip.remove_vlan_interfaces("20","40")
+        DUT2.ip.remove_vlan_interfaces("15","20","30")
+        DUT3.ip.remove_vlan_interfaces("30", "40")
+
+        DUT1.vl.remove_vlans("20", "40")
+        DUT2.vl.remove_vlans("15", "20", "30")
+        DUT3.vl.remove_vlans("30", "40")
+
+        DUT1.int.shut_interfaces("Ex 0/1", "Gi 0/9")
+        DUT2.int.shut_interfaces("Gi 0/4", "Gi 0/5", "Gi 0/9")
+        DUT3.int.shut_interfaces("Gi 0/4", "Gi 0/9")
 
 
 

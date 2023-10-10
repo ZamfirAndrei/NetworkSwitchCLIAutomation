@@ -322,7 +322,7 @@ class TestOSPFSuite1:
         print("###### 3 DUTs ######")
 
         DUT1.int.no_shut_interfaces("Ex 0/1")
-        DUT2.int.no_shut_interfaces("Gi 0/4","Gi 0/5", "Gi 0/9")
+        DUT2.int.no_shut_interfaces("Gi 0/4", "Gi 0/5", "Gi 0/9")
         DUT3.int.no_shut_interfaces("Gi 0/4")
 
         # Adding the ports to the VLAN
@@ -347,7 +347,7 @@ class TestOSPFSuite1:
         DUT3.ip.add_ip_interfaces("50", "12", int_vlan50=["50.0.0.1", "255.255.255.0"], int_vlan12=["12.0.0.2", "255.255.255.0"])
         DUT3.ip.no_shut_int_vlans("12", "50")
 
-        # Enable ospf on all DUTs and advertise the IPs
+        # Enable ospf on DUT1 and DUT2 and advertise the IPs
 
         DUT1.ospf.enable_ospf()
         DUT2.ospf.enable_ospf()
@@ -2262,9 +2262,10 @@ class TestOSPFSuite1:
 
         ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route(network="15.0.0.0")
         print(ip_route)
+        print(dict_of_networks)
 
         assert ip_route["Network"] == "15.0.0.0" and ip_route["Protocol"] == "O IA"
-        assert "15.0.0.0" in dict_ospf_database_summary.keys()
+        assert "15.0.0.0" in dict_ospf_database_summary.keys() and dict_ospf_database_summary["15.0.0.0"]["LS Type"] == "Summary Links(Network)"
 
         print("########## Removing the config #############")
 
@@ -2282,3 +2283,212 @@ class TestOSPFSuite1:
 
         DUT1.vl.remove_vlan(vlan="20")
         DUT2.vl.remove_vlans("20", "15")
+
+    def test_func_23(self):
+
+        print("###### Test_func_23 ######")
+        print("########## Verify if ABR sends TYPE 4 and 5 LSAs  #############")
+        print("###### 3 DUTs ######")
+
+        DUT1.int.no_shut_interfaces("Ex 0/1")
+        DUT2.int.no_shut_interfaces("Gi 0/5", "Gi 0/9", "Gi 0/4")
+        DUT3.int.no_shut_interfaces("Gi 0/4")
+
+        # Adding the ports to the VLAN
+
+        DUT1.vl.add_ports_to_vlan(ports="Ex 0/1", vlan="20")
+        DUT1.vl.add_ports_to_vlan(ports="Ex 0/1", vlan="60")
+
+        DUT2.vl.add_ports_to_vlan(ports="Gi 0/5", vlan="15")
+        DUT2.vl.add_ports_to_vlan(ports="Gi 0/9", vlan="20")
+        DUT2.vl.add_ports_to_vlan(ports="Gi 0/4", vlan="12")
+
+        DUT3.vl.add_ports_to_vlan(ports="Gi 0/4", vlan="12")
+        DUT3.vl.add_ports_to_vlan(ports="Gi 0/4", vlan="50")
+
+        # Create IP interfaces on all DUTs for the specific VLANs
+
+        DUT1.ip.add_ip_interfaces("20","60", int_vlan20=["20.0.0.2", "255.255.255.0"], int_vlan60=["60.0.0.1", "255.255.255.0"])
+        DUT1.ip.no_shut_int_vlans("20","60")
+
+        DUT2.ip.add_ip_interfaces("20", "15", "12", int_vlan20=["20.0.0.1", "255.255.255.0"],
+                                  int_vlan15=["15.0.0.1", "255.255.255.0"], int_vlan12=["12.0.0.1", "255.255.255.0"])
+        DUT2.ip.no_shut_int_vlans("15", "20", "12")
+
+        DUT3.ip.add_ip_interfaces("50", "12", int_vlan50=["50.0.0.1", "255.255.255.0"],
+                                  int_vlan12=["12.0.0.2", "255.255.255.0"])
+        DUT3.ip.no_shut_int_vlans("12", "50")
+
+        # Enable ospf on DUT1 and DUT2 and advertise the IPs
+
+        DUT1.ospf.enable_ospf()
+        DUT2.ospf.enable_ospf()
+
+        DUT1.ospf.advertise_networks(int_vlan20=["20.0.0.2", "0.0.0.1"], int_vlan60=["60.0.0.1", "0.0.0.0"])
+        DUT2.ospf.advertise_networks(int_vlan20=["20.0.0.1", "0.0.0.1"], int_vlan15=["15.0.0.1", "0.0.0.1"])
+
+        # Enable rip on DUT2 and DUT3 and advertise the IPs
+
+        DUT2.rip.enable_rip()
+        DUT3.rip.enable_rip()
+
+        DUT2.rip.advertise_networks("12.0.0.1")
+        DUT3.rip.advertise_networks("12.0.0.2", "50.0.0.1")
+
+        # Redistributing the rip routes into ospf on DUT2
+
+        DUT2.ospf.redistribute_rip()
+
+        time.sleep(45)
+
+        ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
+        print(dict_of_networks)
+
+        # Check the routes are learned as expected
+
+        assert "50.0.0.0" in dict_of_networks.keys() and dict_of_networks["50.0.0.0"]["Protocol"] == "O E2"
+        assert "15.0.0.0" in dict_of_networks.keys() and dict_of_networks["15.0.0.0"]["Protocol"] == "O"
+
+        # Check the OSPF database on DUT1 for LSA Type 4 & 5 (ASBR Summary Link States and AS External Link States)
+
+        dict_ospf_database_router, dict_ospf_database_network, dict_ospf_database_summary, dict_ospf_database_asbr, dict_ospf_database_nssa, dict_ospf_database_external = DUT1.ospf.show_ip_ospf_database(database="asbr")
+        print(dict_ospf_database_asbr)
+
+        # ASBR Summary Link States
+
+        assert ip_session_2 in dict_ospf_database_asbr.keys() and dict_ospf_database_asbr[ip_session_2]["LS Type"] == "Summary Links(AS Boundary Router)"
+
+        dict_ospf_database_router, dict_ospf_database_network, dict_ospf_database_summary, dict_ospf_database_asbr, dict_ospf_database_nssa, dict_ospf_database_external = DUT1.ospf.show_ip_ospf_database(database="external")
+        print(dict_ospf_database_external)
+
+        # AS External Link States
+
+        assert "50.0.0.0" in dict_ospf_database_external.keys() and dict_ospf_database_external["50.0.0.0"]["LS Type"] == "AS External Link"
+
+        print("########## Removing the config #############")
+
+        DUT1.ospf.remove_networks(int_vlan20=["20.0.0.2", "0.0.0.1"], int_vlan60=["60.0.0.1", "0.0.0.0"])
+        DUT2.ospf.remove_networks(int_vlan20=["20.0.0.1", "0.0.0.1"], int_vlan15=["15.0.0.1", "0.0.0.1"])
+
+        DUT1.ospf.disable_ospf()
+        DUT2.ospf.disable_ospf()
+
+        DUT2.rip.disable_rip()
+        DUT3.rip.disable_rip()
+
+        DUT1.ip.remove_vlan_interfaces("20", "60")
+        DUT2.ip.remove_vlan_interfaces("20", "15", "12")
+        DUT3.ip.remove_vlan_interfaces("50", "12")
+
+        DUT1.int.shut_interface(interface="Ex 0/1")
+        DUT2.int.shut_interfaces("Gi 0/9", "Gi 0/5", "Gi 0/4")
+        DUT3.int.shut_interfaces("Gi 0/4")
+
+        DUT1.vl.remove_vlans("20", "60")
+        DUT2.vl.remove_vlans("20", "15")
+        DUT3.vl.remove_vlans("12", "50")
+
+    def test_func_24(self):
+
+        print("###### Test_func_24 ######")
+        print("########## Verify if ASBR sends TYPE 7  #############")
+        print("###### 3 DUTs ######")
+
+        DUT1.int.no_shut_interfaces("Ex 0/1")
+        DUT2.int.no_shut_interfaces("Gi 0/5", "Gi 0/9", "Gi 0/4")
+        DUT3.int.no_shut_interfaces("Gi 0/4")
+
+        # Adding the ports to the VLAN
+
+        DUT1.vl.add_ports_to_vlan(ports="Ex 0/1", vlan="20")
+        DUT1.vl.add_ports_to_vlan(ports="Ex 0/1", vlan="60")
+
+        DUT2.vl.add_ports_to_vlan(ports="Gi 0/5", vlan="15")
+        DUT2.vl.add_ports_to_vlan(ports="Gi 0/9", vlan="20")
+        DUT2.vl.add_ports_to_vlan(ports="Gi 0/4", vlan="12")
+
+        DUT3.vl.add_ports_to_vlan(ports="Gi 0/4", vlan="12")
+        DUT3.vl.add_ports_to_vlan(ports="Gi 0/4", vlan="50")
+
+        # Create IP interfaces on all DUTs for the specific VLANs
+
+        DUT1.ip.add_ip_interfaces("20","60", int_vlan20=["20.0.0.2", "255.255.255.0"], int_vlan60=["60.0.0.1", "255.255.255.0"])
+        DUT1.ip.no_shut_int_vlans("20","60")
+
+        DUT2.ip.add_ip_interfaces("20", "15", "12", int_vlan20=["20.0.0.1", "255.255.255.0"],
+                                  int_vlan15=["15.0.0.1", "255.255.255.0"], int_vlan12=["12.0.0.1", "255.255.255.0"])
+        DUT2.ip.no_shut_int_vlans("15", "20", "12")
+
+        DUT3.ip.add_ip_interfaces("50", "12", int_vlan50=["50.0.0.1", "255.255.255.0"],
+                                  int_vlan12=["12.0.0.2", "255.255.255.0"])
+        DUT3.ip.no_shut_int_vlans("12", "50")
+
+        # Enable ospf on DUT1 and DUT2 and advertise the IPs
+
+        DUT1.ospf.enable_ospf()
+        DUT2.ospf.enable_ospf()
+
+        DUT1.ospf.advertise_networks(int_vlan20=["20.0.0.2", "0.0.0.1"], int_vlan60=["60.0.0.1", "0.0.0.0"])
+        DUT2.ospf.advertise_networks(int_vlan20=["20.0.0.1", "0.0.0.1"], int_vlan15=["15.0.0.1", "0.0.0.1"])
+
+        # Enable rip on DUT2 and DUT3 and advertise the IPs
+
+        DUT2.rip.enable_rip()
+        DUT3.rip.enable_rip()
+
+        DUT2.rip.advertise_networks("12.0.0.1")
+        DUT3.rip.advertise_networks("12.0.0.2", "50.0.0.1")
+
+        # Redistributing the rip routes into ospf on DUT2
+
+        DUT2.ospf.redistribute_rip()
+
+        # Configure nssa area on DUT1 and DUT2 for area 0.0.0.1
+
+        DUT1.ospf.add_nssa_area(area="0.0.0.1")
+        DUT2.ospf.add_nssa_area(area="0.0.0.1")
+
+        time.sleep(45)
+
+        ip_route, networks, networks_connected, dict_of_networks = DUT1.ip.show_ip_route()
+        print(dict_of_networks)
+
+        # Check the routes are learned as expected
+
+        assert "50.0.0.0" in dict_of_networks.keys() and dict_of_networks["50.0.0.0"]["Protocol"] == "O N2"
+        assert "15.0.0.0" in dict_of_networks.keys() and dict_of_networks["15.0.0.0"]["Protocol"] == "O"
+
+        # Check the OSPF database on DUT1 for LSA Type 7 (NSS External Link States)
+
+        dict_ospf_database_router, dict_ospf_database_network, dict_ospf_database_summary, dict_ospf_database_asbr, dict_ospf_database_nssa, dict_ospf_database_external = DUT1.ospf.show_ip_ospf_database(database="nssa")
+        print(dict_ospf_database_nssa)
+
+        # NSSA Link States
+
+        assert "50.0.0.0" in dict_ospf_database_nssa.keys() and dict_ospf_database_nssa["50.0.0.0"]["LS Type"] == "NSSA External Link"
+
+        print("########## Removing the config #############")
+
+        DUT1.ospf.remove_nssa_area(area="0.0.0.1")
+        DUT2.ospf.remove_nssa_area(area="0.0.0.1")
+
+        DUT1.ospf.remove_networks(int_vlan20=["20.0.0.2", "0.0.0.1"], int_vlan60=["60.0.0.1", "0.0.0.0"])
+        DUT2.ospf.remove_networks(int_vlan20=["20.0.0.1", "0.0.0.1"], int_vlan15=["15.0.0.1", "0.0.0.1"])
+
+        DUT1.ospf.disable_ospf()
+        DUT2.ospf.disable_ospf()
+
+        DUT2.rip.disable_rip()
+        DUT3.rip.disable_rip()
+
+        DUT1.ip.remove_vlan_interfaces("20", "60")
+        DUT2.ip.remove_vlan_interfaces("20", "15", "12")
+        DUT3.ip.remove_vlan_interfaces("50", "12")
+
+        DUT1.int.shut_interface(interface="Ex 0/1")
+        DUT2.int.shut_interfaces("Gi 0/9", "Gi 0/5", "Gi 0/4")
+        DUT3.int.shut_interfaces("Gi 0/4")
+
+        DUT1.vl.remove_vlans("20", "60")
+        DUT2.vl.remove_vlans("20", "15")
+        DUT3.vl.remove_vlans("12", "50")

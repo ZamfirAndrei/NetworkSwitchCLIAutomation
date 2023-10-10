@@ -256,7 +256,7 @@ class OSPF:
         self.session.send_cmd("router ospf")
         self.session.send_cmd(f"area {area} nssa")
         self.session.send_cmd("exit")
-        print("The nssa area has been created")
+        print(f"The nssa area has been created on DUT {self.ip_session}")
         output = self.session.read()
         # print(output)
         self.session.close()
@@ -268,7 +268,7 @@ class OSPF:
         self.session.send_cmd("router ospf")
         self.session.send_cmd(f"no area {area} nssa")
         self.session.send_cmd("exit")
-        print("The nssa area has been removed")
+        print(f"The nssa area has been removed from DUT {self.ip_session}")
         output = self.session.read()
         # print(output)
         self.session.close()
@@ -552,19 +552,21 @@ class OSPF:
             area = re.findall(r"Router Link States\s\SArea\s+(\d+.\d+.\d+.\d+)", output)
             link_state_id = re.findall(r"Link State ID\s+:\s+(\d+.\d+.\d+.\d+)", output)
             adv_router = re.findall(r"Advertising Router\s+:\s+(\d+.\d+.\d+.\d+)", output)
+            ls_type = re.findall(r"LS Type\s+:\s+(Router Links)", output)
 
             # print(area)
             # print(link_state_id)
             # print(adv_router)
+            # print(ls_type)
 
             d = {}
 
-            for attribute, id, adv in zip(area, link_state_id, adv_router):
+            for attribute, id, adv, type in zip(area, link_state_id, adv_router, ls_type):
 
                 d["Area"] = attribute
                 d["Link State ID"] = id
                 d["Advertising Router"] = adv
-
+                d["LS Type"] = type
                 # print(d)
                 dict_ospf_database_router[id] = d
                 d = {}
@@ -580,19 +582,21 @@ class OSPF:
             area = re.findall(r"Network Link States\s\SArea\s+(\d+.\d+.\d+.\d+)", output)
             link_state_id = re.findall(r"Link State ID\s+:\s+(\d+.\d+.\d+.\d+)", output)
             adv_router = re.findall(r"Advertising Router\s+:\s+(\d+.\d+.\d+.\d+)", output)
+            ls_type = re.findall(r"LS Type\s+:\s+(Network Links)", output)
 
             # print(area)
             # print(link_state_id)
             # print(adv_router)
+            # print(ls_type)
 
             d = {}
 
-            for attribute, id, adv in zip(area, link_state_id, adv_router):
+            for attribute, id, adv, type in zip(area, link_state_id, adv_router, ls_type):
 
                 d["Area"] = attribute
                 d["Link State ID"] = id
                 d["Advertising Router"] = adv
-
+                d["LS Type"] = type
                 # print(d)
                 dict_ospf_database_network[id] = d
                 d = {}
@@ -608,18 +612,21 @@ class OSPF:
             area = re.findall(r"Summary Link States\s\SArea\s+(\d+.\d+.\d+.\d+)", output)
             link_state_id = re.findall(r"Link State ID\s+:\s+(\d+.\d+.\d+.\d+)", output)
             adv_router = re.findall(r"Advertising Router\s+:\s+(\d+.\d+.\d+.\d+)", output)
+            ls_type = re.findall(r"LS Type\s+:\s+(Summary Links\SNetwork\S)", output)
 
             # print(area)
             # print(link_state_id)
             # print(adv_router)
+            # print(ls_type)
 
             d = {}
 
-            for attribute, id, adv in zip(area, link_state_id, adv_router):
+            for attribute, id, adv, type in zip(area, link_state_id, adv_router, ls_type):
 
                 d["Area"] = attribute
                 d["Link State ID"] = id
                 d["Advertising Router"] = adv
+                d["LS Type"] = type
 
                 # print(d)
                 dict_ospf_database_summary[id] = d
@@ -633,14 +640,24 @@ class OSPF:
             output = self.session.read()
             # print(output)
 
-            router_id = re.findall(r"Router with ID\s+\S(\d+.\d+.\d+.\d+)", output)
-            # print(router_id)
+            link_state_id = re.findall(r"Link State ID\s+:\s+(\d+.\d+.\d+.\d+)", output)
+            adv_router = re.findall(r"Advertising Router\s+:\s+(\d+.\d+.\d+.\d+)", output)
+            ls_type = re.findall(r"LS Type\s+:\s+(Summary Links\SAS Boundary Router\S)", output)
+
+            # print(link_state_id)
+            # print(adv_router)
+            # print(ls_type)
 
             d = {}
 
-            d["Router ID"] = router_id[0]
-            # print(d)
-            dict_ospf_database_asbr[router_id[0]] = d
+            for id, adv, type in zip(link_state_id, adv_router, ls_type):
+
+                d["Link State ID"] = id
+                d["Advertising Router"] = adv
+                d["LS Type"] = type
+                # print(d)
+                dict_ospf_database_asbr[id] = d
+                d = {}
 
             # print(dict_ospf_database_asbr)
 
@@ -653,18 +670,21 @@ class OSPF:
             area = re.findall(r"NSSA External Link States\s\SArea\s+(\d+.\d+.\d+.\d+)", output)
             link_state_id = re.findall(r"Link State ID\s+:\s+(\d+.\d+.\d+.\d+)", output)
             adv_router = re.findall(r"Advertising Router\s+:\s+(\d+.\d+.\d+.\d+)", output)
+            ls_type = re.findall(r"LS Type\s+:\s+(NSSA\s+External\s+Link)", output) # Trb pus Regexul care trebuie
 
             # print(area)
             # print(link_state_id)
             # print(adv_router)
+            print(ls_type)
 
             d = {}
 
-            for attribute, id, adv in zip(area, link_state_id, adv_router):
+            for attribute, id, adv, type in zip(area, link_state_id, adv_router, ls_type):
 
                 d["Area"] = attribute
                 d["Link State ID"] = id
                 d["Advertising Router"] = adv
+                d["LS Type"] = type
 
                 # print(d)
                 dict_ospf_database_nssa[id] = d
@@ -678,21 +698,21 @@ class OSPF:
             output = self.session.read()
             # print(output)
 
-
             link_state_id = re.findall(r"Link State ID\s+:\s+(\d+.\d+.\d+.\d+)", output)
             adv_router = re.findall(r"Advertising Router\s+:\s+(\d+.\d+.\d+.\d+)", output)
-
+            ls_type = re.findall(r"LS Type\s+:\s+(AS\s+External\s+Link)", output)
 
             # print(link_state_id)
             # print(adv_router)
+            # print(ls_type)
 
             d = {}
 
-            for id, adv in zip(link_state_id, adv_router):
+            for id, adv, type in zip(link_state_id, adv_router, ls_type):
 
                 d["Link State ID"] = id
                 d["Advertising Router"] = adv
-
+                d["LS Type"] = type
                 # print(d)
                 dict_ospf_database_external[id] = d
                 d = {}
