@@ -1410,6 +1410,16 @@ class TestRIPSuite1:
         print("########## Check if we can advertise networks into RIP and it establish connection using int vlans #############")
         print("###### 3 DUTs ######")
 
+        #       Topology
+        #
+        #         RIP
+        #
+        # -- DUT1 ---- DUT2
+        #       \      /
+        #        \    /
+        #         DUT3
+        #
+
         # No shutting the interfaces on DUTs
 
         DUT1.int.no_shut_interfaces("Gi 0/3", "Gi 0/4", "Ex 0/1", "Gi 0/9")
@@ -1508,6 +1518,16 @@ class TestRIPSuite1:
         print("###### Test_func_15 ######")
         print("########## Check if we can advertise networks into RIP and it establish connection using routed ports #############")
         print("###### 3 DUTs ######")
+
+        #       Topology
+        #
+        #         RIP
+        #
+        # -- DUT1 ---- DUT2
+        #       \      /
+        #        \    /
+        #         DUT3
+        #
 
         # Creating routed ports on all DUTs
 
@@ -1624,6 +1644,11 @@ class TestRIPSuite1:
         print("########## Verify functionality for redistribute OSPF into RIP #############")
         print("###### 3 DUTs ######")
 
+        #          Topology
+        #
+        #  DUT1 --RIP-- DUT2 --OSPF-- DUT3 -- OSPF
+        #
+
         DUT1.int.no_shut_interfaces("Ex 0/1")
         DUT2.int.no_shut_interfaces("Gi 0/9", "Gi 0/5", "Gi 0/4")
         DUT3.int.no_shut_interfaces("Gi 0/4")
@@ -1731,6 +1756,11 @@ class TestRIPSuite1:
         print("###### Test_func_17 ######")
         print("########## Verify functionality for redistribute all into RIP #############")
         print("###### 3 DUTs ######")
+
+        #          Topology
+        #
+        #  DUT1 --RIP-- DUT2 --OSPF-- DUT3 -- OSPF
+        #
 
         DUT1.int.no_shut_interfaces("Ex 0/1")
         DUT2.int.no_shut_interfaces("Gi 0/9", "Gi 0/5", "Gi 0/4")

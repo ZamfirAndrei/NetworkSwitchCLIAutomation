@@ -43,7 +43,7 @@ class OSPF:
         self.session.send_cmd("router ospf")
         self.session.send_cmd(f"network {ip_network} area {area}\r\n")
         self.session.send_cmd("exit")
-        print(f"The network {ip_network} has been advertised in ospf on DUT {self.ip_session}")
+        print(f"The network {ip_network} has been advertised in ospf in area {area} on DUT {self.ip_session}")
         output = self.session.read()
         # print(output)
         self.session.close()
@@ -56,6 +56,70 @@ class OSPF:
         for item in kwargs.values():
             self.session.send_cmd(f"network {item[0]} area {item[1]}")
             print(f"The network {item[0]} has been advertised in ospf on DUT {self.ip_session}")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def add_default_information_originate(self, nssa=None, metric=None, metric_type=None, area=None):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
+
+        if nssa is not None:
+
+            if metric is not None and metric_type is None:
+                self.session.send_cmd(f"area {area} nssa default-information-originate metric {metric}")
+                print(f"The default route has been redistributed with metric {metric} in nssa area {area} on DUT {self.ip_session}")
+
+            elif metric_type is not None and metric is None:
+                self.session.send_cmd(f"area {area} nssa default-information-originate metric-type {metric_type}")
+                print(f"The default route has been redistributed with metric-type {metric_type} in nssa area {area} on DUT {self.ip_session}")
+
+            elif metric is not None and metric_type is not None:
+                self.session.send_cmd(f"area {area} nssa default-information-originate metric {metric} metric-type {metric_type}")
+                print(f"The default route has been redistributed with metric {metric} and metric-type {metric_type} in nssa area {area} on DUT {self.ip_session}")
+            else:
+                self.session.send_cmd(f"area {area} nssa default-information-originate")
+                print(f"The default route has been redistributed in nssa area {area} on DUT {self.ip_session}")
+
+        if nssa is None:
+
+            if metric is not None and metric_type is None:
+                self.session.send_cmd(f"default-information originate always metric {metric}")
+                print(f"The default route has been redistributed with metric {metric} on DUT {self.ip_session}")
+
+            elif metric_type is not None and metric is None:
+                self.session.send_cmd(f"default-information originate always metric-type {metric_type}")
+                print(f"The default route has been redistributed with metric-type {metric_type} on DUT {self.ip_session}")
+
+            elif metric is not None and metric_type is not None:
+                self.session.send_cmd(f"default-information originate always metric {metric} metric-type {metric_type}")
+                print(f"The default route has been redistributed with metric {metric} and metric-type {metric_type} on DUT {self.ip_session}")
+            else:
+                self.session.send_cmd(f"default-information originate always")
+                print(f"The default route has been redistributed on DUT {self.ip_session}")
+
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def remove_default_information_originate(self, nssa=None, area=None):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
+
+        if nssa is not None:
+
+            self.session.send_cmd(f"no area {area} nssa default-information-originate")
+            print(f"The default route has been removed from nssa area {area} from DUT {self.ip_session}")
+
+        else:
+
+            self.session.send_cmd(f"no default-information originate always")
+            print(f"The default route has been removed from DUT {self.ip_session}")
+
         output = self.session.read()
         # print(output)
         self.session.close()
@@ -232,7 +296,7 @@ class OSPF:
         self.session.send_cmd(f"router-id {router_id}")
         self.session.send_cmd("exit")
         # time.sleep(2)
-        print("Router-id has been configured")
+        print(f"Router-id has been configured on DUT {self.ip_session}")
         output = self.session.read()
         # print(output)
         self.session.close()
@@ -242,12 +306,153 @@ class OSPF:
         self.session.connect()
         self.session.send_cmd("conf t")
         self.session.send_cmd("router ospf")
-        self.session.send_cmd(f"no router-id")
+        self.session.send_cmd("no router-id")
         self.session.send_cmd("exit")
-        print("Router-id has been removed")
+        print(f"Router-id has been removed from DUT {self.ip_session}")
         output = self.session.read()
         # print(output)
         self.session.close()
+
+    def configure_network_type(self, network_type, interface=None, int_vlan=None):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+
+        if int_vlan is not None:
+
+            self.session.send_cmd(f"int vlan {int_vlan}")
+            self.session.send_cmd(f"ip ospf network {network_type}")
+            self.session.send_cmd("exit")
+            print(f"The network type {network_type} has been configured on interface vlan {int_vlan} on DUT {self.ip_session}")
+
+        if interface is not None:
+
+            self.session.send_cmd(f"int {interface}")
+            self.session.send_cmd(f"ip ospf network {network_type}")
+            self.session.send_cmd("exit")
+            print(f"The network type {network_type} has been configured on interface {interface} on DUT {self.ip_session}")
+
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def remove_network_type(self, interface=None, int_vlan=None):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+
+        if int_vlan is not None:
+
+            self.session.send_cmd(f"int vlan {int_vlan}")
+            self.session.send_cmd(f"no ip ospf network")
+            self.session.send_cmd("exit")
+            print(f"The network type has been removed from interface vlan {int_vlan} on DUT {self.ip_session}")
+
+        if interface is not None:
+
+            self.session.send_cmd(f"int {interface}")
+            self.session.send_cmd(f"no ip ospf network")
+            self.session.send_cmd("exit")
+            print(f"The network type has been removed from interface {interface} on DUT {self.ip_session}")
+
+        output = self.session.read()
+        # print(output)
+
+        if "% Configured Neighbours present on this interface, If Type not set" in output:
+
+            print("You have to remove the neighbors first")
+
+        self.session.close()
+
+    def configure_neighbor(self, neighbor):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
+        self.session.send_cmd(f"neighbor {neighbor}")
+        self.session.send_cmd("exit")
+        # time.sleep(2)
+        print(f"The neighbor {neighbor} has been configured on DUT {self.ip_session}")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def remove_neighbor(self, neighbor):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
+        self.session.send_cmd(f"no neighbor {neighbor}")
+        self.session.send_cmd("exit")
+        # time.sleep(2)
+        print(f"The neighbor {neighbor} has been removed on DUT {self.ip_session}")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def configure_neighbors(self, *args):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
+
+        for neighbor in args:
+
+            self.session.send_cmd(f"neighbor {neighbor}")
+            print(f"The neighbor {neighbor} has been configured on DUT {self.ip_session}")
+
+        self.session.send_cmd("exit")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def remove_neighbors(self, *args):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
+
+        for neighbor in args:
+
+            self.session.send_cmd(f"no neighbor {neighbor}")
+            print(f"The neighbor {neighbor} has been removed on DUT {self.ip_session}")
+
+        self.session.send_cmd("exit")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def show_ip_ospf_neighbors_detail(self):
+
+        # Need to add this function
+
+        self.session.connect()
+        self.session.send_cmd("show ip ospf neighbor detail")
+        output = self.session.read()
+        # print(output)
+
+        self.session.close()
+
+    def show_ip_ospf_interface(self, interface=None, int_vlan=None):
+
+        self.session.connect()
+
+        if int_vlan is not None:
+
+            self.session.send_cmd(f"show ip ospf interface vlan {int_vlan}")
+
+        if interface is not None:
+            self.session.send_cmd(f"show ip ospf interface {interface}")
+
+        output = self.session.read()
+        # print(output)
+
+        network_type = re.findall(r"Network\s+Type\s+([NBMABROADCASTPointToMultiPointPointToPoint]+)", output)
+        # print(network_type)
+
+        self.session.close()
+
+        return network_type
 
     def add_nssa_area(self, area):
 
@@ -256,7 +461,7 @@ class OSPF:
         self.session.send_cmd("router ospf")
         self.session.send_cmd(f"area {area} nssa")
         self.session.send_cmd("exit")
-        print(f"The nssa area has been created on DUT {self.ip_session}")
+        print(f"The nssa area {area} has been created on DUT {self.ip_session}")
         output = self.session.read()
         # print(output)
         self.session.close()
@@ -273,6 +478,30 @@ class OSPF:
         # print(output)
         self.session.close()
 
+    def add_network_summarize(self, network, mask, area):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
+        self.session.send_cmd(f"summary-address {network} {mask} {area}")
+        self.session.send_cmd("exit")
+        print(f"The addresses have been summarized into {network} and mask {mask} on DUT {self.ip_session}")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def remove_network_summarize(self, network, mask, area):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router ospf")
+        self.session.send_cmd(f"no summary-address {network} {mask} {area}")
+        self.session.send_cmd("exit")
+        print(f"The summarization of {network} has been removed on DUT {self.ip_session}")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
     def add_passive_interface(self, vlan =None, interface=None):
 
         self.session.connect()
@@ -282,12 +511,14 @@ class OSPF:
         if vlan is None:
 
             self.session.send_cmd(f"passive-interface {interface}")
+            print(f"The passive-interface on interface {interface} has been configured on DUT {self.ip_session}")
 
         else:
 
             self.session.send_cmd(f"passive-interface vlan {vlan}")
+            print(f"The passive-interface on vlan {vlan} has been configured on DUT {self.ip_session}")
         self.session.send_cmd("exit")
-        print("The passive-interface has been created")
+
         output = self.session.read()
         # print(output)
         self.session.close()
@@ -301,12 +532,14 @@ class OSPF:
         if vlan is None:
 
             self.session.send_cmd(f"no passive-interface {interface}")
+            print(f"The passive-interface on interface {interface} has been removed from DUT {self.ip_session}")
 
         else:
 
             self.session.send_cmd(f"no passive-interface vlan {vlan}")
+            print(f"The passive-interface on vlan {vlan} has been removed from DUT {self.ip_session}")
         self.session.send_cmd("exit")
-        print("The passive-interface has been removed")
+
         output = self.session.read()
         # print(output)
         self.session.close()
