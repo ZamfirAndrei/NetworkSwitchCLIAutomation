@@ -1,0 +1,457 @@
+import time
+from Management import dut_objects
+from flows import rstpflow
+
+ip_session_1 = "10.2.109.206"
+ip_session_2 = "10.2.109.83"
+ip_session_3 = "10.2.109.232"
+ip_session_4 = "10.2.109.100"
+ip_session_5 = "10.2.109.113"
+
+DUT1 = dut_objects.DUT_Objects(ip_session=ip_session_1)
+DUT2 = dut_objects.DUT_Objects(ip_session=ip_session_2)
+DUT3 = dut_objects.DUT_Objects(ip_session=ip_session_3)
+DUT4 = dut_objects.DUT_Objects(ip_session=ip_session_4)
+DUT5 = dut_objects.DUT_Objects(ip_session=ip_session_5)
+
+rstp_flow = rstpflow.RSTPFlow()
+
+
+class TestRSTPSuite2:
+
+    def test_func_1(self):
+
+        print("###### Test_func_1 ######")
+        print("########## Verify RSTP (802.1W) root election #############")
+        print("###### 3 DUTs ######")
+
+        #    Topology
+        #
+        #  DUT1 -- DUT2
+        #    \     /
+        #     \   /
+        #      DUT3
+
+        # No shutting the interfaces
+
+        DUT1.int.no_shut_interfaces("Ex 0/1", "Gi 0/10")
+        DUT2.int.no_shut_interfaces("Gi 0/3", "Gi 0/9")
+        DUT3.int.no_shut_interfaces("Gi 0/3", "Gi 0/10")
+
+        # Create VLANs on DUTs and assign ports to them
+
+        DUT1.vl.create_vlans("10", "20", "30")
+        DUT2.vl.create_vlans("10", "20", "30")
+        DUT3.vl.create_vlans("10", "20", "30")
+
+        DUT1.vl.add_more_ports_to_more_vlans("Ex 0/1", "Gi 0/10", vlan10="10", vlan20="20", vlan30="30")
+        DUT2.vl.add_more_ports_to_more_vlans("Gi 0/3", "Gi 0/9", vlan10="10", vlan20="20", vlan30="30")
+        DUT3.vl.add_more_ports_to_more_vlans("Gi 0/3", "Gi 0/10", vlan10="10", vlan20="20", vlan30="30")
+
+        # Disable STP on the link towards Cambium LAB
+
+        DUT2.stp.stp_disable(port="Gi 0/1")
+
+        # Check the default Root Bridge (the lowest MAC in the topology - DUT1)
+
+        d_root_id_1, d_bridge_id_1, ports_1, dict_of_ports_1 = DUT1.stp.show_spanning_tree_rstp()
+        d_root_id_2, d_bridge_id_2, ports_2, dict_of_ports_2 = DUT2.stp.show_spanning_tree_rstp()
+        d_root_id_3, d_bridge_id_3, ports_3, dict_of_ports_3 = DUT3.stp.show_spanning_tree_rstp()
+
+        print("######## Root ID and Bridge ID of DUT 1 ########")
+        print(d_root_id_1)
+        print(d_bridge_id_1)
+        print("######## Root ID and Bridge ID of DUT 2 ########")
+        print(d_root_id_2)
+        print(d_bridge_id_2)
+        print("######## Root ID and Bridge ID of DUT 3 ########")
+        print(d_root_id_3)
+        print(d_bridge_id_3)
+
+        assert d_root_id_1["Root MAC-Address"] == d_root_id_2["Root MAC-Address"] == d_root_id_3["Root MAC-Address"] == d_bridge_id_1["Bridge MAC-Address"]
+        assert d_bridge_id_1["Bridge Priority"] == "32768" and d_bridge_id_2["Bridge Priority"] == "32768" and d_bridge_id_3["Bridge Priority"] == "32768"
+
+        print("######## Ports of DUT 1 ########")
+        print(dict_of_ports_1)
+        print("######## Ports of DUT 2 ########")
+        print(dict_of_ports_2)
+        print("######## Ports of DUT 3 ########")
+        print(dict_of_ports_3)
+
+        # Check the Port Role of each DUT
+
+        assert dict_of_ports_1["Gi0/10"]["Role"] == "Designated" and dict_of_ports_1["Ex0/1"]["Role"] == "Designated"
+        assert dict_of_ports_2["Gi0/3"]["Role"] == "Designated" and dict_of_ports_2["Gi0/9"]["Role"] == "Root"
+        assert dict_of_ports_3["Gi0/3"]["Role"] == "Alternate" and dict_of_ports_3["Gi0/10"]["Role"] == "Root"
+
+        # Asserting using the RSTP Flow
+
+        # rstp_flow.confirm_rstp_root_bridge_bridge_priority_and_ports(d_root_id_1, d_bridge_id_1, "32768", dict_of_ports_1, port="Gi 0/10", role="Designated")
+        # rstp_flow.confirm_rstp_root_bridge_bridge_priority_and_ports(d_root_id_1, d_bridge_id_1, "32768", dict_of_ports_1, port="Ex 0/1", role="Designated")
+        #
+        # rstp_flow.confirm_rstp_root_bridge_bridge_priority_and_ports(d_root_id_2, d_bridge_id_2, "32768", dict_of_ports_2, port="Gi 0/3", role="Designated")
+        # rstp_flow.confirm_rstp_root_bridge_bridge_priority_and_ports(d_root_id_2, d_bridge_id_2, "32768", dict_of_ports_2, port="Gi 0/9", role="Root")
+        #
+        # rstp_flow.confirm_rstp_root_bridge_bridge_priority_and_ports(d_root_id_3, d_bridge_id_3, "32768", dict_of_ports_3, port="Gi 0/3", role="Alternate")
+        # rstp_flow.confirm_rstp_root_bridge_bridge_priority_and_ports(d_root_id_3, d_bridge_id_3, "32768", dict_of_ports_3, port="Gi 0/10", role="Root")
+
+        # Change the bridge priority on DUT3
+
+        DUT3.stp.add_rstp_bridge_priority(bridge_priority="4096")
+
+        # Check the new Root Bridge (the lowest priority in the topology - DUT3)
+
+        d_root_id_1, d_bridge_id_1, ports_1, dict_of_ports_1 = DUT1.stp.show_spanning_tree_rstp()
+        d_root_id_2, d_bridge_id_2, ports_2, dict_of_ports_2 = DUT2.stp.show_spanning_tree_rstp()
+        d_root_id_3, d_bridge_id_3, ports_3, dict_of_ports_3 = DUT3.stp.show_spanning_tree_rstp()
+
+        print("######## Root ID and Bridge ID of DUT 1 ########")
+        print(d_root_id_1)
+        print(d_bridge_id_1)
+        print("######## Root ID and Bridge ID of DUT 2 ########")
+        print(d_root_id_2)
+        print(d_bridge_id_2)
+        print("######## Root ID and Bridge ID of DUT 3 ########")
+        print(d_root_id_3)
+        print(d_bridge_id_3)
+
+        assert d_root_id_1["Root MAC-Address"] == d_root_id_2["Root MAC-Address"] == d_root_id_3["Root MAC-Address"] == d_bridge_id_3["Bridge MAC-Address"]
+        assert d_bridge_id_1["Bridge Priority"] == "32768" and d_bridge_id_2["Bridge Priority"] == "32768" and d_bridge_id_3["Bridge Priority"] == "4096"
+
+        print("######## Ports of DUT 1 ########")
+        print(dict_of_ports_1)
+        print("######## Ports of DUT 2 ########")
+        print(dict_of_ports_2)
+        print("######## Ports of DUT 3 ########")
+        print(dict_of_ports_3)
+
+        # Check the Port Role of each DUT
+
+        assert dict_of_ports_1["Gi0/10"]["Role"] == "Root" and dict_of_ports_1["Ex0/1"]["Role"] == "Designated"
+        assert dict_of_ports_2["Gi0/3"]["Role"] == "Root" and dict_of_ports_2["Gi0/9"]["Role"] == "Alternate"
+        assert dict_of_ports_3["Gi0/3"]["Role"] == "Designated" and dict_of_ports_3["Gi0/10"]["Role"] == "Designated"
+
+        # Remove the bridge-priority and check that DUT1 is the root
+
+        DUT3.stp.remove_rstp_bridge_priority()
+
+        d_root_id_1, d_bridge_id_1, ports_1, dict_of_ports_1 = DUT1.stp.show_spanning_tree_rstp()
+        d_root_id_2, d_bridge_id_2, ports_2, dict_of_ports_2 = DUT2.stp.show_spanning_tree_rstp()
+        d_root_id_3, d_bridge_id_3, ports_3, dict_of_ports_3 = DUT3.stp.show_spanning_tree_rstp()
+
+        print("######## Root ID and Bridge ID of DUT 1 ########")
+        print(d_root_id_1)
+        print(d_bridge_id_1)
+        print("######## Root ID and Bridge ID of DUT 2 ########")
+        print(d_root_id_2)
+        print(d_bridge_id_2)
+        print("######## Root ID and Bridge ID of DUT 3 ########")
+        print(d_root_id_3)
+        print(d_bridge_id_3)
+
+        assert d_root_id_1["Root MAC-Address"] == d_root_id_2["Root MAC-Address"] == d_root_id_3["Root MAC-Address"] == d_bridge_id_1["Bridge MAC-Address"]
+        assert d_bridge_id_1["Bridge Priority"] == "32768" and d_bridge_id_2["Bridge Priority"] == "32768" and d_bridge_id_3["Bridge Priority"] == "32768"
+
+        print("######## Ports of DUT 1 ########")
+        print(dict_of_ports_1)
+        print("######## Ports of DUT 2 ########")
+        print(dict_of_ports_2)
+        print("######## Ports of DUT 3 ########")
+        print(dict_of_ports_3)
+
+        # Check the Port Role of each DUT
+
+        assert dict_of_ports_1["Gi0/10"]["Role"] == "Designated" and dict_of_ports_1["Ex0/1"]["Role"] == "Designated"
+        assert dict_of_ports_2["Gi0/3"]["Role"] == "Designated" and dict_of_ports_2["Gi0/9"]["Role"] == "Root"
+        assert dict_of_ports_3["Gi0/3"]["Role"] == "Alternate" and dict_of_ports_3["Gi0/10"]["Role"] == "Root"
+
+        print("########## Removing the config #############")
+
+        DUT2.stp.stp_enable(port="Gi 0/1")
+
+        DUT1.vl.remove_vlans("10", "20", "30")
+        DUT2.vl.remove_vlans("10", "20", "30")
+        DUT3.vl.remove_vlans("10", "20", "30")
+
+        DUT1.int.shut_interfaces("Ex 0/1", "Gi 0/10")
+        DUT2.int.shut_interfaces("Gi 0/3", "Gi 0/9")
+        DUT3.int.shut_interfaces("Gi 0/3", "Gi 0/10")
+
+    def test_func_2(self):
+
+        print("###### Test_func_2 ######")
+        print("########## Verify RSTP (802.1W) port cost functionality #############")
+        print("###### 3 DUTs ######")
+
+        #    Topology
+        #
+        #  DUT1 -- DUT2
+        #    \     /
+        #     \   /
+        #      DUT3
+
+        # No shutting the interfaces
+
+        DUT1.int.no_shut_interfaces("Ex 0/1", "Gi 0/10")
+        DUT2.int.no_shut_interfaces("Gi 0/3", "Gi 0/9")
+        DUT3.int.no_shut_interfaces("Gi 0/3", "Gi 0/10")
+
+        # Create VLANs on DUTs and assign ports to them
+
+        DUT1.vl.create_vlans("10", "20", "30")
+        DUT2.vl.create_vlans("10", "20", "30")
+        DUT3.vl.create_vlans("10", "20", "30")
+
+        DUT1.vl.add_more_ports_to_more_vlans("Ex 0/1", "Gi 0/10", vlan10="10", vlan20="20", vlan30="30")
+        DUT2.vl.add_more_ports_to_more_vlans("Gi 0/3", "Gi 0/9", vlan10="10", vlan20="20", vlan30="30")
+        DUT3.vl.add_more_ports_to_more_vlans("Gi 0/3", "Gi 0/10", vlan10="10", vlan20="20", vlan30="30")
+
+        # Disable STP on the link towards Cambium LAB
+
+        DUT2.stp.stp_disable(port="Gi 0/1")
+
+        # Check the default Root Bridge (the lowest MAC in the topology - DUT1)
+
+        d_root_id_1, d_bridge_id_1, ports_1, dict_of_ports_1 = DUT1.stp.show_spanning_tree_rstp()
+        d_root_id_2, d_bridge_id_2, ports_2, dict_of_ports_2 = DUT2.stp.show_spanning_tree_rstp()
+        d_root_id_3, d_bridge_id_3, ports_3, dict_of_ports_3 = DUT3.stp.show_spanning_tree_rstp()
+
+        print("######## Root ID and Bridge ID of DUT 1 ########")
+        print(d_root_id_1)
+        print(d_bridge_id_1)
+        print("######## Root ID and Bridge ID of DUT 2 ########")
+        print(d_root_id_2)
+        print(d_bridge_id_2)
+        print("######## Root ID and Bridge ID of DUT 3 ########")
+        print(d_root_id_3)
+        print(d_bridge_id_3)
+
+        assert d_root_id_1["Root MAC-Address"] == d_root_id_2["Root MAC-Address"] == d_root_id_3["Root MAC-Address"] == d_bridge_id_1["Bridge MAC-Address"]
+        assert d_bridge_id_1["Bridge Priority"] == "32768" and d_bridge_id_2["Bridge Priority"] == "32768" and d_bridge_id_3["Bridge Priority"] == "32768"
+
+        print("######## Ports of DUT 1 ########")
+        print(dict_of_ports_1)
+        print("######## Ports of DUT 2 ########")
+        print(dict_of_ports_2)
+        print("######## Ports of DUT 3 ########")
+        print(dict_of_ports_3)
+
+        # Check the Port Role/Cost of each DUT
+
+        assert dict_of_ports_1["Gi0/10"]["Role"] == "Designated" and dict_of_ports_1["Ex0/1"]["Role"] == "Designated"
+        assert dict_of_ports_2["Gi0/3"]["Role"] == "Designated" and dict_of_ports_2["Gi0/9"]["Role"] == "Root"
+        assert dict_of_ports_3["Gi0/3"]["Role"] == "Alternate" and dict_of_ports_3["Gi0/10"]["Role"] == "Root"
+        assert dict_of_ports_3["Gi0/3"]["Cost"] == "20000" and dict_of_ports_3["Gi0/10"]["Cost"] == "20000"
+
+        # Change the cost of the Root port of DUT3, so it becomes Alternate
+
+        DUT3.stp.add_rstp_port_cost(port="Gi 0/10", cost="50000")
+
+        # Check the default Root Bridge (the lowest MAC in the topology - DUT1)
+
+        d_root_id_1, d_bridge_id_1, ports_1, dict_of_ports_1 = DUT1.stp.show_spanning_tree_rstp()
+        d_root_id_2, d_bridge_id_2, ports_2, dict_of_ports_2 = DUT2.stp.show_spanning_tree_rstp()
+        d_root_id_3, d_bridge_id_3, ports_3, dict_of_ports_3 = DUT3.stp.show_spanning_tree_rstp()
+
+        print("######## Root ID and Bridge ID of DUT 1 ########")
+        print(d_root_id_1)
+        print(d_bridge_id_1)
+        print("######## Root ID and Bridge ID of DUT 2 ########")
+        print(d_root_id_2)
+        print(d_bridge_id_2)
+        print("######## Root ID and Bridge ID of DUT 3 ########")
+        print(d_root_id_3)
+        print(d_bridge_id_3)
+
+        assert d_root_id_1["Root MAC-Address"] == d_root_id_2["Root MAC-Address"] == d_root_id_3["Root MAC-Address"] == d_bridge_id_1["Bridge MAC-Address"]
+        assert d_bridge_id_1["Bridge Priority"] == "32768" and d_bridge_id_2["Bridge Priority"] == "32768" and d_bridge_id_3["Bridge Priority"] == "32768"
+
+        # Check the ports of DUT3 (The Root port -> Alternate port, The Alternate port -> Root port)
+
+        print("######## Ports of DUT 1 ########")
+        print(dict_of_ports_1)
+        print("######## Ports of DUT 2 ########")
+        print(dict_of_ports_2)
+        print("######## Ports of DUT 3 ########")
+        print(dict_of_ports_3)
+
+        # Check the Port Role/Cost of each DUT
+
+        assert dict_of_ports_1["Gi0/10"]["Role"] == "Designated" and dict_of_ports_1["Ex0/1"]["Role"] == "Designated"
+        assert dict_of_ports_2["Gi0/3"]["Role"] == "Designated" and dict_of_ports_2["Gi0/9"]["Role"] == "Root"
+        assert dict_of_ports_3["Gi0/3"]["Role"] == "Root" and dict_of_ports_3["Gi0/10"]["Role"] == "Alternate"
+        assert dict_of_ports_3["Gi0/3"]["Cost"] == "20000" and dict_of_ports_3["Gi0/10"]["Cost"] == "50000"
+
+        # Remove the cost and check that DUT3 ports are back in place
+
+        DUT3.stp.remove_rstp_port_cost(port="Gi 0/10")
+
+        # Check the default Root Bridge (the lowest MAC in the topology - DUT1)
+
+        d_root_id_1, d_bridge_id_1, ports_1, dict_of_ports_1 = DUT1.stp.show_spanning_tree_rstp()
+        d_root_id_2, d_bridge_id_2, ports_2, dict_of_ports_2 = DUT2.stp.show_spanning_tree_rstp()
+        d_root_id_3, d_bridge_id_3, ports_3, dict_of_ports_3 = DUT3.stp.show_spanning_tree_rstp()
+
+        print("######## Root ID and Bridge ID of DUT 1 ########")
+        print(d_root_id_1)
+        print(d_bridge_id_1)
+        print("######## Root ID and Bridge ID of DUT 2 ########")
+        print(d_root_id_2)
+        print(d_bridge_id_2)
+        print("######## Root ID and Bridge ID of DUT 3 ########")
+        print(d_root_id_3)
+        print(d_bridge_id_3)
+
+        assert d_root_id_1["Root MAC-Address"] == d_root_id_2["Root MAC-Address"] == d_root_id_3["Root MAC-Address"] == d_bridge_id_1["Bridge MAC-Address"]
+        assert d_bridge_id_1["Bridge Priority"] == "32768" and d_bridge_id_2["Bridge Priority"] == "32768" and d_bridge_id_3["Bridge Priority"] == "32768"
+
+        print("######## Ports of DUT 1 ########")
+        print(dict_of_ports_1)
+        print("######## Ports of DUT 2 ########")
+        print(dict_of_ports_2)
+        print("######## Ports of DUT 3 ########")
+        print(dict_of_ports_3)
+
+        # Check the Port Role/Cost of each DUT
+
+        assert dict_of_ports_1["Gi0/10"]["Role"] == "Designated" and dict_of_ports_1["Ex0/1"]["Role"] == "Designated"
+        assert dict_of_ports_2["Gi0/3"]["Role"] == "Designated" and dict_of_ports_2["Gi0/9"]["Role"] == "Root"
+        assert dict_of_ports_3["Gi0/3"]["Role"] == "Alternate" and dict_of_ports_3["Gi0/10"]["Role"] == "Root"
+        assert dict_of_ports_3["Gi0/3"]["Cost"] == "20000" and dict_of_ports_3["Gi0/10"]["Cost"] == "20000"
+
+        print("########## Removing the config #############")
+
+        DUT2.stp.stp_enable(port="Gi 0/1")
+
+        DUT1.vl.remove_vlans("10", "20", "30")
+        DUT2.vl.remove_vlans("10", "20", "30")
+        DUT3.vl.remove_vlans("10", "20", "30")
+
+        DUT1.int.shut_interfaces("Ex 0/1", "Gi 0/10")
+        DUT2.int.shut_interfaces("Gi 0/3", "Gi 0/9")
+        DUT3.int.shut_interfaces("Gi 0/3", "Gi 0/10")
+
+    def test_func_3(self):
+
+        print("###### Test_func_3 ######")
+        print("########## Verify RSTP (802.1W) port-priority functionality #############")
+        print("###### 2 DUTs ######")
+
+        #    Topology
+        #
+        #  DUT1 == DUT2
+
+        # No shutting the interfaces
+
+        DUT1.int.no_shut_interfaces("Ex 0/1", "Ex 0/2")
+        DUT2.int.no_shut_interfaces("Gi 0/9", "Gi 0/10")
+
+        # Create VLANs on DUTs and assign ports to them
+
+        DUT1.vl.create_vlans("10", "20", "30")
+        DUT2.vl.create_vlans("10", "20", "30")
+
+        DUT1.vl.add_more_ports_to_more_vlans("Ex 0/1", "Ex 0/2", vlan10="10", vlan20="20", vlan30="30")
+        DUT2.vl.add_more_ports_to_more_vlans("Gi 0/9", "Gi 0/10", vlan10="10", vlan20="20", vlan30="30")
+
+        # Disable STP on the link towards Cambium LAB
+
+        DUT2.stp.stp_disable(port="Gi 0/1")
+
+        # Check the default Root Bridge (the lowest MAC in the topology - DUT1)
+
+        d_root_id_1, d_bridge_id_1, ports_1, dict_of_ports_1 = DUT1.stp.show_spanning_tree_rstp()
+        d_root_id_2, d_bridge_id_2, ports_2, dict_of_ports_2 = DUT2.stp.show_spanning_tree_rstp()
+
+        print("######## Root ID and Bridge ID of DUT 1 ########")
+        print(d_root_id_1)
+        print(d_bridge_id_1)
+        print("######## Root ID and Bridge ID of DUT 2 ########")
+        print(d_root_id_2)
+        print(d_bridge_id_2)
+
+        assert d_root_id_1["Root MAC-Address"] == d_root_id_2["Root MAC-Address"] == d_bridge_id_1["Bridge MAC-Address"]
+        assert d_bridge_id_1["Bridge Priority"] == "32768" and d_bridge_id_2["Bridge Priority"] == "32768"
+
+        print("######## Ports of DUT 1 ########")
+        print(dict_of_ports_1)
+        print("######## Ports of DUT 2 ########")
+        print(dict_of_ports_2)
+
+        # Check the Port Role/Port-priority of each DUT
+
+        assert dict_of_ports_1["Ex0/1"]["Role"] == "Designated" and dict_of_ports_1["Ex0/2"]["Role"] == "Designated"
+        assert dict_of_ports_2["Gi0/9"]["Role"] == "Root" and dict_of_ports_2["Gi0/10"]["Role"] == "Alternate"
+        assert dict_of_ports_1["Ex0/1"]["Prio"] == "128" and dict_of_ports_1["Ex0/2"]["Prio"] == "128"
+
+        # Change the port-priority of the remote port of DUT1 (Ex 0/2), so the port Gi 0/10 from DUT2 becomes Root
+
+        DUT1.stp.add_rstp_port_priority(port="Ex 0/2", port_priority="64")
+
+        # Check the default Root Bridge (the lowest MAC in the topology - DUT1)
+
+        d_root_id_1, d_bridge_id_1, ports_1, dict_of_ports_1 = DUT1.stp.show_spanning_tree_rstp()
+        d_root_id_2, d_bridge_id_2, ports_2, dict_of_ports_2 = DUT2.stp.show_spanning_tree_rstp()
+
+        print("######## Root ID and Bridge ID of DUT 1 ########")
+        print(d_root_id_1)
+        print(d_bridge_id_1)
+        print("######## Root ID and Bridge ID of DUT 2 ########")
+        print(d_root_id_2)
+        print(d_bridge_id_2)
+
+        assert d_root_id_1["Root MAC-Address"] == d_root_id_2["Root MAC-Address"] == d_bridge_id_1["Bridge MAC-Address"]
+        assert d_bridge_id_1["Bridge Priority"] == "32768" and d_bridge_id_2["Bridge Priority"] == "32768"
+
+        # Check the ports of DUT2 (The Root port -> Alternate port, The Alternate port -> Root port)
+
+        print("######## Ports of DUT 1 ########")
+        print(dict_of_ports_1)
+        print("######## Ports of DUT 2 ########")
+        print(dict_of_ports_2)
+
+        # Check the Port Role/Port-priority of each DUT
+
+        assert dict_of_ports_1["Ex0/1"]["Role"] == "Designated" and dict_of_ports_1["Ex0/2"]["Role"] == "Designated"
+        assert dict_of_ports_2["Gi0/9"]["Role"] == "Alternate" and dict_of_ports_2["Gi0/10"]["Role"] == "Root"
+        assert dict_of_ports_1["Ex0/1"]["Prio"] == "128" and dict_of_ports_1["Ex0/2"]["Prio"] == "64"
+
+        # Remove the port-priority from DUT1 and check that DUT2 ports are back in place
+
+        DUT1.stp.remove_rstp_port_priority(port="Ex 0/2")
+
+        # Check the default Root Bridge (the lowest MAC in the topology - DUT1)
+
+        d_root_id_1, d_bridge_id_1, ports_1, dict_of_ports_1 = DUT1.stp.show_spanning_tree_rstp()
+        d_root_id_2, d_bridge_id_2, ports_2, dict_of_ports_2 = DUT2.stp.show_spanning_tree_rstp()
+
+        print("######## Root ID and Bridge ID of DUT 1 ########")
+        print(d_root_id_1)
+        print(d_bridge_id_1)
+        print("######## Root ID and Bridge ID of DUT 2 ########")
+        print(d_root_id_2)
+        print(d_bridge_id_2)
+
+        assert d_root_id_1["Root MAC-Address"] == d_root_id_2["Root MAC-Address"] == d_bridge_id_1["Bridge MAC-Address"]
+        assert d_bridge_id_1["Bridge Priority"] == "32768" and d_bridge_id_2["Bridge Priority"] == "32768"
+
+        print("######## Ports of DUT 1 ########")
+        print(dict_of_ports_1)
+        print("######## Ports of DUT 2 ########")
+        print(dict_of_ports_2)
+
+        # Check the Port Role/Port-priority of each DUT
+
+        assert dict_of_ports_1["Ex0/1"]["Role"] == "Designated" and dict_of_ports_1["Ex0/2"]["Role"] == "Designated"
+        assert dict_of_ports_2["Gi0/9"]["Role"] == "Root" and dict_of_ports_2["Gi0/10"]["Role"] == "Alternate"
+        assert dict_of_ports_1["Ex0/1"]["Prio"] == "128" and dict_of_ports_1["Ex0/2"]["Prio"] == "128"
+
+        print("########## Removing the config #############")
+
+        DUT2.stp.stp_enable(port="Gi 0/1")
+
+        DUT1.vl.remove_vlans("10", "20", "30")
+        DUT2.vl.remove_vlans("10", "20", "30")
+
+        DUT1.int.shut_interfaces("Ex 0/1", "Ex 0/2")
+        DUT2.int.shut_interfaces("Gi 0/9", "Gi 0/10")
