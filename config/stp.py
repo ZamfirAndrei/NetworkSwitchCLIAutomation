@@ -39,7 +39,7 @@ class STP:
 
         return d
 
-    def changing_stp_mode(self, mode=None):
+    def change_stp_mode(self, mode=None):
 
         self.session.connect()
         self.session.send_cmd("conf t \r\n")
@@ -95,7 +95,7 @@ class STP:
         else:
 
             print(f"The bridge priority of the swtich {self.ip_session} remains the same ")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
 
         self.session.close()
@@ -106,7 +106,7 @@ class STP:
         self.session.send_cmd("conf t\r\n")
         self.session.send_cmd(f"no spanning-tree priority")
         print(f"The bridge priority of the switch {self.ip_session} was changed to default")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 
@@ -118,7 +118,7 @@ class STP:
         self.session.send_cmd(f"spanning-tree cost {cost}")
         self.session.send_cmd("!")
         print(f"The cost for {port} was changed to {cost} on DUT {self.ip_session}")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 
@@ -130,19 +130,19 @@ class STP:
         self.session.send_cmd(f"no spanning-tree cost")
         self.session.send_cmd("!")
         print(f"The cost for {port} has been removed from DUT {self.ip_session}")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 
     def add_rstp_port_priority(self, port=None, port_priority=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"int {port}\r\n")
-        self.session.send_cmd(f"spanning-tree port-priority {port_priority}\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"int {port}")
+        self.session.send_cmd(f"spanning-tree port-priority {port_priority}")
         self.session.send_cmd("!")
         print(f"The port-priority for {port} has been changed to {port_priority} on DUT {self.ip_session}")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 
@@ -154,7 +154,7 @@ class STP:
         self.session.send_cmd(f"no spanning-tree port-priority\r\n")
         self.session.send_cmd("!")
         print(f"The port-priority for {port} has been removed from DUT {self.ip_session}")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 
@@ -174,9 +174,9 @@ class STP:
         ports = list()
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("set cli pagination off\r\n")
-        self.session.send_cmd("do show span\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("set cli pagination off")
+        self.session.send_cmd("do show span")
         output = self.session.read()
         # print(output)
 
@@ -186,7 +186,7 @@ class STP:
         # print(match)
         # print(match1)
 
-        print("###################")
+        # print("###################")
 
         d_root_id["Root Priority"] = match[0][0]
         d_root_id["Root MAC-Address"] = match[0][1]
@@ -197,7 +197,7 @@ class STP:
         # print(d_root_id)
         # print(d_bridge_id)
 
-        print("###################")
+        # print("###################")
 
         for attributes in match1:
             # print(attributes)
@@ -500,6 +500,7 @@ class STP:
             "Type": ""
         }
 
+        dict_ports_instance_vlan = {}
         list_ports_instance = list()
 
         self.session.connect()
@@ -518,16 +519,16 @@ class STP:
                             r"Address\s+(\w+.\w+.\w+.\w+.\w+.\w+)[\s\S]+Bridge Id\s+Priority\s+(\d+)\S+"
                             r"\s+Address\s+(\w+.\w+.\w+.\w+.\w+.\w+)", output)
 
-        match2 = re.findall(r"([GEix]+\d/\d+)\s+(\w+)\s+(\w+)\s+(\w+)\s+(\d+)\S\d+\s+([\d\w]+)", output)
+        match2 = re.findall(r"([GEix]+\d/\d+)\s+(\w+)\s+(\w+)\s+(\w+)\s+(\d{1,3})\s+([\d\w]+)", output)
 
-        # print(match1)  # Regex pt. PVRST VL X root,brigde (mac-addresses and priorities)
-        # print(match2)  # Regex pt. PVRST VL X ports
+        # print(match1)  # Regex for PVRST VL X root,brigde (mac-addresses and priorities)
+        # print(match2)  # Regex for PVRST VL X ports
 
         for key, attribute in zip(d_instance_vlan.keys(), match1[0]):
 
             d_instance_vlan[key] = attribute
 
-        print(d_instance_vlan)
+        # print(d_instance_vlan)
 
         for i in range(len(match2)):
 
@@ -536,11 +537,15 @@ class STP:
             for key, attribute in zip(d_ports_instance_vlan.keys(), match2[i]):
 
                 d[key] = attribute
+            # print(d)
 
             list_ports_instance.append(d)
-        print(list_ports_instance)
+            dict_ports_instance_vlan[d["Name"]] = d
 
-        return d_instance_vlan, list_ports_instance
+        # print(list_ports_instance)
+        # print(dict_ports_instance_vlan)
+
+        return d_instance_vlan, dict_ports_instance_vlan, list_ports_instance
 
 
 ip_session = "10.2.109.238"
@@ -552,13 +557,13 @@ ip_session = "10.2.109.238"
 # obj.add_rstp_port_priority(port="Ex 0/1", port_priority= "64")
 # obj.show_spanning_tree_rstp()
 # obj.remove_rstp_port_priority(port="Ex 0/1")
-# obj.changing_stp_mode(mode="rst")
+# obj.change_stp_mode(mode="rst")
 #
 # obj1 = STP("10.2.109.198")
 # # obj1.add_rstp_bridge_priority(bridge_priority="61440")
 # # obj1.show_spanning_tree_rstp()
 # print("###########################")
-# obj1.changing_stp_mode(mode="rst")
+# obj1.change_stp_mode(mode="rst")
 # obj1.check_stp_mode()
 # obj.add_pvrst_bridge_priority(vlan="10",brg_priority="4096")
 # obj.remove_pvrst_bridge_priority(vlan="10")
@@ -566,7 +571,7 @@ ip_session = "10.2.109.238"
 # obj.remove_pvrst_port_priority(vlan="10",port="Ex 0/2")
 # obj.add_pvrst_port_cost(vlan="10",port="Ex 0/1",cost="1")
 # obj.remove_pvrst_port_cost(vlan="10",port="Ex 0/1")
-# obj.changing_stp_mode(mode="mst")
+# obj.change_stp_mode(mode="mst")
 # obj.mst_configuration(name="TETE1",instance="1",vlan="10,100")
 # obj.add_mst_priority(instance="1",priority="4096")
 # obj.remove_mst_priority(instance="1")

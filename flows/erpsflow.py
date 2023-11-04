@@ -97,7 +97,7 @@ class ERPSFlow:
 
     def assert_rpl_port(self, configured_rpl_port, rpl_port):
         print(rpl_port)
-        if rpl_port != "There is no RPL Port":
+        if rpl_port != "There is no RPL Port": # Cred ca e configured
             # Re-Modeling the Configured RPL Port from "gi 0/X" to be "Gi0/X"
             list_rpl_port = []
             list_rpl_port.append(configured_rpl_port[0].upper())

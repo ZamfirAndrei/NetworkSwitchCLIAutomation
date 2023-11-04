@@ -54,8 +54,8 @@ class TestRSTPSuite1:
         print("###### Test_func_2 ######")
         print("########## Check that you can change the stp mode to RSTP #############")
 
-        stp1.changing_stp_mode(mode="pvrst")
-        stp2.changing_stp_mode(mode="mst")
+        stp1.change_stp_mode(mode="pvrst")
+        stp2.change_stp_mode(mode="mst")
 
         x1 = stp1.check_stp_mode()
         x2 = stp2.check_stp_mode()
@@ -68,8 +68,8 @@ class TestRSTPSuite1:
 
         print("##############################")
 
-        stp1.changing_stp_mode(mode="rst")
-        stp2.changing_stp_mode(mode="rst")
+        stp1.change_stp_mode(mode="rst")
+        stp2.change_stp_mode(mode="rst")
 
         x3 = stp1.check_stp_mode()
         x4 = stp2.check_stp_mode()

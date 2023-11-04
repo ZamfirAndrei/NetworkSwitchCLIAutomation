@@ -250,9 +250,9 @@ class VLAN:
 
         else:
 
-            self.session.send_cmd("conf t\r\n")
-            self.session.send_cmd("set cli pagination off\r\n")
-            self.session.send_cmd("do show vlan\r\n")
+            self.session.send_cmd("conf t")
+            self.session.send_cmd("set cli pagination off")
+            self.session.send_cmd("do show vlan")
             output = self.session.read()
             # print(output)
 
@@ -321,12 +321,12 @@ class VLAN:
 
         for vlan in kwargs.values():
 
-            print(vlan)
+            # print(vlan)
             self.session.send_cmd(f"vlan {vlan}")
 
             for arg in args:
                 self.session.send_cmd(f"port add {arg}")
-
+                print(f"The port {arg} is added successfully to vlan {vlan} on DUT {self.ip_session}")
             self.session.send_cmd("!")
 
         output = self.session.read()
@@ -334,8 +334,7 @@ class VLAN:
         # print(error)
         if "% Invalid interface type" in error:
             print("The interface does not exist")
-        else:
-            print("The port is added succesfully")
+
         # print(output)
         self.session.close()
 
