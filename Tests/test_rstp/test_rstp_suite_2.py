@@ -84,17 +84,6 @@ class TestRSTPSuite2:
         assert dict_of_ports_2["Gi0/3"]["Role"] == "Designated" and dict_of_ports_2["Gi0/9"]["Role"] == "Root"
         assert dict_of_ports_3["Gi0/3"]["Role"] == "Alternate" and dict_of_ports_3["Gi0/10"]["Role"] == "Root"
 
-        # Asserting using the RSTP Flow
-
-        # rstp_flow.confirm_rstp_root_bridge_bridge_priority_and_ports(d_root_id_1, d_bridge_id_1, "32768", dict_of_ports_1, port="Gi 0/10", role="Designated")
-        # rstp_flow.confirm_rstp_root_bridge_bridge_priority_and_ports(d_root_id_1, d_bridge_id_1, "32768", dict_of_ports_1, port="Ex 0/1", role="Designated")
-        #
-        # rstp_flow.confirm_rstp_root_bridge_bridge_priority_and_ports(d_root_id_2, d_bridge_id_2, "32768", dict_of_ports_2, port="Gi 0/3", role="Designated")
-        # rstp_flow.confirm_rstp_root_bridge_bridge_priority_and_ports(d_root_id_2, d_bridge_id_2, "32768", dict_of_ports_2, port="Gi 0/9", role="Root")
-        #
-        # rstp_flow.confirm_rstp_root_bridge_bridge_priority_and_ports(d_root_id_3, d_bridge_id_3, "32768", dict_of_ports_3, port="Gi 0/3", role="Alternate")
-        # rstp_flow.confirm_rstp_root_bridge_bridge_priority_and_ports(d_root_id_3, d_bridge_id_3, "32768", dict_of_ports_3, port="Gi 0/10", role="Root")
-
         # Change the bridge priority on DUT3
 
         DUT3.stp.add_rstp_bridge_priority(bridge_priority="4096")

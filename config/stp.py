@@ -260,11 +260,11 @@ class STP:
     def add_pvrst_port_priority(self, vlan=None, port=None, port_priority=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"int {port}\r\n")
-        self.session.send_cmd(f"spanning-tree vlan {vlan} port-priority {port_priority}\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"int {port}")
+        self.session.send_cmd(f"spanning-tree vlan {vlan} port-priority {port_priority}")
         self.session.send_cmd("!")
-        print(f"The port-priority for {port} has been changed")
+        print(f"The port-priority for {port} has been changed on DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
         self.session.close()
@@ -272,20 +272,40 @@ class STP:
     def remove_pvrst_port_priority(self, vlan=None, port=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"int {port}\r\n")
-        self.session.send_cmd(f"no spanning-tree vlan {vlan} port-priority\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"int {port}")
+        self.session.send_cmd(f"no spanning-tree vlan {vlan} port-priority")
         self.session.send_cmd("!")
-        print(f"The port-priority for {port} has been changed to default")
-        # output = self.session.read()
+        print(f"The port-priority for {port} has been changed to default on DUT {self.ip_session}")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def add_prvst_root_primary_secondary(self, vlan, root):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"spanning-tree vlan {vlan} root {root}")
+        print(f"The root {root} for vlan {vlan} has been configured on DUT {self.ip_session}")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def remove_pvrst_root_primary_secondary(self, vlan):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"no spanning-tree vlan {vlan} root")
+        print(f"The priority for vlan {vlan} has been changed to default")
+        output = self.session.read()
         # print(output)
         self.session.close()
 
     def mst_configuration(self, name=None, instance=None, vlan=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("spanning-tree mst configuration\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("spanning-tree mst configuration")
 
         if name is not None:
 
@@ -293,41 +313,41 @@ class STP:
 
         if instance is not None and vlan is not None:
 
-            self.session.send_cmd(f"instance {instance} vlan {vlan}\r\n")
+            self.session.send_cmd(f"instance {instance} vlan {vlan}")
 
-        print("The mst configuration has been made")
-        # output = self.session.read()
+        print(f"The mst configuration has been made on DUT {self.ip_session}")
+        output = self.session.read()
         # print(output)
         self.session.close()
 
     def add_mst_priority(self, instance=None, priority=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"spanning-tree mst {instance} priority {priority}\r\n")
-        print(f"The priority for instance {instance} has been changed in {priority}")
-        # output = self.session.read()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"spanning-tree mst {instance} priority {priority}")
+        print(f"The priority for instance {instance} has been changed in {priority} on DUT {self.ip_session}")
+        output = self.session.read()
         # print(output)
         self.session.close()
 
     def remove_mst_priority(self, instance=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"no spanning-tree mst {instance} priority\r\n")
-        print(f"The priority for instance {instance} has been changed to default")
-        # output = self.session.read()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"no spanning-tree mst {instance} priority")
+        print(f"The priority for instance {instance} has been changed to default on DUT {self.ip_session}")
+        output = self.session.read()
         # print(output)
         self.session.close()
 
     def add_mst_port_cost(self, instance=None, port=None, cost=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"int {port}\r\n")
-        self.session.send_cmd(f"spanning-tree mst {instance} cost {cost}\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"int {port}")
+        self.session.send_cmd(f"spanning-tree mst {instance} cost {cost}")
         self.session.send_cmd("!")
-        print(f"The cost for {port} was changed to {cost}")
+        print(f"The cost for {port} on instance {instance} was changed to {cost}")
         # output = self.session.read()
         # print(output)
         self.session.close()
@@ -335,36 +355,127 @@ class STP:
     def remove_mst_port_cost(self, instance=None, port=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"int {port}\r\n")
-        self.session.send_cmd(f"no spanning-tree mst {instance} cost\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"int {port}")
+        self.session.send_cmd(f"no spanning-tree mst {instance} cost")
         self.session.send_cmd("!")
-        print(f"The cost for {port} has been removed")
-        # output = self.session.read()
+        print(f"The cost for {port} on instance {instance} has been removed on DUT {self.ip_session}")
+        output = self.session.read()
         # print(output)
         self.session.close()
 
     def add_mst_port_priority(self, instance=None, port=None, port_priority=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"int {port}\r\n")
-        self.session.send_cmd(f"spanning-tree mst {instance} port-priority {port_priority}\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"int {port}")
+        self.session.send_cmd(f"spanning-tree mst {instance} port-priority {port_priority}")
         self.session.send_cmd("!")
-        print(f"The port-priority for {port} has been changed")
-        # output = self.session.read()
+        print(f"The port-priority for {port} on instance {instance} has been changed on DUT {self.ip_session}")
+        output = self.session.read()
         # print(output)
         self.session.close()
 
     def remove_mst_port_priority(self, instance=None, port=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"int {port}\r\n")
-        self.session.send_cmd(f"no spanning-tree mst {instance} port-priority\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"int {port}")
+        self.session.send_cmd(f"no spanning-tree mst {instance} port-priority")
         self.session.send_cmd("!")
-        print(f"The port-priority for {port} has been changed to default")
-        # output = self.session.read()
+        print(f"The port-priority for {port} on instance {instance} has been changed to default on DUT {self.ip_session}")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def add_mst_instance_with_vlans(self, *args, instance):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("spanning-tree mst configuration")
+
+        for vlan in args:
+            self.session.send_cmd(f"instance {instance} vlan {vlan}")
+            print(f"The vlan {vlan} has been added to instance {instance} for DUT {self.ip_session}")
+
+        self.session.send_cmd("!")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def add_mst_instances_with_vlans(self, *args, **kwargs):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("spanning-tree mst configuration")
+
+        for instance, vlan in zip(args, kwargs.values()):
+            self.session.send_cmd(f"instance {instance} vlan {vlan[0]}")
+            print(f"The vlan {vlan[0]} has been added to instance {instance} for DUT {self.ip_session}")
+
+        self.session.send_cmd("!")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def remove_mst_instance(self, instance):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("spanning-tree mst configuration")
+
+        self.session.send_cmd(f"no instance {instance}")
+        print(f"The instance {instance} has been removed from DUT {self.ip_session}")
+
+        self.session.send_cmd("!")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def remove_mst_instances(self, *args):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("spanning-tree mst configuration")
+
+        for instance in args:
+            self.session.send_cmd(f"no instance {instance}")
+            print(f"The instance {instance} has been removed from DUT {self.ip_session}")
+
+        self.session.send_cmd("!")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def add_mst_region(self, region):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("spanning-tree mst configuration")
+        self.session.send_cmd(f"name {region}")
+        self.session.send_cmd("!")
+        print(f"The region {region} has been added for DUT {self.ip_session}")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def add_mst_root_primary_secondary(self, instance, root):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"spanning-tree mst instance-id {instance} root {root}")
+        print(f"The root {root} for instance {instance} has been configured on DUT {self.ip_session}")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def remove_mst_root_primary_secondary(self, instance):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"no spanning-tree mst instance-id {instance} root")
+        print(f"The priority for instance {instance} has been changed to default")
+        output = self.session.read()
         # print(output)
         self.session.close()
 
@@ -386,12 +497,13 @@ class STP:
             "Type": ""
         }
 
-        d_instances = {
+        d_instance = {
             "Instance":"",
             "VLANs Mapped":"",
-            "Bridge ID":"",
-            "Root ID":"",
-            "Priority":"",
+            "Bridge ID Address":"",
+            "Bridge ID Priority":"",
+            "Root ID Address":"",
+            "Root ID Priority":"",
         }
 
         d_ports_instances = {
@@ -402,6 +514,8 @@ class STP:
             "Prio": "",
             "Type": ""
         }
+
+        dict_of_ports_instance = {}
 
         list_ports_instance_zero = list()
         list_ports_instance = list()
@@ -430,7 +544,7 @@ class STP:
                 # print(key, attribute)
                 d_instance_zero[key] = attribute
 
-            print(d_instance_zero)
+            # print(d_instance_zero)
 
             for i in range(len(match2)):
 
@@ -443,7 +557,7 @@ class STP:
 
                 # print(d)
                 list_ports_instance_zero.append(d)
-            print(list_ports_instance_zero)
+            # print(list_ports_instance_zero)
             # print(list_ports_instance_zero[0]["Name"])
 
         else:
@@ -461,11 +575,11 @@ class STP:
             # print(match1)  # Regex pt. MST root,brigde (mac-addresses and priorities)
             # print(match2)  # Regex pt. MST ports
 
-            for key, attribute in zip(d_instances.keys(), match1[0]):
+            for key, attribute in zip(d_instance.keys(), match1[0]):
 
-                d_instances[key] = attribute
+                d_instance[key] = attribute
 
-            print(d_instances)
+            # print(d_instances)
 
             for i in range(len(match2)):
 
@@ -476,10 +590,12 @@ class STP:
                     d[key] = attribute
 
                 list_ports_instance.append(d)
+                dict_of_ports_instance[d["Name"]] = d
 
-            print(list_ports_instance)
+            # print(list_ports_instance)
+            # print(dict_of_ports_instance)
 
-        return d_instance_zero, list_ports_instance_zero, d_instances, list_ports_instance
+        return d_instance_zero, d_instance, dict_of_ports_instance
 
     def show_spanning_tree_pvrst(self, vlan=None):
 

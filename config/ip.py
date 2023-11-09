@@ -206,7 +206,7 @@ class IP:
 
             # print(int_vlan, ip, ip[0], ip[1])
 
-            self.session.send_cmd(f"int vlan {int_vlan}\r\n")
+            self.session.send_cmd(f"int vlan {int_vlan}")
             self.session.send_cmd(f"ip add {ip[0]} {ip[1]}")
             self.session.send_cmd("!")
             print(f"The int vlan {int_vlan} has now the ip {ip[0]} and mask {ip[1]}")

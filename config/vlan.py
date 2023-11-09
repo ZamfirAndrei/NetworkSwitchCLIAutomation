@@ -319,15 +319,37 @@ class VLAN:
         self.session.connect("admin", "Admin1234!")
         self.session.send_cmd("conf t")
 
-        for vlan in kwargs.values():
+        for vlan in args:
 
             # print(vlan)
             self.session.send_cmd(f"vlan {vlan}")
-
-            for arg in args:
-                self.session.send_cmd(f"port add {arg}")
-                print(f"The port {arg} is added successfully to vlan {vlan} on DUT {self.ip_session}")
+            # print(kwargs.items())
+            # print(kwargs.values())
+            # print(kwargs.keys())
+            for port in kwargs.values():
+                self.session.send_cmd(f"port add {port}")
+                print(f"The port {port} is added successfully to vlan {vlan} on DUT {self.ip_session}")
             self.session.send_cmd("!")
+
+        output = self.session.read()
+        error = re.findall(r"% Invalid interface type", output)
+        # print(error)
+        if "% Invalid interface type" in error:
+            print("The interface does not exist")
+
+        # print(output)
+        self.session.close()
+
+    def add_more_ports_to_different_vlans(self, *args, **kwargs):
+
+        self.session.connect("admin", "Admin1234!")
+        self.session.send_cmd("conf t")
+
+        for vlan, port in zip(args, kwargs.values()):
+
+            self.session.send_cmd(f"vlan {vlan}")
+            self.session.send_cmd(f"port add {port}")
+            self.session.send_cmd(f"!")
 
         output = self.session.read()
         error = re.findall(r"% Invalid interface type", output)
