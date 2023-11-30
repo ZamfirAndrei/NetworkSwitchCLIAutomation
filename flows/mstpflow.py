@@ -4,7 +4,7 @@ from config import vlan
 
 class MSTPFlow:
 
-    def create_mstp_configuration(self, DUT, int1, int2, vlan1, vlan2, vlan3, mode, instance1, instance2, vlans_instance_1, vlans_instance_2, region, port_cambium_lab=None):
+    def create_mst_configuration(self, DUT, int1, int2, vlan1, vlan2, vlan3, mode, instance1, instance2, vlans_instance_1, vlans_instance_2, region, port_cambium_lab=None):
 
         # No shutting the interfaces
 

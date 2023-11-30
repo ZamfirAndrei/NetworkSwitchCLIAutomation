@@ -132,7 +132,7 @@ class OSPF:
         self.session.send_cmd(f"no network {ip_network} area {area}")
         self.session.send_cmd("exit")
         print(f"The network {ip_network} has been removed from ospf process on DUT {self.ip_session}")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 

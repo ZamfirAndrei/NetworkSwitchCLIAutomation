@@ -1,6 +1,7 @@
 import time
 from Management import dut_objects
 from flows import rstpflow
+from test_beds import test_bed_1
 
 ip_session_1 = "10.2.109.206"
 ip_session_2 = "10.2.109.83"
@@ -8,11 +9,13 @@ ip_session_3 = "10.2.109.232"
 ip_session_4 = "10.2.109.100"
 ip_session_5 = "10.2.109.113"
 
+
 DUT1 = dut_objects.DUT_Objects(ip_session=ip_session_1)
 DUT2 = dut_objects.DUT_Objects(ip_session=ip_session_2)
 DUT3 = dut_objects.DUT_Objects(ip_session=ip_session_3)
 DUT4 = dut_objects.DUT_Objects(ip_session=ip_session_4)
 DUT5 = dut_objects.DUT_Objects(ip_session=ip_session_5)
+
 
 rstp_flow = rstpflow.RSTPFlow()
 
@@ -277,3 +280,169 @@ class TestRSTPSuite3:
 
         rstp_flow.remove_rstp_configuration(DUT1, "Ex 0/1", "Ex 0/2", "10", "20", "30")
         rstp_flow.remove_rstp_configuration(DUT2, "Gi 0/9", "Gi 0/10", "10", "20", "30", "Gi 0/1")
+
+    def test_func_4(self):
+
+        print("###### Test_func_4 ######")
+        print("########## Verify that RSTP (802.1W) can be disabled on port #############")
+        print("###### 2 DUTs ######")
+
+        #    Topology
+        #
+        #  DUT1 -- DUT2
+
+        rstp_flow.create_rstp_configuration_1_LINK_2_DUTs(DUT1, "Ex 0/1", "10", "20", "30", "rst")
+        rstp_flow.create_rstp_configuration_1_LINK_2_DUTs(DUT2, "Gi 0/9", "10", "20", "30", "rst", "Gi 0/1")
+
+        # Check the default Root Bridge (the lowest MAC in the topology - DUT1)
+
+        d_root_id_1, d_bridge_id_1, ports_1, dict_of_ports_1 = DUT1.stp.show_spanning_tree_rstp()
+        d_root_id_2, d_bridge_id_2, ports_2, dict_of_ports_2 = DUT2.stp.show_spanning_tree_rstp()
+
+        # Asserting the default root bridges of all DUTs using RSTP flow
+
+        rstp_flow.assert_root_2_DUTs(DUT1, d_root_id_1, d_bridge_id_1, "32768"
+                                     , DUT2, d_root_id_2, d_bridge_id_2, "32768")
+
+        # Check the Port Role of each DUT
+
+        rstp_flow.assert_rstp_ports_1_LINK_2_DUTs(DUT1, dict_of_ports_1, "Ex 0/1", "Designated","128", "20000",
+                                                  DUT2, dict_of_ports_2, "Gi 0/9", "Root", "128", "20000")
+
+        # Disable the spanning-tree on DUT2's port towards DUT1 and DUT2 will see himself as root
+
+        DUT2.stp.stp_disable(port="Gi 0/9")
+
+        # Check the Root Bridge on both DUTs (both will be Root)
+
+        d_root_id_1, d_bridge_id_1, ports_1, dict_of_ports_1 = DUT1.stp.show_spanning_tree_rstp()
+        d_root_id_2, d_bridge_id_2, ports_2, dict_of_ports_2 = DUT2.stp.show_spanning_tree_rstp()
+
+        # Asserting the root bridges of all DUTs using RSTP flow
+
+        rstp_flow.assert_root(DUT1, d_root_id_1, d_bridge_id_1, "32768")
+        rstp_flow.assert_root(DUT2, d_root_id_2, d_bridge_id_2, "32768")
+
+        # Check the Port Role of each DUT
+
+        rstp_flow.assert_rstp_ports_1_LINK_2_DUTs(DUT1, dict_of_ports_1, "Ex 0/1", "Designated", "128", "20000",
+                                                  DUT2, dict_of_ports_2, "Gi 0/9", "Disabled", "128", "20000")
+
+        # Enable the spanning-tree on DUT2's port towards DUT1 and DUT2 will see DUT1 as root
+
+        DUT2.stp.stp_enable(port="Gi 0/9")
+
+        # Check the Root Bridge on both DUTs (DUT2 will be Root)
+
+        d_root_id_1, d_bridge_id_1, ports_1, dict_of_ports_1 = DUT1.stp.show_spanning_tree_rstp()
+        d_root_id_2, d_bridge_id_2, ports_2, dict_of_ports_2 = DUT2.stp.show_spanning_tree_rstp()
+
+        # Asserting the root bridges of all DUTs using RSTP flow
+
+        rstp_flow.assert_root(DUT1, d_root_id_1, d_bridge_id_1, "32768")
+
+        # We use the Bridge ID of DUT1 because DUT1 is Root
+
+        rstp_flow.assert_root(DUT2, d_root_id_2, d_bridge_id_1, "32768")
+
+        # Check the Port Role of each DUT
+
+        rstp_flow.assert_rstp_ports_1_LINK_2_DUTs(DUT1, dict_of_ports_1, "Ex 0/1", "Designated", "128", "20000",
+                                                  DUT2, dict_of_ports_2, "Gi 0/9", "Root", "128", "20000")
+
+        print("########## Removing the config #############")
+
+        rstp_flow.remove_rstp_configuration_1_LINK_2_DUTs(DUT1, "Ex 0/1", "10", "20", "30")
+        rstp_flow.remove_rstp_configuration_1_LINK_2_DUTs(DUT2, "Gi 0/9", "10", "20", "30", "Gi 0/1")
+
+    def test_func_5(self):
+
+        print("###### Test_func_5 ######")
+        print("########## Verify that RSTP (802.1W) can be disabled on port (BPDU transmit/receive - BPDUfilter) #############")
+        print("###### 2 DUTs ######")
+
+        #    Topology
+        #
+        #  DUT1 -- DUT2
+
+        rstp_flow.create_rstp_configuration_1_LINK_2_DUTs(DUT1, "Ex 0/1", "10", "20", "30", "rst")
+        rstp_flow.create_rstp_configuration_1_LINK_2_DUTs(DUT2, "Gi 0/9", "10", "20", "30", "rst", "Gi 0/1")
+
+        # Check the default Root Bridge (the lowest MAC in the topology - DUT1)
+
+        d_root_id_1, d_bridge_id_1, ports_1, dict_of_ports_1 = DUT1.stp.show_spanning_tree_rstp()
+        d_root_id_2, d_bridge_id_2, ports_2, dict_of_ports_2 = DUT2.stp.show_spanning_tree_rstp()
+
+        # Asserting the default root bridges of all DUTs using RSTP flow
+
+        rstp_flow.assert_root_2_DUTs(DUT1, d_root_id_1, d_bridge_id_1, "32768"
+                                     , DUT2, d_root_id_2, d_bridge_id_2, "32768")
+
+        # Check the Port Role of each DUT
+
+        rstp_flow.assert_rstp_ports_1_LINK_2_DUTs(DUT1, dict_of_ports_1, "Ex 0/1", "Designated","128", "20000",
+                                                  DUT2, dict_of_ports_2, "Gi 0/9", "Root", "128", "20000")
+
+        # Enable the bpdufilter on spanning-tree on DUT2's port towards DUT1 and DUT2 will see himself as root
+
+        DUT2.stp.add_rstp_bpdu_filter(port="Gi 0/9", mode="enable")
+
+        # Check the Root Bridge on both DUTs (both will be Root)
+
+        d_root_id_1, d_bridge_id_1, ports_1, dict_of_ports_1 = DUT1.stp.show_spanning_tree_rstp()
+        d_root_id_2, d_bridge_id_2, ports_2, dict_of_ports_2 = DUT2.stp.show_spanning_tree_rstp()
+
+        # Asserting the root bridges of all DUTs using RSTP flow
+
+        rstp_flow.assert_root(DUT1, d_root_id_1, d_bridge_id_1, "32768")
+        rstp_flow.assert_root(DUT2, d_root_id_2, d_bridge_id_2, "32768")
+
+        # Check the Port Role of each DUT
+
+        rstp_flow.assert_rstp_ports_1_LINK_2_DUTs(DUT1, dict_of_ports_1, "Ex 0/1", "Designated", "128", "20000",
+                                                  DUT2, dict_of_ports_2, "Gi 0/9", "Designated", "128", "20000")
+
+        # Check the show-running config for BPDU receive/transmit
+
+        bpdu_receive, bpdu_transmit = DUT2.stp.show_run_stp_bpdu_filter()
+
+        assert bpdu_receive == "disabled"
+        assert bpdu_transmit == "disabled"
+
+        # Disable the bpdufilter on spanning-tree on DUT2's port towards DUT1 and DUT2 will see himself as root
+
+        DUT2.stp.add_rstp_bpdu_filter(port="Gi 0/9", mode="disable")
+
+        # Check the Root Bridge on both DUTs (DUT2 will be Root)
+
+        d_root_id_1, d_bridge_id_1, ports_1, dict_of_ports_1 = DUT1.stp.show_spanning_tree_rstp()
+        d_root_id_2, d_bridge_id_2, ports_2, dict_of_ports_2 = DUT2.stp.show_spanning_tree_rstp()
+
+        # Asserting the root bridges of all DUTs using RSTP flow
+
+        rstp_flow.assert_root(DUT1, d_root_id_1, d_bridge_id_1, "32768")
+
+        # We use the Bridge ID of DUT1 because DUT1 is Root
+
+        rstp_flow.assert_root(DUT2, d_root_id_2, d_bridge_id_1, "32768")
+
+        # Check the show-running config for BPDU receive/transmit
+
+        bpdu_receive, bpdu_transmit = DUT2.stp.show_run_stp_bpdu_filter(interface="Gi 0/9")
+        print(bpdu_receive, bpdu_transmit)
+
+        assert bpdu_receive == "No bpdu-receive match"
+        assert bpdu_transmit == "No bpdu-transmit match"
+
+        # Check the Port Role of each DUT
+
+        rstp_flow.assert_rstp_ports_1_LINK_2_DUTs(DUT1, dict_of_ports_1, "Ex 0/1", "Designated", "128", "20000",
+                                                  DUT2, dict_of_ports_2, "Gi 0/9", "Root", "128", "20000")
+
+        print("########## Removing the config #############")
+
+        rstp_flow.remove_rstp_configuration_1_LINK_2_DUTs(DUT1, "Ex 0/1", "10", "20", "30")
+        rstp_flow.remove_rstp_configuration_1_LINK_2_DUTs(DUT2, "Gi 0/9", "10", "20", "30", "Gi 0/1")
+
+
+

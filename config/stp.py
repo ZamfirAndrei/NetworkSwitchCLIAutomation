@@ -20,9 +20,9 @@ class STP:
 
         d = {}
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("set cli pagination off\r\n")
-        self.session.send_cmd("do show span\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("set cli pagination off")
+        self.session.send_cmd("do show span")
 
         output = self.session.read()
         match = re.findall(r"is executing the ([mstpr]+)", output)
@@ -42,39 +42,99 @@ class STP:
     def change_stp_mode(self, mode=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t \r\n")
-        self.session.send_cmd(f"spanning-tree mode {mode}\r\n")
+        self.session.send_cmd("conf t ")
+        self.session.send_cmd(f"spanning-tree mode {mode}")
         print(f"The mode of the DUT {self.ip_session} has been changed to {mode}")
-        # output = self.session.read()
+        output = self.session.read()
         # print(output)
         self.session.close()
 
     def stp_enable(self, port):
 
         self.session.connect()
-        self.session.send_cmd("conf t \r\n")
-        self.session.send_cmd(f"int {port}\r\n")
-        self.session.send_cmd(f"spanning-tree enable\r\n")
-        print(f"The spanning-tree was enabled on the port {port}")
-        # output = self.session.read()
+        self.session.send_cmd("conf t ")
+        self.session.send_cmd(f"int {port}")
+        self.session.send_cmd(f"spanning-tree enable")
+        print(f"The spanning-tree was enabled on the port {port} on DUT {self.ip_session}")
+        output = self.session.read()
         # print(output)
         self.session.close()
 
     def stp_disable(self, port):
 
         self.session.connect()
-        self.session.send_cmd("conf t \r\n")
-        self.session.send_cmd(f"int {port}\r\n")
-        self.session.send_cmd(f"spanning-tree disable\r\n")
-        print(f"The spanning-tree was disabled on the port {port}")
-        # output = self.session.read()
+        self.session.send_cmd("conf t ")
+        self.session.send_cmd(f"int {port}")
+        self.session.send_cmd(f"spanning-tree disable")
+        print(f"The spanning-tree was disabled on the port {port} on DUT {self.ip_session}")
+        output = self.session.read()
         # print(output)
         self.session.close()
+
+    def add_rstp_bpdu_receive(self, port, mode):
+
+        self.session.connect()
+        self.session.send_cmd("conf t ")
+        self.session.send_cmd(f"int {port}")
+        self.session.send_cmd(f"spanning-tree bpdu-receive {mode}")
+        print(f"The spanning-tree bpdu-receive was {mode} on the port {port} on DUT {self.ip_session}")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def add_rstp_bpdu_transmit(self, port, mode):
+
+        self.session.connect()
+        self.session.send_cmd("conf t ")
+        self.session.send_cmd(f"int {port}")
+        self.session.send_cmd(f"spanning-tree bpdu-transmit {mode}")
+        print(f"The spanning-tree bpdu-transmit was {mode} on the port {port} on DUT {self.ip_session}")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def add_rstp_bpdu_filter(self, port, mode):
+
+        self.session.connect()
+        self.session.send_cmd("conf t ")
+        self.session.send_cmd(f"int {port}")
+        self.session.send_cmd(f"spanning-tree bpdufilter {mode}")
+        print(f"The spanning-tree bpdufilter was {mode} on the port {port} on DUT {self.ip_session}")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def show_run_stp_bpdu_filter(self, interface):
+
+        self.session.connect()
+        self.session.send_cmd(f"show run int {interface}")
+        output = self.session.read()
+        # print(output)
+        bpdu_receive_match = re.findall("spanning-tree bpdu-receive ([enabldis]+)", output)
+        bpdu_transmit_match = re.findall("spanning-tree bpdu-transmit ([enabldis]+)", output)
+
+        # print(bpdu_receive_match, bpdu_transmit_match)
+        self.session.close()
+        # print(len(bpdu_receive_match),len(bpdu_transmit_match))
+
+        if len(bpdu_receive_match) > 0 and len(bpdu_transmit_match) > 0:
+            return bpdu_receive_match[0], bpdu_transmit_match[0]
+
+        elif len(bpdu_receive_match) == 0 and len(bpdu_transmit_match) > 0:
+            return "No bpdu-receive match", bpdu_transmit_match[0]
+
+        elif len(bpdu_receive_match) > 0 and len(bpdu_transmit_match) == 0:
+            return bpdu_receive_match[0], "No bpdu-transmit match"
+
+        else:
+            return "No bpdu-receive match", "No bpdu-transmit match"
+
+
 
     def show_spanning_tree_root(self):
 
         self.session.connect()
-        self.session.send_cmd("show spanning-tree root address\r\n")
+        self.session.send_cmd("show spanning-tree root address")
         output = self.session.read()
         # print(output)
         root = re.findall(r"\w{2}:\w{2}:\w{2}:\w{2}:\w{2}:\w{2}", output)
@@ -88,13 +148,13 @@ class STP:
         if bridge_priority is not None:
 
             self.session.connect()
-            self.session.send_cmd("conf t\r\n")
-            self.session.send_cmd(f"spanning-tree priority {bridge_priority}\r\n")
+            self.session.send_cmd("conf t")
+            self.session.send_cmd(f"spanning-tree priority {bridge_priority}")
             print(f"The bridge priority of the switch {self.ip_session} was changed to {bridge_priority}")
 
         else:
 
-            print(f"The bridge priority of the swtich {self.ip_session} remains the same ")
+            print(f"The bridge priority of the switch {self.ip_session} remains the same ")
         output = self.session.read()
         # print(output)
 
@@ -103,7 +163,7 @@ class STP:
     def remove_rstp_bridge_priority(self):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd("conf t")
         self.session.send_cmd(f"no spanning-tree priority")
         print(f"The bridge priority of the switch {self.ip_session} was changed to default")
         output = self.session.read()
@@ -149,9 +209,9 @@ class STP:
     def remove_rstp_port_priority(self, port=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"int {port}\r\n")
-        self.session.send_cmd(f"no spanning-tree port-priority\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"int {port}")
+        self.session.send_cmd(f"no spanning-tree port-priority")
         self.session.send_cmd("!")
         print(f"The port-priority for {port} has been removed from DUT {self.ip_session}")
         output = self.session.read()
@@ -217,8 +277,8 @@ class STP:
 
         self.session.connect()
         self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"spanning-tree vlan {vlan} brg-priority {brg_priority}\r\n")
-        print(f"The brg-priority for vlan {vlan} has been changed in {brg_priority}")
+        self.session.send_cmd(f"spanning-tree vlan {vlan} brg-priority {brg_priority}")
+        print(f"The brg-priority for vlan {vlan} has been changed in {brg_priority} on DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
         self.session.close()
@@ -226,9 +286,9 @@ class STP:
     def remove_pvrst_bridge_priority(self, vlan=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"no spanning-tree vlan {vlan} brg-priority\r\n")
-        print(f"The brg-priority for vlan {vlan} has been changed to default")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"no spanning-tree vlan {vlan} brg-priority")
+        print(f"The brg-priority for vlan {vlan} has been changed to default on DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
         self.session.close()
@@ -236,11 +296,11 @@ class STP:
     def add_pvrst_port_cost(self, vlan=None, port=None, cost=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"int {port}\r\n")
-        self.session.send_cmd(f"spanning-tree vlan {vlan} cost {cost}\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"int {port}")
+        self.session.send_cmd(f"spanning-tree vlan {vlan} cost {cost}")
         self.session.send_cmd("!")
-        print(f"The cost for {port} was changed to {cost}")
+        print(f"The cost for {port} was changed to {cost} on DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
         self.session.close()
@@ -252,7 +312,7 @@ class STP:
         self.session.send_cmd(f"int {port}\r\n")
         self.session.send_cmd(f"no spanning-tree vlan {vlan} cost\r\n")
         self.session.send_cmd("!")
-        print(f"The cost for {port} has been removed")
+        print(f"The cost for {port} has been removed from DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
         self.session.close()

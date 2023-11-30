@@ -31,9 +31,9 @@ class IP:
         else:
 
             self.session.connect()
-            self.session.send_cmd("conf t\r\n")
-            self.session.send_cmd(f"int vlan {int_vlan}\r\n")
-            self.session.send_cmd("no shut\r\n")
+            self.session.send_cmd("conf t")
+            self.session.send_cmd(f"int vlan {int_vlan}")
+            self.session.send_cmd("no shut")
             output = self.session.read()
             # print(output)
             print("The interface VLAN was created succesfully")
@@ -50,17 +50,17 @@ class IP:
 
         else:
             self.session.connect()
-            self.session.send_cmd("conf t\r\n")
-            self.session.send_cmd(f"no int vlan {int_vlan}\r\n")
+            self.session.send_cmd("conf t")
+            self.session.send_cmd(f"no int vlan {int_vlan}")
             output = self.session.read()
 
             if "%The VLAN interface must be administratively down before deleting" in output:
 
                 print("We have to shut the interface first")
-                self.session.send_cmd(f"int vlan {int_vlan}\r\n")
-                self.session.send_cmd("shut\r\n")
-                self.session.send_cmd("!\r\n")
-                self.session.send_cmd(f"no int vlan {int_vlan}\r\n")
+                self.session.send_cmd(f"int vlan {int_vlan}")
+                self.session.send_cmd("shut")
+                self.session.send_cmd("!")
+                self.session.send_cmd(f"no int vlan {int_vlan}")
                 output = self.session.read()
                 # print(output)
                 print(f"The inteface vlan {int_vlan} has been removed succesfully")
@@ -95,7 +95,7 @@ class IP:
         if mgmt is not None:
 
             self.session.connect()
-            self.session.send_cmd(f"show ip int mgmt\r\n")
+            self.session.send_cmd(f"show ip int mgmt")
             output = self.session.read()
             # print(output)
             # print("1")
@@ -111,7 +111,7 @@ class IP:
         if int_vlan is not None:
 
             self.session.connect()
-            self.session.send_cmd(f"show ip int vlan {int_vlan}\r\n")
+            self.session.send_cmd(f"show ip int vlan {int_vlan}")
             output = self.session.read()
             # print(output)
             # print("2")
@@ -132,9 +132,9 @@ class IP:
         else:
 
             self.session.connect()
-            self.session.send_cmd(cmd="conf t\r\n")
-            self.session.send_cmd(cmd="set cli pagination off\r\n")
-            self.session.send_cmd(cmd="do show ip int\r\n")
+            self.session.send_cmd(cmd="conf t")
+            self.session.send_cmd(cmd="set cli pagination off")
+            self.session.send_cmd(cmd="do show ip int")
             output = self.session.read()
             # print(output)
             print("3")
@@ -177,16 +177,16 @@ class IP:
         if int_vlan is not None and ip is not None and mask is not None:
 
             self.session.connect()
-            self.session.send_cmd("conf t\r\n")
-            self.session.send_cmd(f"int vlan {int_vlan}\r\n")
+            self.session.send_cmd("conf t")
+            self.session.send_cmd(f"int vlan {int_vlan}")
 
             if dhcp == "No":
 
-                self.session.send_cmd(f"ip add {ip} {mask}\r\n")
+                self.session.send_cmd(f"ip add {ip} {mask}")
 
             else:
 
-                self.session.send_cmd("ip add dhcp\r\n")
+                self.session.send_cmd("ip add dhcp")
 
             output = self.session.read()
             # print(output)
@@ -200,10 +200,12 @@ class IP:
     def add_ip_interfaces(self, *args, **kwargs):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd("conf t")
 
         for int_vlan, ip in zip(args, kwargs.values()):
 
+            # print(kwargs.items())
+            # print(kwargs.values())
             # print(int_vlan, ip, ip[0], ip[1])
 
             self.session.send_cmd(f"int vlan {int_vlan}")
@@ -223,9 +225,9 @@ class IP:
         if int_vlan is not None:
 
             self.session.connect()
-            self.session.send_cmd("conf t\r\n")
-            self.session.send_cmd(f"int vlan {int_vlan}\r\n")
-            self.session.send_cmd("no ip add\r\n")
+            self.session.send_cmd("conf t")
+            self.session.send_cmd(f"int vlan {int_vlan}")
+            self.session.send_cmd("no ip add")
             output = self.session.read()
             # print(output)
             print(f"The ip from int vlan {int_vlan} of DUT {self.ip_session} has been removed")
@@ -235,16 +237,16 @@ class IP:
     def remove_vlan_interfaces(self, *args):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd("conf t")
 
         for int_vlan in args:
 
             # print(int_vlan, ip, ip[0], ip[1])
 
-            self.session.send_cmd(f"int vlan {int_vlan}\r\n")
-            self.session.send_cmd(f"shut\r\n")
-            self.session.send_cmd("!\r\n")
-            self.session.send_cmd(f"no int vlan {int_vlan}\r\n")
+            self.session.send_cmd(f"int vlan {int_vlan}")
+            self.session.send_cmd(f"shut")
+            self.session.send_cmd("!")
+            self.session.send_cmd(f"no int vlan {int_vlan}")
             print(f"The int vlan {int_vlan} of DUT {self.ip_session} has been removed")
 
         output = self.session.read()
@@ -255,10 +257,10 @@ class IP:
     def add_ip_routed_port(self, interface, ip, mask):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"int {interface}\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"int {interface}")
         self.session.send_cmd(f"ip add {ip} {mask}")
-        self.session.send_cmd("!\r\n")
+        self.session.send_cmd("!")
         print(f"The interface {interface} has now the ip {ip} and mask {mask}")
 
         output = self.session.read()
@@ -271,9 +273,9 @@ class IP:
         output = ""
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"int {interface}\r\n")
-        self.session.send_cmd("no ip add\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"int {interface}")
+        self.session.send_cmd("no ip add")
         output = self.session.read()
         # print(output)
         print(f"The ip of interface {interface} has been removed")
@@ -283,14 +285,14 @@ class IP:
     def add_ip_routed_ports(self, *args, **kwargs):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd("conf t")
 
         for interface, ip in zip(args, kwargs.values()):
             # print(int_vlan, ip, ip[0], ip[1])
 
-            self.session.send_cmd(f"int {interface}\r\n")
+            self.session.send_cmd(f"int {interface}")
             self.session.send_cmd(f"ip add {ip[0]} {ip[1]}")
-            self.session.send_cmd("!\r\n")
+            self.session.send_cmd("!")
             print(f"The interface {interface} has now the ip {ip[0]} and mask {ip[1]}")
 
         output = self.session.read()
@@ -301,16 +303,16 @@ class IP:
     def remove_ip_routed_ports(self, *args):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd("conf t")
 
         for interface in args:
 
             # print(interface, ip, ip[0], ip[1])
 
-            self.session.send_cmd(f"int {interface}\r\n")
-            self.session.send_cmd(f"shut\r\n")
-            self.session.send_cmd(f"no ip addr\r\n")
-            self.session.send_cmd("!\r\n")
+            self.session.send_cmd(f"int {interface}")
+            self.session.send_cmd(f"shut")
+            self.session.send_cmd(f"no ip addr")
+            self.session.send_cmd("!")
             print(f"The ip of interface {interface} has been removed")
 
         output = self.session.read()
@@ -321,10 +323,10 @@ class IP:
     def shut_int_vlan(self, int_vlan):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"int vlan {int_vlan}\r\n")
-        self.session.send_cmd(f"shut\r\n")
-        self.session.send_cmd("!\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"int vlan {int_vlan}")
+        self.session.send_cmd(f"shut")
+        self.session.send_cmd("!")
         output = self.session.read()
         # print(output)
         print(f"The int vlan {int_vlan} of DUT {self.ip_session} has been shut")
@@ -336,13 +338,13 @@ class IP:
     def shut_int_vlans(self, *args):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd("conf t")
 
         for int_vlan in args:
 
-            self.session.send_cmd(f"int vlan {int_vlan}\r\n")
-            self.session.send_cmd(f"shut\r\n")
-            self.session.send_cmd("!\r\n")
+            self.session.send_cmd(f"int vlan {int_vlan}")
+            self.session.send_cmd(f"shut")
+            self.session.send_cmd("!")
             print(f"The int vlan {int_vlan} of DUT {self.ip_session} has been shut")
 
         output = self.session.read()
@@ -353,10 +355,10 @@ class IP:
     def no_shut_int_vlan(self, int_vlan):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"int vlan {int_vlan}\r\n")
-        self.session.send_cmd(f"no shut\r\n")
-        self.session.send_cmd("!\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"int vlan {int_vlan}")
+        self.session.send_cmd(f"no shut")
+        self.session.send_cmd("!")
         output = self.session.read()
         # print(output)
         print(f"The int vlan {int_vlan} of DUT {self.ip_session} has been no-shut")
@@ -368,13 +370,13 @@ class IP:
     def no_shut_int_vlans(self, *args):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd("conf t")
 
         for int_vlan in args:
 
-            self.session.send_cmd(f"int vlan {int_vlan}\r\n")
-            self.session.send_cmd(f"no shut\r\n")
-            self.session.send_cmd("!\r\n")
+            self.session.send_cmd(f"int vlan {int_vlan}")
+            self.session.send_cmd(f"no shut")
+            self.session.send_cmd("!")
             print(f"The int vlan {int_vlan} of DUT {self.ip_session} has been no-shut")
 
         output = self.session.read()
@@ -401,7 +403,7 @@ class IP:
 
             print("Tete")
         self.session.send_cmd("exit")
-        print(f"The static route for {network_dest} has been installed with next hope {next_hop} and distance metric {distance_metric}")
+        print(f"The static route for {network_dest} has been installed with next hope {next_hop} and distance metric {distance_metric} for DUT {self.ip_session}")
         output = self.session.read()
         # print(output)
         self.session.close()
@@ -413,8 +415,8 @@ class IP:
         if network_dest is not None and mask_dest is not None and next_hop is not None:
 
             self.session.connect()
-            self.session.send_cmd("conf t\r\n")
-            self.session.send_cmd(f"no ip route {network_dest} {mask_dest} {next_hop}\r\n")
+            self.session.send_cmd("conf t")
+            self.session.send_cmd(f"no ip route {network_dest} {mask_dest} {next_hop}")
             output = self.session.read()
             # print(output)
 
@@ -424,7 +426,7 @@ class IP:
 
             else:
 
-                print(f"The static route for {network_dest} with next hope {next_hop}was removed succesfully from DUT {self.ip_session}")
+                print(f"The static route for {network_dest} with next hope {next_hop} was removed successfully from DUT {self.ip_session}")
         self.session.close()
 
     def show_ip_route(self, network = None):
@@ -459,7 +461,7 @@ class IP:
 
         if network is None:
 
-            self.session.send_cmd("show ip route\r\n")
+            self.session.send_cmd("show ip route")
             output = self.session.read()
             # print(output)
             match = re.findall(r"([SRO\sIANE12]+)\s+(\d+.\d+.\d+.\d+)/(\d+)\s+\S(\d+)/(\d+)\S via (\d+.\d+.\d+.\d+)", output)
@@ -514,7 +516,7 @@ class IP:
             # print(networks[1]['Network']) # Aflam pt elem 1 din lista ip-ul de la cheia Network
         else:
 
-            self.session.send_cmd(f"show ip route {network}\r\n")
+            self.session.send_cmd(f"show ip route {network}")
             output = self.session.read()
             # print(output)
 

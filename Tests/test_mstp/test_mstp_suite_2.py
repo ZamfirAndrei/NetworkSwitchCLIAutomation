@@ -33,9 +33,9 @@ class TestMSTPSuite2:
         #      DUT3
         #
 
-        mstp_flow.create_mstp_configuration(DUT1, "Ex 0/1", "Gi 0/10", "10", "20", "30", "mst", "1", "2", "10,20", "30", "Reg1")
-        mstp_flow.create_mstp_configuration(DUT2, "Gi 0/3", "Gi 0/9", "10", "20", "30", "mst", "1", "2", "10,20", "30", "Reg1", "Gi 0/1")
-        mstp_flow.create_mstp_configuration(DUT3, "Gi 0/3", "Gi 0/10", "10", "20", "30", "mst", "1", "2", "10,20", "30","Reg1")
+        mstp_flow.create_mst_configuration(DUT1, "Ex 0/1", "Gi 0/10", "10", "20", "30", "mst", "1", "2", "10,20", "30", "Reg1")
+        mstp_flow.create_mst_configuration(DUT2, "Gi 0/3", "Gi 0/9", "10", "20", "30", "mst", "1", "2", "10,20", "30", "Reg1", "Gi 0/1")
+        mstp_flow.create_mst_configuration(DUT3, "Gi 0/3", "Gi 0/10", "10", "20", "30", "mst", "1", "2", "10,20", "30","Reg1")
 
         # Check the default Root Bridge for Instance 1 (the lowest MAC in the topology - DUT1)
 
@@ -122,11 +122,11 @@ class TestMSTPSuite2:
         #      DUT3
         #
 
-        mstp_flow.create_mstp_configuration(DUT1, "Ex 0/1", "Gi 0/10", "10", "20", "30", "mst", "1", "2", "10,20",
+        mstp_flow.create_mst_configuration(DUT1, "Ex 0/1", "Gi 0/10", "10", "20", "30", "mst", "1", "2", "10,20",
                                                 "30", "Reg1")
-        mstp_flow.create_mstp_configuration(DUT2, "Gi 0/3", "Gi 0/9", "10", "20", "30", "mst", "1", "2", "10,20",
+        mstp_flow.create_mst_configuration(DUT2, "Gi 0/3", "Gi 0/9", "10", "20", "30", "mst", "1", "2", "10,20",
                                                 "30", "Reg1", "Gi 0/1")
-        mstp_flow.create_mstp_configuration(DUT3, "Gi 0/3", "Gi 0/10", "10", "20", "30", "mst", "1", "2", "10,20",
+        mstp_flow.create_mst_configuration(DUT3, "Gi 0/3", "Gi 0/10", "10", "20", "30", "mst", "1", "2", "10,20",
                                                 "30", "Reg1")
 
         # Check the default Root Bridge for Instance 1 (the lowest MAC in the topology - DUT1)
@@ -216,9 +216,9 @@ class TestMSTPSuite2:
         #
         #  DUT1 == DUT2
 
-        mstp_flow.create_mstp_configuration(DUT1, "Ex 0/1", "Ex 0/2", "10", "20", "30", "mst", "1", "2", "10,20",
+        mstp_flow.create_mst_configuration(DUT1, "Ex 0/1", "Ex 0/2", "10", "20", "30", "mst", "1", "2", "10,20",
                                             "30", "Reg1")
-        mstp_flow.create_mstp_configuration(DUT2, "Gi 0/9", "Gi 0/10", "10", "20", "30", "mst", "1", "2", "10,20",
+        mstp_flow.create_mst_configuration(DUT2, "Gi 0/9", "Gi 0/10", "10", "20", "30", "mst", "1", "2", "10,20",
                                             "30", "Reg1", "Gi 0/1")
 
         # Check the default Root Bridge for Instance 1 (the lowest MAC in the topology - DUT1)
@@ -299,11 +299,11 @@ class TestMSTPSuite2:
         #      DUT3
         #
 
-        mstp_flow.create_mstp_configuration(DUT1, "Ex 0/1", "Gi 0/10", "10", "20", "30", "mst", "1", "2", "10,20", "30",
+        mstp_flow.create_mst_configuration(DUT1, "Ex 0/1", "Gi 0/10", "10", "20", "30", "mst", "1", "2", "10,20", "30",
                                             "Reg1")
-        mstp_flow.create_mstp_configuration(DUT2, "Gi 0/3", "Gi 0/9", "10", "20", "30", "mst", "1", "2", "10,20", "30",
+        mstp_flow.create_mst_configuration(DUT2, "Gi 0/3", "Gi 0/9", "10", "20", "30", "mst", "1", "2", "10,20", "30",
                                             "Reg1", "Gi 0/1")
-        mstp_flow.create_mstp_configuration(DUT3, "Gi 0/3", "Gi 0/10", "10", "20", "30", "mst", "1", "2", "10,20", "30",
+        mstp_flow.create_mst_configuration(DUT3, "Gi 0/3", "Gi 0/10", "10", "20", "30", "mst", "1", "2", "10,20", "30",
                                             "Reg1")
 
         # Check the default Root Bridge for Instance 1 (the lowest MAC in the topology - DUT1)

@@ -17,9 +17,9 @@ class INFOs:
     def show_system_info(self):
 
         self.session.connect()
-        self.session.send_cmd(cmd="conf t\r\n")
-        self.session.send_cmd(cmd="set cli pagination off\r\n")
-        self.session.send_cmd(cmd="do show system info\r\n")
+        self.session.send_cmd(cmd="conf t")
+        self.session.send_cmd(cmd="set cli pagination off")
+        self.session.send_cmd(cmd="do show system info")
         output = self.session.read()
         # print(output)
 
@@ -40,16 +40,16 @@ class INFOs:
     def show_run(self, protocol=None):
 
         self.session.connect()
-        self.session.send_cmd(cmd="conf t\r\n")
-        self.session.send_cmd(cmd="set cli pagination off\r\n")
-        self.session.send_cmd(cmd=f"do show run {protocol}\r\n")
+        self.session.send_cmd(cmd="conf t")
+        self.session.send_cmd(cmd="set cli pagination off")
+        self.session.send_cmd(cmd=f"do show run {protocol}")
         output = self.session.read()
         # print(output)
 
     def show_env_cpu(self):
 
         self.session.connect()
-        self.session.send_cmd(cmd="show env all\r\n")
+        self.session.send_cmd(cmd="show env all")
         output = self.session.read()
         # print(output)
 
@@ -74,7 +74,7 @@ class INFOs:
     def show_env_cpu_counters(self):
 
         self.session.connect()
-        self.session.send_cmd(cmd="show cpu-counters\r\n")
+        self.session.send_cmd(cmd="show cpu-counters")
         output = self.session.read()
         print(output)
 

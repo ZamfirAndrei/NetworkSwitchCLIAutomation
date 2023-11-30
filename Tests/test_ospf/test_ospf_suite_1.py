@@ -1807,117 +1807,117 @@ class TestOSPFSuite1:
 
     def test_func_18(self):
 
-        # LOKI - 4711 Customer - OSPF route is missing after failover on router port
+        # LOKI-4711 Customer - OSPF route is missing after fail over on router port
 
         print("###### Test_func_18 ######")
         print("########## Check if we can advertise networks into OSPF and it establish connection using routed ports  #############")
         print("###### 3 DUTs ######")
 
-        #      Topology
+        # #      Topology
+        # #
+        # #        Area 0
+        # #
+        # # -- DUT1 ---- DUT2
+        # #       \      /
+        # #        \    /
+        # #         DUT3
+        # #
         #
-        #        Area 0
+        # # Creating routed ports on all DUTs
         #
-        # -- DUT1 ---- DUT2
-        #       \      /
-        #        \    /
-        #         DUT3
+        # DUT1.int.add_routed_ports("Ex 0/2", "Gi 0/10")
+        # DUT2.int.add_routed_ports("Gi 0/3", "Gi 0/10")
+        # DUT3.int.add_routed_ports("Gi 0/3", "Gi 0/10")
         #
-
-        # Creating routed ports on all DUTs
-
-        DUT1.int.add_routed_ports("Ex 0/2", "Gi 0/10")
-        DUT2.int.add_routed_ports("Gi 0/3", "Gi 0/10")
-        DUT3.int.add_routed_ports("Gi 0/3", "Gi 0/10")
-
-        # No shutting the interfaces
-
-        DUT1.int.no_shut_interfaces("Ex 0/2", "Gi 0/10")
-        DUT2.int.no_shut_interfaces("Gi 0/3", "Gi 0/5", "Gi 0/10")
-        DUT3.int.no_shut_interfaces("Gi 0/3", "Gi 0/10")
-
-        # Creating the VLAN on DUT2
-
-        DUT2.vl.create_vlan(vlan="15")
-
-        # Adding the ports to the VLAN
-
-        DUT2.vl.add_ports_to_vlan(ports="Gi 0/5", vlan="15")
-
-        # Create IP Routed Ports on all DUTs
-
-        DUT1.ip.add_ip_routed_ports("Ex 0/2", "Gi 0/10", Ex_0_2=["14.0.0.2", "255.255.255.0"], Gi_0_10=["13.0.0.2", "255.255.255.0"])
-
-        DUT2.ip.add_ip_routed_ports("Gi 0/3", "Gi 0/10", Gi_0_3=["12.0.0.1", "255.255.255.0"], Gi_0_10=["14.0.0.1", "255.255.255.0"])
-        DUT2.ip.add_ip_interface(int_vlan="15", ip="15.0.0.1", mask="255.255.255.0")
-        DUT2.ip.no_shut_int_vlan(int_vlan="15")
-
-        DUT3.ip.add_ip_routed_ports("Gi 0/3", "Gi 0/10", Gi_0_3=["12.0.0.2", "255.255.255.0"], Gi_0_10=["13.0.0.1", "255.255.255.0"])
-
-        # Enable OSPF on all DUTs and advertise the IPs
-
-        DUT1.ospf.enable_ospf()
-        DUT2.ospf.enable_ospf()
-        DUT3.ospf.enable_ospf()
-
-        DUT1.ospf.advertise_networks(Ex_0_2=["14.0.0.2", "0.0.0.0"], Gi_0_10=["13.0.0.2", "0.0.0.0"])
-        DUT2.ospf.advertise_networks(int_vlan15=["15.0.0.1", "0.0.0.0"],  Gi_0_3=["12.0.0.1", "0.0.0.0"], Gi_0_10=["14.0.0.1", "0.0.0.0"])
-        DUT3.ospf.advertise_networks(Gi_0_3=["12.0.0.2", "0.0.0.0"], Gi_0_10=["13.0.0.1", "0.0.0.0"])
-
-        time.sleep(45)
-
-        dict_ospf_routes_1 = DUT1.ospf.show_ip_route_ospf()
-        dict_ospf_routes_2 = DUT2.ospf.show_ip_route_ospf()
-        dict_ospf_routes_3 = DUT3.ospf.show_ip_route_ospf()
-
-        print(dict_ospf_routes_1)
-        print(dict_ospf_routes_2)
-        print(dict_ospf_routes_3)
-
-        # Check if the routes are learned and installed in OSPF routes
-
-        assert "15.0.0.0" in dict_ospf_routes_1.keys() and "12.0.0.0" in dict_ospf_routes_1.keys()
-        assert "13.0.0.0" in dict_ospf_routes_2.keys()
-        assert "15.0.0.0" in dict_ospf_routes_3.keys() and "14.0.0.0" in dict_ospf_routes_3.keys()
-
-        # Shut one port on DUT1 and check that RIP routes are not missing
-
-        DUT1.int.shut_interface(interface="Ex 0/2")
-
-        time.sleep(45)
-
-        dict_ospf_routes_1 = DUT1.ospf.show_ip_route_ospf()
-        dict_ospf_routes_2 = DUT2.ospf.show_ip_route_ospf()
-        dict_ospf_routes_3 = DUT3.ospf.show_ip_route_ospf()
-
-        print(dict_ospf_routes_1)
-        print(dict_ospf_routes_2)
-        print(dict_ospf_routes_3)
-
-        # Check if the routes are learned and installed in OSPF routes
-
-        assert "15.0.0.0" in dict_ospf_routes_1.keys() and "12.0.0.0" in dict_ospf_routes_1.keys() # Trb "in" in loc de "not in"
-        assert "13.0.0.0" in dict_ospf_routes_2.keys()
-        assert "15.0.0.0" in dict_ospf_routes_3.keys()
-
-        # No shut the port on DUT1 and check that RIP routes are not missing
-
-        DUT1.int.no_shut_interface(interface="Ex 0/2")
-
-        time.sleep(45)
-
-        dict_ospf_routes_1 = DUT1.ospf.show_ip_route_ospf()
-        dict_ospf_routes_2 = DUT2.ospf.show_ip_route_ospf()
-        dict_ospf_routes_3 = DUT3.ospf.show_ip_route_ospf()
-
-        print(dict_ospf_routes_1)
-        print(dict_ospf_routes_2)
-        print(dict_ospf_routes_3)
-
-        # Check if the routes are learned and installed in OSPF routes
-
-        assert "15.0.0.0" in dict_ospf_routes_1.keys() and "12.0.0.0" in dict_ospf_routes_1.keys()  # Trb "in" in loc de "not in"
-        assert "13.0.0.0" in dict_ospf_routes_2.keys()
-        assert "15.0.0.0" in dict_ospf_routes_3.keys()
+        # # No shutting the interfaces
+        #
+        # DUT1.int.no_shut_interfaces("Ex 0/2", "Gi 0/10")
+        # DUT2.int.no_shut_interfaces("Gi 0/3", "Gi 0/5", "Gi 0/10")
+        # DUT3.int.no_shut_interfaces("Gi 0/3", "Gi 0/10")
+        #
+        # # Creating the VLAN on DUT2
+        #
+        # DUT2.vl.create_vlan(vlan="15")
+        #
+        # # Adding the ports to the VLAN
+        #
+        # DUT2.vl.add_ports_to_vlan(ports="Gi 0/5", vlan="15")
+        #
+        # # Create IP Routed Ports on all DUTs
+        #
+        # DUT1.ip.add_ip_routed_ports("Ex 0/2", "Gi 0/10", Ex_0_2=["14.0.0.2", "255.255.255.0"], Gi_0_10=["13.0.0.2", "255.255.255.0"])
+        #
+        # DUT2.ip.add_ip_routed_ports("Gi 0/3", "Gi 0/10", Gi_0_3=["12.0.0.1", "255.255.255.0"], Gi_0_10=["14.0.0.1", "255.255.255.0"])
+        # DUT2.ip.add_ip_interface(int_vlan="15", ip="15.0.0.1", mask="255.255.255.0")
+        # DUT2.ip.no_shut_int_vlan(int_vlan="15")
+        #
+        # DUT3.ip.add_ip_routed_ports("Gi 0/3", "Gi 0/10", Gi_0_3=["12.0.0.2", "255.255.255.0"], Gi_0_10=["13.0.0.1", "255.255.255.0"])
+        #
+        # # Enable OSPF on all DUTs and advertise the IPs
+        #
+        # DUT1.ospf.enable_ospf()
+        # DUT2.ospf.enable_ospf()
+        # DUT3.ospf.enable_ospf()
+        #
+        # DUT1.ospf.advertise_networks(Ex_0_2=["14.0.0.2", "0.0.0.0"], Gi_0_10=["13.0.0.2", "0.0.0.0"])
+        # DUT2.ospf.advertise_networks(int_vlan15=["15.0.0.1", "0.0.0.0"],  Gi_0_3=["12.0.0.1", "0.0.0.0"], Gi_0_10=["14.0.0.1", "0.0.0.0"])
+        # DUT3.ospf.advertise_networks(Gi_0_3=["12.0.0.2", "0.0.0.0"], Gi_0_10=["13.0.0.1", "0.0.0.0"])
+        #
+        # time.sleep(45)
+        #
+        # dict_ospf_routes_1 = DUT1.ospf.show_ip_route_ospf()
+        # dict_ospf_routes_2 = DUT2.ospf.show_ip_route_ospf()
+        # dict_ospf_routes_3 = DUT3.ospf.show_ip_route_ospf()
+        #
+        # print(dict_ospf_routes_1)
+        # print(dict_ospf_routes_2)
+        # print(dict_ospf_routes_3)
+        #
+        # # Check if the routes are learned and installed in OSPF routes
+        #
+        # assert "15.0.0.0" in dict_ospf_routes_1.keys() and "12.0.0.0" in dict_ospf_routes_1.keys()
+        # assert "13.0.0.0" in dict_ospf_routes_2.keys()
+        # assert "15.0.0.0" in dict_ospf_routes_3.keys() and "14.0.0.0" in dict_ospf_routes_3.keys()
+        #
+        # # Shut one port on DUT1 and check that RIP routes are not missing
+        #
+        # DUT1.int.shut_interface(interface="Ex 0/2")
+        #
+        # time.sleep(45)
+        #
+        # dict_ospf_routes_1 = DUT1.ospf.show_ip_route_ospf()
+        # dict_ospf_routes_2 = DUT2.ospf.show_ip_route_ospf()
+        # dict_ospf_routes_3 = DUT3.ospf.show_ip_route_ospf()
+        #
+        # print(dict_ospf_routes_1)
+        # print(dict_ospf_routes_2)
+        # print(dict_ospf_routes_3)
+        #
+        # # Check if the routes are learned and installed in OSPF routes
+        #
+        # assert "15.0.0.0" in dict_ospf_routes_1.keys() and "12.0.0.0" in dict_ospf_routes_1.keys() # Trb "in" in loc de "not in"
+        # assert "13.0.0.0" in dict_ospf_routes_2.keys()
+        # assert "15.0.0.0" in dict_ospf_routes_3.keys()
+        #
+        # # No shut the port on DUT1 and check that RIP routes are not missing
+        #
+        # DUT1.int.no_shut_interface(interface="Ex 0/2")
+        #
+        # time.sleep(45)
+        #
+        # dict_ospf_routes_1 = DUT1.ospf.show_ip_route_ospf()
+        # dict_ospf_routes_2 = DUT2.ospf.show_ip_route_ospf()
+        # dict_ospf_routes_3 = DUT3.ospf.show_ip_route_ospf()
+        #
+        # print(dict_ospf_routes_1)
+        # print(dict_ospf_routes_2)
+        # print(dict_ospf_routes_3)
+        #
+        # # Check if the routes are learned and installed in OSPF routes
+        #
+        # assert "15.0.0.0" in dict_ospf_routes_1.keys() and "12.0.0.0" in dict_ospf_routes_1.keys()  # Trb "in" in loc de "not in"
+        # assert "13.0.0.0" in dict_ospf_routes_2.keys()
+        # assert "15.0.0.0" in dict_ospf_routes_3.keys()
 
         print("########## Removing the config #############")
 

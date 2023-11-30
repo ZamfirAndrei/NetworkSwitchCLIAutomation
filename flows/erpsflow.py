@@ -196,9 +196,9 @@ class ERPSFlow:
         else:
             assert is_rpl_owner_DUT == False
 
-    def confirm_erps_configuration_for_3DUTs_after_one_interface_is_shutdown(self, erps1, erps2, erps3, group_id,
+    def confirm_erps_configuration_for_3DUTs_after_one_interface_is_shutdown(self, erps1, erps2, erps3, final_int_to_shutdown_noshutdown, group_id,
                                                                              configured_rpl_port_DUT1, configured_rpl_port_DUT2,
-                                                                             configured_rpl_port_DUT3, final_int_to_shutdown_noshutdown):
+                                                                             configured_rpl_port_DUT3):
 
         # ----- Asserting for DUT1 -----
 
@@ -254,5 +254,32 @@ class ERPSFlow:
         list_ports_DUT3_after_shut = erps3.check_erps_ports(group_id)
         self.assert_ports_after_shutting_down_a_ring_port(rpl_port_DUT3_after_shut, list_ports_DUT3_after_shut, final_int_to_shutdown_noshutdown, d_ports_DUT3_after_shut, is_rpl_owner_DUT3)
 
+    def change_the_rpl_port_on_the_rpl_owner(self, erps, group_id, new_rpl_port):
+
+        # De-activating the ERPS Group
+        erps.deactivate_erps_group(group_id)
+
+        # Removing and re-configuring the ERPS Protected Port
+        erps.delete_erps_protected_port(group_id)
+        erps.configure_erps_protected_port(group_id, new_rpl_port)
+
+        # Activating the ERPS Group
+        erps.activate_erps_group(group_id)
+
+    def change_the_rpl_owner(self, erps1, erps2, group_id, new_rpl_port):
+
+        # De-activating the ERPS Group
+        erps1.deactivate_erps_group(group_id)
+
+        # Removing the ERPS Protected Port of the actual RPL Owner
+        erps1.delete_erps_protected_port(group_id)
+
+        # De-activating the ERPS Group on another DUT and configuring ERPS Protected Port, making it the new RPL Owner
+        erps2.deactivate_erps_group(group_id)
+        erps2.configure_erps_protected_port(group_id, new_rpl_port)
+
+        # Activating the ERPS Group on the new and old RPL Owner
+        erps1.activate_erps_group(group_id)
+        erps2.activate_erps_group(group_id)
 
 

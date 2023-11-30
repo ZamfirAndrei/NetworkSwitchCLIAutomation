@@ -45,7 +45,7 @@ class VLAN:
 
     def create_vlan(self, vlan):
 
-        self.session.connect("admin", "Admin1234!")
+        self.session.connect()
         output = self.session.read()
         conf = re.findall(r"config", output)
         #print(conf)
@@ -71,7 +71,7 @@ class VLAN:
 
     def create_vlans(self, *args):
 
-        self.session.connect("admin", "Admin1234!")
+        self.session.connect()
         output = self.session.read()
         conf = re.findall(r"config", output)
         # print(conf)
@@ -99,7 +99,7 @@ class VLAN:
 
     def remove_vlan(self, vlan):
 
-        self.session.connect("admin", "Admin1234!")
+        self.session.connect()
         self.session.send_cmd("conf t")
         self.session.send_cmd(f"no vlan {vlan}")
         self.session.send_cmd("exit")
@@ -116,7 +116,7 @@ class VLAN:
 
     def remove_vlans(self, *args):
 
-        self.session.connect("admin", "Admin1234!")
+        self.session.connect()
         self.session.send_cmd("conf t")
         output = ""
 
@@ -136,7 +136,7 @@ class VLAN:
 
     def add_ports_to_vlan(self, ports, vlan):
 
-        self.session.connect("admin", "Admin1234!")
+        self.session.connect()
         self.session.send_cmd("conf t")
         self.session.send_cmd(f"vlan {vlan}")
         self.session.send_cmd(f"port add {ports}")
@@ -155,7 +155,7 @@ class VLAN:
 
     def remove_ports_from_vlan(self, ports, vlan):
 
-        self.session.connect("admin","Admin1234!")
+        self.session.connect()
         self.session.send_cmd("conf t")
         self.session.send_cmd(f"vlan {vlan}")
         self.session.send_cmd(f"no port {ports}")
@@ -192,7 +192,7 @@ class VLAN:
 
     def show_vlan(self, vlan=None):
 
-        self.session.connect("admin", "Admin1234!")
+        self.session.connect()
         d = {
             "VLAN ID" : "",
             "Member Ports" : "",
@@ -246,7 +246,7 @@ class VLAN:
             #         d[key] = match[0][i]
             #         i += 1
 
-            print(d)
+            # print(d)
 
         else:
 
@@ -296,7 +296,7 @@ class VLAN:
 
     def add_more_ports_to_vlan(self, *args, vlan):
 
-        self.session.connect("admin", "Admin1234!")
+        self.session.connect()
         self.session.send_cmd("conf t")
         self.session.send_cmd(f"vlan {vlan}")
 
@@ -316,7 +316,7 @@ class VLAN:
 
     def add_more_ports_to_more_vlans(self, *args, **kwargs):
 
-        self.session.connect("admin", "Admin1234!")
+        self.session.connect()
         self.session.send_cmd("conf t")
 
         for vlan in args:
@@ -342,7 +342,7 @@ class VLAN:
 
     def add_more_ports_to_different_vlans(self, *args, **kwargs):
 
-        self.session.connect("admin", "Admin1234!")
+        self.session.connect()
         self.session.send_cmd("conf t")
 
         for vlan, port in zip(args, kwargs.values()):

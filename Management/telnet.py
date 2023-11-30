@@ -7,8 +7,8 @@ class Telnet:
     def __init__(self, ip):
 
         self.ip_session = ip
-
-    def connect(self, username, password):
+        self.telnet = None
+    def connect(self, username="admin", password="Admin1234!"):
 
         try:
 
@@ -19,6 +19,8 @@ class Telnet:
             self.telnet.write(username.encode('ascii') + b"\r\n")
             self.telnet.read_until(b"Password: ", timeout=5)
             self.telnet.write(password.encode('ascii') + b"\r\n")
+            self.telnet = self.telnet
+
             time.sleep(1)
         except Exception as e:
             return e
