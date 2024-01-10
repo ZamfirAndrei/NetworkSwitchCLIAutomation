@@ -14,12 +14,39 @@ class Interface:
         self.session = ssh.SSH(ip=ip_session)
         self.tn = telnet.Telnet(ip=ip_session)
 
+    def add_port_configuration(self, port, mode=None, pvid=None, acceptable_frame_type=None):
+
+        self.session.connect()
+        self.session.send_cmd(cmd="conf t")
+        self.session.send_cmd(cmd=f"int {port}")
+
+        if mode is not None:
+
+            self.session.send_cmd(cmd=f"sw mode {mode}")
+            print(f"The mode {mode} has been configured on port {port}, on DUT {self.ip_session}")
+
+        if pvid is not None:
+
+            self.session.send_cmd(cmd=f"sw pvid {pvid}")
+            print(f"The pvid {pvid} has been configured on port {port}, on DUT {self.ip_session}")
+
+        if acceptable_frame_type is not None:
+
+            self.session.send_cmd(cmd=f"sw acceptable-frame-type {acceptable_frame_type}")
+            print(f"The acceptable-frame-type {acceptable_frame_type} has been configured on port {port}, on DUT {self.ip_session}")
+
+        self.session.send_cmd("exit")
+        output = self.session.read()
+        # print(output)
+
+        self.session.close()
+
     def shut_interface(self, interface):
 
         self.session.connect()
-        self.session.send_cmd(cmd="conf t\r\n")
-        self.session.send_cmd(cmd=f"int {interface}\r\n")
-        self.session.send_cmd(cmd="shut\r\n")
+        self.session.send_cmd(cmd="conf t")
+        self.session.send_cmd(cmd=f"int {interface}")
+        self.session.send_cmd(cmd="shut")
         self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)
@@ -29,12 +56,12 @@ class Interface:
     def shut_interfaces(self, *args):
 
         self.session.connect()
-        self.session.send_cmd(cmd="conf t\r\n")
+        self.session.send_cmd(cmd="conf t")
 
         for interface in args:
 
-            self.session.send_cmd(cmd=f"int {interface}\r\n")
-            self.session.send_cmd(cmd="shut\r\n")
+            self.session.send_cmd(cmd=f"int {interface}")
+            self.session.send_cmd(cmd="shut")
             self.session.send_cmd(cmd="!")
             print(f"The interface {interface} has been shut on DUT {self.ip_session}")
         self.session.send_cmd("exit")
@@ -45,9 +72,9 @@ class Interface:
     def no_shut_interface(self, interface):
 
         self.session.connect()
-        self.session.send_cmd(cmd="conf t\r\n")
-        self.session.send_cmd(cmd=f"int {interface}\r\n")
-        self.session.send_cmd(cmd="no shut\r\n")
+        self.session.send_cmd(cmd="conf t")
+        self.session.send_cmd(cmd=f"int {interface}")
+        self.session.send_cmd(cmd="no shut")
         self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)
@@ -57,12 +84,12 @@ class Interface:
     def no_shut_interfaces(self, *args):
 
         self.session.connect()
-        self.session.send_cmd(cmd="conf t\r\n")
+        self.session.send_cmd(cmd="conf t")
 
         for interface in args:
 
-            self.session.send_cmd(cmd=f"int {interface}\r\n")
-            self.session.send_cmd(cmd="no shut\r\n")
+            self.session.send_cmd(cmd=f"int {interface}")
+            self.session.send_cmd(cmd="no shut")
             self.session.send_cmd(cmd="!")
             print(f"The interface {interface} has been no-shut on DUT {self.ip_session}")
         self.session.send_cmd("exit")
@@ -73,10 +100,10 @@ class Interface:
     def add_routed_port(self, interface):
 
         self.session.connect()
-        self.session.send_cmd(cmd="conf t\r\n")
-        self.session.send_cmd(cmd=f"int {interface}\r\n")
-        self.session.send_cmd(cmd="shut\r\n")
-        self.session.send_cmd(cmd="no sw\r\n")
+        self.session.send_cmd(cmd="conf t")
+        self.session.send_cmd(cmd=f"int {interface}")
+        self.session.send_cmd(cmd="shut")
+        self.session.send_cmd(cmd="no sw")
         self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)
@@ -86,10 +113,10 @@ class Interface:
     def remove_routed_port(self, interface):
 
         self.session.connect()
-        self.session.send_cmd(cmd="conf t\r\n")
-        self.session.send_cmd(cmd=f"int {interface}\r\n")
-        self.session.send_cmd(cmd="shut\r\n")
-        self.session.send_cmd(cmd="sw\r\n")
+        self.session.send_cmd(cmd="conf t")
+        self.session.send_cmd(cmd=f"int {interface}")
+        self.session.send_cmd(cmd="shut")
+        self.session.send_cmd(cmd="sw")
         self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)
@@ -99,13 +126,13 @@ class Interface:
     def add_routed_ports(self, *args):
 
         self.session.connect()
-        self.session.send_cmd(cmd="conf t\r\n")
+        self.session.send_cmd(cmd="conf t")
 
         for interface in args:
 
-            self.session.send_cmd(cmd=f"int {interface}\r\n")
-            self.session.send_cmd(cmd="shut\r\n")
-            self.session.send_cmd(cmd="no sw\r\n")
+            self.session.send_cmd(cmd=f"int {interface}")
+            self.session.send_cmd(cmd="shut")
+            self.session.send_cmd(cmd="no sw")
             print(f"The routed port {interface} has been created on DUT {self.ip_session}")
         self.session.send_cmd("exit")
         output = self.session.read()
@@ -116,13 +143,13 @@ class Interface:
     def remove_routed_ports(self, *args):
 
         self.session.connect()
-        self.session.send_cmd(cmd="conf t\r\n")
+        self.session.send_cmd(cmd="conf t")
 
         for interface in args:
 
-            self.session.send_cmd(cmd=f"int {interface}\r\n")
-            self.session.send_cmd(cmd="shut\r\n")
-            self.session.send_cmd(cmd="sw\r\n")
+            self.session.send_cmd(cmd=f"int {interface}")
+            self.session.send_cmd(cmd="shut")
+            self.session.send_cmd(cmd="sw")
             print(f"The routed port {interface} has been removed from DUT {self.ip_session}")
         self.session.send_cmd("exit")
         output = self.session.read()
@@ -137,9 +164,9 @@ class Interface:
         list_of_int_vlans = list()
 
         self.session.connect()
-        self.session.send_cmd(cmd="conf t\r\n")
-        self.session.send_cmd(cmd="set cli pagination off\r\n")
-        self.session.send_cmd(cmd="do sh int desc\r\n")
+        self.session.send_cmd(cmd="conf t")
+        self.session.send_cmd(cmd="set cli pagination off")
+        self.session.send_cmd(cmd="do sh int desc")
         output = self.session.read()
         # print(output)
 

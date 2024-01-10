@@ -129,17 +129,21 @@ class Sanity:
         time.sleep(60)
         output = self.session.read()
         print(output)
+        ok = False
 
         for res in failed_message_copy_running_config:
             # print(res)
             if res in output:
                 print(f"There is a problem: {res}")
                 # print(res)
+                ok = False
                 return res
 
             else:
+                ok = True
 
-                print(f"The configuration has been copied successfully on the server {server_ip}")
+        if ok == True:
+            print(f"The configuration has been copied successfully on the server {server_ip}")
 
         self.session.close()
 
@@ -207,17 +211,22 @@ class Sanity:
 
         time.sleep(60)
         output = self.tn.read()
-        print(output)
+        # print(output)
+        ok = False
 
         for res in failed_message_copy_running_config:
             # print(res)
             if res in output:
                 print(f"There is a problem: {res}")
                 # print(res)
+                ok = False
                 return res
 
             else:
-                print(f"The configuration has been copied successfully on the server {server_ip}")
+                ok = True
+
+        if ok == True:
+            print(f"The configuration has been copied successfully on the server {server_ip}")
 
         self.tn.close()
 
@@ -244,7 +253,7 @@ class Sanity:
 
         time.sleep(60)
         output = self.tn.read()
-        print(output)
+        # print(output)
 
         result = re.findall(r"(File Copied Successfully)", output)
         print(result)

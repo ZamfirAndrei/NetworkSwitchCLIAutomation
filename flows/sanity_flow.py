@@ -11,7 +11,7 @@ class SanityFlow:
 
         if protocol == "ssh":
 
-            # Check that the new software version is downloaded succesfully
+            # Check that the new software version is downloaded successfully
 
             result = DUT.sanity.download_image_ssh(mode=mode, server_ip=server_ip, img=img, user=user, password=password, path=path)
 
@@ -20,9 +20,9 @@ class SanityFlow:
 
         elif protocol == "telnet":
 
-            # Check that the new software version is downloaded succesfully
+            # Check that the new software version is downloaded successfully
 
-            result = DUT.sanity.download_image_telnet(mode=mode, server_ip=server_ip, img=img)
+            result = DUT.sanity.download_image_telnet(mode=mode, server_ip=server_ip, img=img, user=user, password=password)
 
             assert result == "Image Download Successful"
             print("Successful asserting...")
@@ -54,6 +54,49 @@ class SanityFlow:
 
             print("Choose a valid protocol!")
 
+    def save_and_reload_DUT(self, DUT, protocol):
+
+        print(f"Reloading the DUT {DUT.ip_session}...")
+
+        if protocol == "ssh":
+
+            DUT.session.connect()
+            DUT.session.send_cmd(cmd="wr st")
+            DUT.session.send_cmd(cmd="reload --y")
+            DUT.session.close()
+            time.sleep(140)
+
+        elif protocol == "telnet":
+
+            DUT.tn.connect()
+            DUT.tn.write_cmd(cmd="wr st")
+            DUT.tn.write_cmd(cmd="reload --y")
+            DUT.tn.close()
+            time.sleep(140)
+
+        else:
+
+            print("Choose a valid protocol!")
+
+    def save_configuration(self, DUT, protocol):
+
+        print(f"Saving the configuration the DUT {DUT.ip_session}...")
+
+        if protocol == "ssh":
+
+            DUT.session.connect()
+            DUT.session.send_cmd(cmd="wr st")
+
+        elif protocol == "telnet":
+
+            DUT.tn.connect()
+            DUT.tn.write_cmd(cmd="wr st")
+
+        else:
+
+            print("Choose a valid protocol!")
+
+        time.sleep(5)
 
     def check_software_version_and_model(self, DUT, img_to_be_checked, model):
 
@@ -82,6 +125,10 @@ class SanityFlow:
             DUT.session.connect()
             DUT.session.send_cmd(cmd="wr st")
             DUT.session.close()
+
+            time.sleep(5)
+
+            print("The configuration has been saved to startup-config...")
 
             assert vl["VLAN ID"] == vlan
 
@@ -121,6 +168,7 @@ class SanityFlow:
             DUT.tn.connect()
             DUT.tn.write_cmd(cmd="wr st")
             DUT.tn.close()
+            print("Successful asserting before reloading the DUT...")
 
             assert vl["VLAN ID"] == vlan
 
@@ -143,7 +191,7 @@ class SanityFlow:
             # Check after the reload that VLAN is no longer configured
 
             vl = DUT.vl.show_vlan(vlan=vlan)
-            print(vlan)
+            print(vl)
 
             assert vl["VLAN ID"] != vlan
             print("Successful asserting after reloading the DUT...")
@@ -151,3 +199,112 @@ class SanityFlow:
         else:
 
             print("Choose a valid protocol!")
+
+    def port_configuration(self,  DUT, port, port_mode, pvid, acceptable_frame_type):
+
+        # Create vlan
+
+        DUT.vl.create_vlan(vlan=pvid)
+
+        # Make the configuration for the port
+
+        DUT.int.add_port_configuration(port=port, mode=port_mode, pvid=pvid,
+                                       acceptable_frame_type=acceptable_frame_type)
+
+    def assert_configuration_port(self, DUT, port, port_mode, pvid, acceptable_frame_type, img_to_be_checked, model):
+
+        # Check the Port Configuration BEFORE downloading the new image
+
+        port_ = DUT.vl.show_vlan_port(port=port)
+        print(port_)
+
+        assert port_["Port"] == port.replace(" ","")
+        assert port_["Port VLAN ID"] == pvid
+        assert port_["Port Mode"] == port_mode
+
+        if acceptable_frame_type == "all":
+            assert port_["Port Acceptable Frame Type"] == "Admit All"
+
+        elif acceptable_frame_type == "tagged":
+            assert port_["Port Acceptable Frame Type"] == "Admit Only VLAN Tagged"
+
+        elif acceptable_frame_type == "untagged":
+            assert port_["Port Acceptable Frame Type"] == "Admit Only Untagged and Priority Tagged"
+
+        else:
+            print(f"Chose a valid acceptable_frame_type for the port {port}")
+
+        # Check the model and software version
+
+        self.check_software_version_and_model(DUT, img_to_be_checked=img_to_be_checked, model=model)
+
+    def assert_configuration_port_before_after_download_image(self, DUT, port, port_mode, pvid, acceptable_frame_type,
+                                                              protocol, mode, srv_ip, user, password , path, img_to_be_checked,
+                                                            model):
+
+        # Make the configuration for the port
+
+        DUT.int.add_port_configuration(port=port, mode=port_mode, pvid=pvid, acceptable_frame_type=acceptable_frame_type)
+
+        # Check the Port Configuration BEFORE downloading the new image
+
+        port_ = DUT.vl.show_vlan_port(port=port)
+        print(port_)
+
+        assert port_["Port"] == port.replace(" ","")
+        assert port_["Port VLAN ID"] == pvid
+        assert port_["Port Mode"] == port_mode
+
+        if acceptable_frame_type == "all":
+            assert port_["Port Acceptable Frame Type"] == "Admit All"
+
+        elif acceptable_frame_type == "tagged":
+            assert port_["Port Acceptable Frame Type"] == "Admit Only VLAN Tagged"
+
+        elif acceptable_frame_type == "untagged":
+            assert port_["Port Acceptable Frame Type"] == "Admit Only Untagged and Priority Tagged"
+
+        else:
+            print(f"Chose a valid acceptable_frame_type for the port {port}")
+
+        # Save the configuration and download the new image
+
+        self.save_configuration(DUT, protocol)
+        self.assert_download_image(DUT, protocol, mode, srv_ip, img_to_be_checked, path, user, password)
+
+        # Reload the DUT
+
+        self.reload_DUT(DUT, protocol)
+
+        # Check the Port Configuration AFTER downloading the new image
+
+        port_ = DUT.vl.show_vlan_port(port=port)
+        print(port_)
+
+        assert port_["Port"] == port.replace(" ", "")
+        assert port_["Port VLAN ID"] == pvid
+        assert port_["Port Mode"] == port_mode
+
+        if acceptable_frame_type == "all":
+            assert port_["Port Acceptable Frame Type"] == "Admit All"
+
+        elif acceptable_frame_type == "tagged":
+            assert port_["Port Acceptable Frame Type"] == "Admit Only VLAN Tagged"
+
+        elif acceptable_frame_type == "untagged":
+            assert port_["Port Acceptable Frame Type"] == "Admit Only Untagged and Priority Tagged"
+
+        else:
+            print(f"Chose a valid acceptable_frame_type for the port {port}")
+
+        # Check the model and software version
+
+        self.check_software_version_and_model(DUT, img_to_be_checked=img_to_be_checked, model=model)
+
+
+
+
+
+
+
+

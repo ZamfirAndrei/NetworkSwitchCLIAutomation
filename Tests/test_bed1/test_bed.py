@@ -8,6 +8,10 @@ dut2 = test_bed_1.DUT2
 dut3 = test_bed_1.DUT3
 
 DUT1 = dut_objects.DUT_Objects_TestBed(dut1)
+DUT2 = dut_objects.DUT_Objects_TestBed(dut2)
+DUT3 = dut_objects.DUT_Objects_TestBed(dut3)
+
+rstp_flow = rstpflow.RSTPFlow()
 
 
 # ip_session__1 = dut1["ip"]
@@ -20,6 +24,7 @@ DUT1 = dut_objects.DUT_Objects_TestBed(dut1)
 class TestBed:
 
     def test_func_1(self):
+
         print("###### Test_func_1 ######")
         print("########## Test with Test Bed #############")
         print("###### 2 DUTs ######")
@@ -36,3 +41,32 @@ class TestBed:
         # DUT1.vl.create_vlan(vlan="3000")
         print(DUT1.ip_session)
         print(DUT1.hostname)
+        print(DUT1.ports)
+        print(DUT1.ports["v1"])
+        print(DUT1.user)
+
+        rstp_flow.create_rstp_configuration_1_LINK_2_DUTs(DUT1, DUT1.ports['v1'],"10","20","30","rstp")
+        rstp_flow.create_rstp_configuration_1_LINK_2_DUTs(DUT2, DUT2.ports['v1'], "10", "20", "30", "rstp")
+
+        # Check the default Root Bridge (the lowest MAC in the topology - DUT1)
+
+        d_root_id_1, d_bridge_id_1, ports_1, dict_of_ports_1 = DUT1.stp.show_spanning_tree_rstp()
+        d_root_id_2, d_bridge_id_2, ports_2, dict_of_ports_2 = DUT2.stp.show_spanning_tree_rstp()
+
+        # Asserting the default root bridges of all DUTs using RSTP flow
+
+        rstp_flow.assert_root_2_DUTs(DUT1, d_root_id_1, d_bridge_id_1, "32768"
+                                     , DUT2, d_root_id_2, d_bridge_id_2, "32768")
+
+        print("########## Removing the config #############")
+
+        rstp_flow.remove_rstp_configuration_1_LINK_2_DUTs(DUT1, DUT1.ports['v1'], "10", "20", "30")
+        rstp_flow.remove_rstp_configuration_1_LINK_2_DUTs(DUT2, DUT2.ports['v1'], "10", "20", "30")
+
+    def test_func_2(self):
+
+        DUT1.tn.connect()
+        DUT1.tn.write_cmd(cmd="show ip int")
+        output = DUT1.tn.read()
+        print(output)
+        DUT1.tn.close()

@@ -11,7 +11,7 @@ from Management import ssh
 
 ip_session_1 = "10.2.109.206"
 ip_session_2 = "10.2.109.83"
-ip_session_3 = "10.2.109.232"
+ip_session_3 = "10.2.109.98"
 
 DUT1 = dut_objects.DUT_Objects(ip_session=ip_session_1)
 DUT2 = dut_objects.DUT_Objects(ip_session=ip_session_2)
@@ -1438,7 +1438,7 @@ class TestRIPSuite1:
 
         DUT3.vl.create_vlan(vlan="11")
         DUT3.vl.create_vlan(vlan="12")
-        DUT3.vl.create_vlan(vlan="20")
+        # DUT3.vl.create_vlan(vlan="20")
 
         # Adding the ports to the VLAN
 
@@ -1450,7 +1450,7 @@ class TestRIPSuite1:
         DUT2.vl.add_ports_to_vlan(ports="Gi 0/9", vlan="14")
         DUT2.vl.add_ports_to_vlan(ports="Gi 0/4", vlan="12")
 
-        DUT3.vl.add_ports_to_vlan(ports="Gi 0/4", vlan="20")
+        # DUT3.vl.add_ports_to_vlan(ports="Gi 0/4", vlan="20")
         DUT3.vl.add_ports_to_vlan(ports="Gi 0/9", vlan="11")
         DUT3.vl.add_ports_to_vlan(ports="Gi 0/4", vlan="12")
 
@@ -1487,11 +1487,11 @@ class TestRIPSuite1:
         # print(dict_rip_routes_1["15.0.0.0"]["Learned From"])
         print(dict_rip_routes_1)
 
-        # Check if the routes are learned and instaled in RIP routes
+        # Check if the routes are learned and installed using RIP
 
         assert "15.0.0.0" in dict_rip_routes_1.keys() and "12.0.0.0" in dict_rip_routes_1.keys()
         assert "30.0.0.0" in dict_rip_routes_2.keys() and "11.0.0.0" in dict_rip_routes_2.keys()
-        assert "30.0.0.0" in dict_rip_routes_3.keys() and "15.0.0.0" in dict_rip_routes_3.keys()
+        assert "30.0.0.0" in dict_rip_routes_3.keys() and "15.0.0.0" in dict_rip_routes_3.keys() and "14.0.0.0" in dict_rip_routes_3.keys()
 
         print("########## Removing the config #############")
 

@@ -43,7 +43,7 @@ DUT2 = {
             'mac_address': '00:01:01:01:49:01', }
 
 
-# ===================================== DUT 2 declaration =====================================
+# ===================================== DUT 3 declaration =====================================
 
 DUT3Ports = {'h1':  'gigabitethernet 0/3',   'h1speed': "1000", 'h1value': 'Gi0/5',
              'h2':  'gigabitethernet 0/4',   'h2speed': "1000", 'h2value': 'Gi0/6',
@@ -51,7 +51,7 @@ DUT3Ports = {'h1':  'gigabitethernet 0/3',   'h1speed': "1000", 'h1value': 'Gi0/
              'x2':  'gigabitethernet 0/10',  'x2speed': "1000", 'x2value': 'Gi0/10'}
 
 DUT3 = {
-            'ip': "10.2.109.232",
+            'ip': "10.2.109.98",
             'user': 'admin',
             'password': 'Admin1234!',
             'connectionObject': 'telnet',

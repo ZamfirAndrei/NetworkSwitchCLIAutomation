@@ -42,8 +42,10 @@ class DUT_Objects_TestBed:
         self.ip_session = parameters["ip"]
         self.user = parameters["user"]
         self.password = parameters["password"]
-        self.port = parameters["ports"]["h1value"][:2] + " " + parameters["ports"]["h1value"][2:]
+        # self.port = parameters["ports"]["h1value"][:2] + " " + parameters["ports"]["h1value"][2:]
+        self.ports = parameters["ports"]
         self.hostname = parameters["hostname"]
+        self.model = parameters['model']
 
         # Creating the objects
 

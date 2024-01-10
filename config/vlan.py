@@ -264,7 +264,7 @@ class VLAN:
 
         self.session.connect()
         d = {
-            "Port ":"",
+            "Port":"",
             "Port VLAN ID":"",
             "Port Acceptable Frame Type":"",
             "Port Mode": "",
@@ -289,7 +289,7 @@ class VLAN:
             # print(key, value)
             d[key] = value
 
-        print(d)
+        # print(d)
         self.session.close()
 
         return d
