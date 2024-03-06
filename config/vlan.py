@@ -109,7 +109,7 @@ class VLAN:
         if "% Vlan does not exist" in error:
             print("The VLAN does not exist")
         else:
-            print(f"The VLAN {vlan} has been removed succesfully from DUT {self.ip_session}")
+            print(f"The VLAN {vlan} has been removed successfully from DUT {self.ip_session}")
         self.session.send_cmd("exit")
         # print(output)
         self.session.close()
@@ -129,7 +129,7 @@ class VLAN:
             if "% Vlan does not exist" in error:
                 print("The VLAN does not exist")
             else:
-                print(f"The VLAN {vlan} has been removed succesfully from DUT {self.ip_session}")
+                print(f"The VLAN {vlan} has been removed successfully from DUT {self.ip_session}")
         self.session.send_cmd("exit")
         # print(output)
         self.session.close()
@@ -147,7 +147,7 @@ class VLAN:
         if "% Invalid interface type" in error:
             print("The interface does not exist")
         else:
-            print(f"The port {ports} is added succesfully on DUT {self.ip_session} for vlan {vlan}")
+            print(f"The port {ports} is added successfully on DUT {self.ip_session} for vlan {vlan}")
         # print(output)
         self.session.send_cmd("exit")
         # print(output)

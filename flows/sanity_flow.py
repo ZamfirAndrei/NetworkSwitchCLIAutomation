@@ -7,13 +7,13 @@ from Management import dut_objects
 
 class SanityFlow:
 
-    def assert_download_image(self, DUT, protocol, mode, server_ip, img, path, user=None, password=None):
+    def assert_download_image(self, DUT, protocol, mode, server_ip, img, path, platform= "EXTX", img_compression = "img", user=None, password=None, ):
 
         if protocol == "ssh":
 
             # Check that the new software version is downloaded successfully
 
-            result = DUT.sanity.download_image_ssh(mode=mode, server_ip=server_ip, img=img, user=user, password=password, path=path)
+            result = DUT.sanity.download_image_ssh(mode=mode, server_ip=server_ip, img=img, user=user, password=password, path=path, platform=platform, img_compression=img_compression)
 
             assert result == "Image Download Successful"
             print("Successful asserting...")
@@ -22,7 +22,7 @@ class SanityFlow:
 
             # Check that the new software version is downloaded successfully
 
-            result = DUT.sanity.download_image_telnet(mode=mode, server_ip=server_ip, img=img, user=user, password=password)
+            result = DUT.sanity.download_image_telnet(mode=mode, server_ip=server_ip, img=img, user=user, password=password, platform=platform, img_compression=img_compression)
 
             assert result == "Image Download Successful"
             print("Successful asserting...")
@@ -107,6 +107,8 @@ class SanityFlow:
 
         assert software_version["CNS Software Version"] == img_to_be_checked
         assert model_name["Model Name"] == model
+
+        print(f"The software version {software_version['CNS Software Version']} and the model name {model_name['Model Name']} have been asserted successfully")
 
     def assert_copy_startup_config(self, DUT, protocol, mode, server_ip, vlan, path, user=None, password=None):
 

@@ -17,21 +17,21 @@ class Sanity:
         self.session = ssh.SSH(ip=ip_session)
         self.tn = telnet.Telnet(ip=ip_session)
 
-    def download_image_ssh(self, mode, server_ip, img, user=None, password=None, path=None):
+    def download_image_ssh(self, mode, server_ip, img, platform= "EXTX", img_compression = "img", user=None, password=None, path=None):
 
         self.session.connect()
 
         if mode == "tftp":
 
-            self.session.send_cmd(cmd=f"download agent tftp://{server_ip}/cnMatrix-EXTX-{img}.img.tar.gz")
+            self.session.send_cmd(cmd=f"download agent tftp://{server_ip}/cnMatrix-{platform}-{img}.{img_compression}.tar.gz")
 
         elif mode == "sftp":
 
-            self.session.send_cmd(cmd=f"download agent sftp://{user}:{password}@{server_ip}/cnMatrix-EXTX-{img}.img.tar.gz")
+            self.session.send_cmd(cmd=f"download agent sftp://{user}:{password}@{server_ip}/cnMatrix-{platform}-{img}.{img_compression}.tar.gz")
 
         elif mode == "scp":
 
-            self.session.send_cmd(cmd=f"download agent scp://{user}@{server_ip}{path}/cnMatrix-EXTX-{img}.img.tar.gz")
+            self.session.send_cmd(cmd=f"download agent scp://{user}@{server_ip}{path}/cnMatrix-{platform}-{img}.{img_compression}.tar.gz")
             self.session.send_cmd(cmd=f"{password}")
 
         else:
@@ -271,21 +271,21 @@ class Sanity:
 
         self.tn.close()
 
-    def download_image_telnet(self, mode, server_ip, img, user=None, password=None, path=None):
+    def download_image_telnet(self, mode, server_ip, img, platform= "EXTX", img_compression = "img", user=None, password=None, path=None):
 
         self.tn.connect()
 
         if mode == "tftp":
 
-            self.tn.write_cmd(cmd=f"download agent tftp://{server_ip}/cnMatrix-EXTX-{img}.img.tar.gz")
+            self.tn.write_cmd(cmd=f"download agent tftp://{server_ip}/cnMatrix-{platform}-{img}.{img_compression}.tar.gz")
 
         elif mode == "sftp":
 
-            self.tn.write_cmd(cmd=f"download agent sftp://{user}:{password}@{server_ip}/cnMatrix-EXTX-{img}.img.tar.gz")
+            self.tn.write_cmd(cmd=f"download agent sftp://{user}:{password}@{server_ip}/cnMatrix-{platform}-{img}.{img_compression}.tar.gz")
 
         elif mode == "scp":
 
-            self.tn.write_cmd(cmd=f"download agent scp://{user}@{server_ip}{path}/cnMatrix-EXTX-{img}.img.tar.gz")
+            self.tn.write_cmd(cmd=f"download agent scp://{user}@{server_ip}{path}/cnMatrix-{platform}-{img}.{img_compression}.tar.gz")
             self.tn.write_cmd(cmd=f"{password}")
 
         else:

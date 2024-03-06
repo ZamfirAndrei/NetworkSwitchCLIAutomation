@@ -5,12 +5,8 @@ import time
 #password = "Admin1234!"
 
 
-# Creez o clasa SSH, iar in interiorul ei voi creea mai multe functii
-
 class SSH:
 
-    # Functia de initializare in care  initializez variabilele ssh si ip. Pe acestea le voi utiliza in
-    # functiile de mai jos
 
     def __init__(self, ip):
 

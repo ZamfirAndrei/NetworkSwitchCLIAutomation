@@ -19,6 +19,9 @@ rstp_flow = rstpflow.RSTPFlow()
 # ip_session_3 = "10.2.109.232"
 # ip_session_4 = "10.2.109.100"
 # ip_session_5 = "10.2.109.113"
+ip_session_6 = "10.2.109.173"
+
+DUT6 = dut_objects.DUT_Objects(ip_session=ip_session_6)
 
 
 class TestBed:
@@ -70,3 +73,37 @@ class TestBed:
         output = DUT1.tn.read()
         print(output)
         DUT1.tn.close()
+
+    def test_func_3(self, var=3):
+
+        if var == 1:
+            print("Block 1")
+
+        elif var == 2:
+            print("Block 2")
+
+        else:
+            print("Block 3")
+
+        print("-------- Final -----------")
+
+    def test_func_4(self):
+
+        DUT6.session.connect("admin", "Admin1234!")
+        DUT6.session.send_cmd(cmd="show ip route")
+        output = DUT6.session.read()
+        print(output)
+        DUT6.session.close()
+
+        print("########################")
+
+        DUT6.tn.connect("admin", "Admin1234!")
+        DUT6.tn.write_cmd(cmd="show ip route")
+        output1 = DUT6.tn.read()
+        print(output1)
+        DUT6.tn.close()
+
+        print("########################")
+
+        soft_ver = DUT6.sanity.show_software_version_device()
+        print(soft_ver)

@@ -8,7 +8,9 @@ from flows import sanity_flow
 from test_beds import test_bed_1
 from mocks import mock_1
 
-mock_1 = mock_1.mocks_sanity
+# mock_1 = mock_1.mocks_sanity
+path = mock_1.paths
+
 
 ip_session_1 = "10.2.109.206"
 ip_session_2 = "10.2.109.83"
@@ -38,7 +40,29 @@ image_to_be_checked_2 = "5.0.1-r4"
 server_ip = "10.2.109.24"
 user = "cambium"
 password = "cambium123"
-# path = ''
+
+
+paths_dut1 = {
+    "tftp": "/AGZamfir/Andrei-2028.conf",
+    "sftp": "/AGZamfir/sftp_Andrei-2028.conf"
+}
+
+paths_dut2 = {
+    "tftp": "/AGZamfir/Andrei-2010.conf",
+    "sftp": "/AGZamfir/sftp_Andrei-2010.conf"
+}
+
+paths_dut3 = {
+    "tftp": "/AGZamfir/Andrei-2010.conf",
+    "sftp": "/AGZamfir/sftp_Andrei-3052.conf"
+}
+
+
+paths = {
+    "DUT1": paths_dut1,
+    "DUT2": paths_dut2,
+    "DUT3": paths_dut3
+}
 
 class TestSanitySuite3:
 
@@ -446,7 +470,7 @@ class TestSanitySuite3:
         # Check that the new software version is downloaded successfully
 
         sanity_flow_.assert_download_image(DUT3, "ssh", "sftp", server_ip, image_to_downgrade,
-                                           "/AGZamfir/sftp_Andrei-3052.conf", user, password)
+                                           "/AGZamfir/sftp_Andrei-3052.conf", user=user, password=password)
 
         # Make connection to the DUT, Reload it and check the new software version is loading successfully
 
@@ -490,7 +514,7 @@ class TestSanitySuite3:
         print("########## Check you can save/retrieve the startup-config on a remote server using TFTP using SSH - EX3052R-P #############")
 
         sanity_flow_.assert_copy_startup_config(DUT3, "ssh", "tftp", server_ip, "1000",
-                                                "/AGZamfir/Andrei-3052.conf")
+                                                path["DUT3"]["tftp"])
 
     def test_func_32(self):
 
@@ -498,7 +522,7 @@ class TestSanitySuite3:
         print("########## Check you can save/retrieve the startup-config on a remote server using SFTP using SSH - EX3052R-P #############")
 
         sanity_flow_.assert_copy_startup_config(DUT3, "ssh", "sftp", server_ip, "1000",
-                                                "/AGZamfir/sftp_Andrei-3052.conf", user, password)
+                                                path["DUT3"]["sftp"], user, password)
 
     def test_func_33(self):
 
@@ -526,7 +550,7 @@ class TestSanitySuite3:
         # Check that the new software version is downloaded successfully
 
         sanity_flow_.assert_download_image(DUT3, "telnet", "sftp", server_ip, image_to_update, "/AGZamfir/Andrei-3052.conf",
-                                           user, password)
+                                           user=user, password=password)
 
         # Make connection to the DUT, Reload it and check the new software version is loading successfully
 
@@ -551,7 +575,7 @@ class TestSanitySuite3:
         print("########## Check you can save/retrieve the startup-config on a remote server using TFTP using Telnet - EX3052R-P #############")
 
         sanity_flow_.assert_copy_startup_config(DUT3, "telnet", "tftp", server_ip, "1000",
-                                                "/AGZamfir/Andrei-3052.conf")
+                                                path["DUT3"]["tftp"])
 
     def test_func_37(self):
 
@@ -559,7 +583,7 @@ class TestSanitySuite3:
         print("########## Check you can save/retrieve the startup-config on a remote server using SFTP using Telnet - EX3052R-P #############")
 
         sanity_flow_.assert_copy_startup_config(DUT3, "telnet", "sftp", server_ip, "1000",
-                                                "/AGZamfir/sftp_Andrei-3052.conf", user, password)
+                                                path["DUT3"]["sftp"], user, password)
 
     def test_func_38(self):
 
@@ -613,3 +637,17 @@ class TestSanitySuite3:
         # Check the port configuration AFTER downloading the new software image
 
         sanity_flow_.assert_configuration_port(DUT3, "Gi 0/4", "Hybrid", "10", "untagged", image_to_be_checked_1, DUT3.model)
+
+    # def test_func_40(self):
+    #
+    #     print(path)
+    #     print(path["DUT1"]["sftp"])
+    #     print(path["DUT1"]["tftp"])
+    #     print(path["DUT2"]["sftp"])
+    #     print(path["DUT2"]["tftp"])
+    #     print(path["DUT3"]["sftp"])
+    #     print(path["DUT3"]["tftp"])
+
+
+
+
