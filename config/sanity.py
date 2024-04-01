@@ -211,7 +211,7 @@ class Sanity:
 
         time.sleep(60)
         output = self.tn.read()
-        # print(output)
+        print(output)
         ok = False
 
         for res in failed_message_copy_running_config:

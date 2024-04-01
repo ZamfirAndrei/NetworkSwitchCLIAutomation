@@ -10,6 +10,7 @@ from mocks import mock_1
 
 # mock_1 = mock_1.mocks_sanity
 path = mock_1.paths
+params = mock_1.mocks_sanity_legacy
 
 
 ip_session_1 = "10.2.109.206"
@@ -73,15 +74,15 @@ class TestSanitySuite3:
 
         # Check that the new software version is downloaded successfully
 
-        sanity_flow_.assert_download_image(DUT1, "ssh", "tftp", "10.2.109.24", "5.0.2-r4","/AGZamfir/Andrei-2028.conf")
+        sanity_flow_.assert_download_image(DUT1, protocol=params["protocol"]["ssh"], mode=params["mode"]["tftp"], server_ip=params["server_ip"], img=params["image_version"]["image_6"], path=params["path"]["DUT1"]["tftp"])
 
         # Make connection to the DUT, Reload it and check the new software version is loading successfully
 
-        sanity_flow_.reload_DUT(DUT1, "ssh")
+        sanity_flow_.reload_DUT(DUT1, protocol=params["protocol"]["ssh"])
 
         # Check the new software version and model name of the DUT
 
-        sanity_flow_.check_software_version_and_model(DUT1, "5.0.2-r4", dut1['model'])
+        sanity_flow_.check_software_version_and_model(DUT1, img_to_be_checked=params["image_version_to_be_checked"]["image_6"], model=DUT1.model)
 
     def test_func_2(self):
 
@@ -90,15 +91,16 @@ class TestSanitySuite3:
 
         # Check that the new software version is downloaded successfully
 
-        sanity_flow_.assert_download_image(DUT1, "ssh", "sftp", "10.2.109.24", "5.0.1-r4", "/AGZamfir/sftp_Andrei-2028.conf", "cambium", "cambium123")
+        sanity_flow_.assert_download_image(DUT1, protocol=params["protocol"]["ssh"], mode=params["mode"]["sftp"], server_ip=params["server_ip"], img=params["image_version"]["image_5"],
+                                           path=params["path"]["DUT1"]["sftp"],  user=params["user"], password=params["password"])
 
         # Make connection to the DUT, Reload it and check the new software version is loading successfully
 
-        sanity_flow_.reload_DUT(DUT1, "ssh")
+        sanity_flow_.reload_DUT(DUT1, protocol=params["protocol"]["ssh"])
 
         # Check the new software version and model name of the DUT
 
-        sanity_flow_.check_software_version_and_model(DUT1, "5.0.1-r4", DUT1.model)
+        sanity_flow_.check_software_version_and_model(DUT1, img_to_be_checked=params["image_version_to_be_checked"]["image_5"], model=DUT1.model)
 
     # def test_func_3(self):
     #
@@ -119,28 +121,32 @@ class TestSanitySuite3:
 
         # Check that the new software version is downloaded successfully
 
-        sanity_flow_.assert_download_image(DUT1, "ssh", "tftp", "10.2.109.24", "5.0.2-r4","/AGZamfir/Andrei-2028.conf")
+        sanity_flow_.assert_download_image(DUT1, protocol=params["protocol"]["ssh"], mode=params["mode"]["tftp"], server_ip=params["server_ip"], img=params["image_version"]["image_6"],
+                                           path=params["path"]["DUT1"]["tftp"])
 
         # Make connection to the DUT, Reload it and check the new software version is loading successfully
 
-        sanity_flow_.reload_DUT(DUT1, "ssh")
+        sanity_flow_.reload_DUT(DUT1, protocol=params["protocol"]["ssh"])
 
         # Check the new software version and model name of the DUT
 
-        sanity_flow_.check_software_version_and_model(DUT1, "5.0.2-r4", dut1['model'])
+        sanity_flow_.check_software_version_and_model(DUT1, img_to_be_checked=params["image_version_to_be_checked"]["image_6"], model=DUT1.model)
+
     def test_func_5(self):
 
         print("###### Test_func_5 ######")
         print("########## Check you can save/retrieve the startup-config on a remote server using TFTP using SSH #############")
 
-        sanity_flow_.assert_copy_startup_config(DUT1, "ssh", "tftp", "10.2.109.24", "3000", "/AGZamfir/Andrei-2028.conf")
+        sanity_flow_.assert_copy_startup_config(DUT1,  protocol=params["protocol"]["ssh"], mode=params["mode"]["tftp"], server_ip=params["server_ip"],
+                                           vlan="3000", path=params["path"]["DUT1"]["tftp"])
 
     def test_func_6(self):
 
         print("###### Test_func_6 ######")
         print("########## Check you can save/retrieve the startup-config on a remote server using SFTP using SSH #############")
 
-        sanity_flow_.assert_copy_startup_config(DUT1, "ssh", "sftp", "10.2.109.24", "3000", "/AGZamfir/sftp_Andrei-2028.conf", "cambium", "cambium123")
+        sanity_flow_.assert_copy_startup_config(DUT1, protocol=params["protocol"]["ssh"], mode=params["mode"]["sftp"], server_ip=params["server_ip"],
+                                           vlan="3000", path=params["path"]["DUT1"]["sftp"], user=params["user"], password=params["password"])
 
     def test_func_7(self):
 
@@ -149,15 +155,16 @@ class TestSanitySuite3:
 
         # Check that the new software version is downloaded successfully
 
-        sanity_flow_.assert_download_image(DUT1, "telnet", "tftp", "10.2.109.24", "5.0.1-r4", "/AGZamfir/Andrei-2028.conf")
+        sanity_flow_.assert_download_image(DUT1, protocol=params["protocol"]["telnet"], mode=params["mode"]["tftp"], server_ip=params["server_ip"], img=params["image_version"]["image_5"],
+                                           path=params["path"]["DUT1"]["tftp"])
 
         # Make connection to the DUT, Reload it and check the new software version is loading successfully
 
-        sanity_flow_.reload_DUT(DUT1, "telnet")
+        sanity_flow_.reload_DUT(DUT1, protocol=params["protocol"]["telnet"])
 
         # Check the new software version and model name of the DUT
 
-        sanity_flow_.check_software_version_and_model(DUT1, "5.0.1-r4", DUT1.model)
+        sanity_flow_.check_software_version_and_model(DUT1, img_to_be_checked=params["image_version_to_be_checked"]["image_5"], model=DUT1.model)
 
     def test_func_8(self):
 
@@ -166,16 +173,16 @@ class TestSanitySuite3:
 
         # Check that the new software version is downloaded successfully
 
-        sanity_flow_.assert_download_image(DUT1, "telnet", "sftp", "10.2.109.24", "5.0.2-r4", "/AGZamfir/sftp_Andrei-2028.conf",
-                                           "cambium", "cambium123")
+        sanity_flow_.assert_download_image(DUT1, protocol=params["protocol"]["telnet"], mode=params["mode"]["sftp"], server_ip=params["server_ip"], img=params["image_version"]["image_6"],
+                                           path=params["path"]["DUT1"]["sftp"],  user=params["user"], password=params["password"])
 
         # Make connection to the DUT, Reload it and check the new software version is loading successfully
 
-        sanity_flow_.reload_DUT(DUT1, "telnet")
+        sanity_flow_.reload_DUT(DUT1, protocol=params["protocol"]["telnet"])
 
         # Check the new software version and model name of the DUT
 
-        sanity_flow_.check_software_version_and_model(DUT1, "5.0.2-r4", DUT1.model)
+        sanity_flow_.check_software_version_and_model(DUT1, img_to_be_checked=params["image_version_to_be_checked"]["image_6"], model=DUT1.model)
 
     # def test_func_9(self):
     #
@@ -191,15 +198,16 @@ class TestSanitySuite3:
         print("###### Test_func_10 ######")
         print("########## Check you can save/retrieve the startup-config on a remote server using TFTP using Telnet #############")
 
-        sanity_flow_.assert_copy_startup_config(DUT1, "telnet", "tftp", "10.2.109.24", "3000",
-                                                "/AGZamfir/Andrei-2028.conf")
+        sanity_flow_.assert_copy_startup_config(DUT1, protocol=params["protocol"]["telnet"], mode=params["mode"]["tftp"], server_ip=params["server_ip"],
+                                           vlan="3000", path=params["path"]["DUT1"]["tftp"])
 
     def test_func_11(self):
 
         print("###### Test_func_11 ######")
         print("########## Check you can save/retrieve the startup-config on a remote server using SFTP using Telnet #############")
 
-        sanity_flow_.assert_copy_startup_config(DUT1, "telnet", "sftp", "10.2.109.24", "3000", "/AGZamfir/sftp_Andrei-2028.conf", "cambium", "cambium123")
+        sanity_flow_.assert_copy_startup_config(DUT1, protocol=params["protocol"]["telnet"], mode=params["mode"]["sftp"], server_ip=params["server_ip"],
+                                           vlan="3000", path=params["path"]["DUT1"]["sftp"], user=params["user"], password=params["password"])
 
     def test_func_12(self):
 
@@ -208,24 +216,39 @@ class TestSanitySuite3:
 
         # Make the configuration for the port
 
-        sanity_flow_.port_configuration(DUT1, "Gi 0/4", "Trunk", "15","tagged")
+        sanity_flow_.port_configuration(DUT1, port="Gi 0/4", port_mode="Trunk", pvid="15",acceptable_frame_type="tagged")
 
         # Check the port configuration BEFORE downloading the new software image
 
-        sanity_flow_.assert_configuration_port(DUT1, "Gi 0/4", "Trunk", "15","tagged","5.0.2-r4", DUT1.model)
+        sanity_flow_.assert_configuration_port(DUT1, port="Gi 0/4", port_mode="Trunk", pvid="15",acceptable_frame_type="tagged",
+                                               img_to_be_checked=params["image_version_to_be_checked"]["image_6"], model=DUT1.model)
 
         # Save the configuration and download the new image
 
-        sanity_flow_.save_configuration(DUT1, "ssh")
-        sanity_flow_.assert_download_image(DUT1, "ssh", "tftp", "10.2.109.24", "5.0.1-r4","/AGZamfir/Andrei-2028.conf")
+        sanity_flow_.save_configuration(DUT1, protocol=params["protocol"]["ssh"])
+        sanity_flow_.assert_download_image(DUT1, protocol=params["protocol"]["ssh"], mode=params["mode"]["tftp"],server_ip=params["server_ip"], img=params["image_version"]["image_5"],
+                                           path=params["path"]["DUT1"]["tftp"], platform=params["platform"], img_compression=params["image_compression"], user=params["user"],
+                                           password=params["password"])
 
         # Reload the DUT
 
-        sanity_flow_.reload_DUT(DUT1, "ssh")
+        sanity_flow_.reload_DUT(DUT1, protocol=params["protocol"]["ssh"])
 
         # Check the port configuration AFTER downloading the new software image
 
-        sanity_flow_.assert_configuration_port(DUT1, "Gi 0/4", "Trunk", "15", "tagged", "5.0.1-r4", DUT1.model)
+        sanity_flow_.assert_configuration_port(DUT1, port="Gi 0/4", port_mode="Trunk", pvid="15", acceptable_frame_type="tagged",img_to_be_checked=params["image_version_to_be_checked"]["image_5"],
+                                               model=DUT1.model)
+
+        # Remove the port configuration and save
+
+        sanity_flow_.remove_port_configuration(DUT1, port="Gi 0/4")
+        sanity_flow_.save_configuration(DUT1, protocol=params["protocol"]["ssh"])
+
+        # Check the port configuration
+
+        sanity_flow_.assert_configuration_port(DUT1, port="Gi 0/4", port_mode="Hybrid", pvid="1",acceptable_frame_type="all",
+                                               img_to_be_checked=params["image_version_to_be_checked"]["image_5"],model=DUT1.model)
+
 
     def test_func_13(self):
 
@@ -234,24 +257,38 @@ class TestSanitySuite3:
 
         # Make the configuration for the port
 
-        sanity_flow_.port_configuration(DUT1, "Gi 0/4", "Hybrid", "10","untagged")
+        sanity_flow_.port_configuration(DUT1, port="Gi 0/4", port_mode="Hybrid", pvid="10", acceptable_frame_type="untagged")
 
         # Check the port configuration BEFORE downloading the new software image
 
-        sanity_flow_.assert_configuration_port(DUT1, "Gi 0/4", "Hybrid", "10","untagged","5.0.1-r4", DUT1.model)
+        sanity_flow_.assert_configuration_port(DUT1, port="Gi 0/4", port_mode="Hybrid", pvid="10", acceptable_frame_type="untagged",
+                                               img_to_be_checked=params["image_version_to_be_checked"]["image_5"],model=DUT1.model)
 
         # Save the configuration and download the new image
 
-        sanity_flow_.save_configuration(DUT1, "telnet")
-        sanity_flow_.assert_download_image(DUT1, "telnet", "tftp", "10.2.109.24", "5.0.2-r4","/AGZamfir/Andrei-2028.conf")
+        sanity_flow_.save_configuration(DUT1, protocol=params["protocol"]["telnet"])
+        sanity_flow_.assert_download_image(DUT1, protocol=params["protocol"]["telnet"], mode=params["mode"]["tftp"],server_ip=params["server_ip"], img=params["image_version"]["image_6"],
+                                           path=params["path"]["DUT1"]["tftp"], platform=params["platform"],img_compression=params["image_compression"], user=params["user"],
+                                           password=params["password"])
 
         # Reload the DUT
 
-        sanity_flow_.reload_DUT(DUT1, "telnet")
+        sanity_flow_.reload_DUT(DUT1, protocol=params["protocol"]["telnet"])
 
         # Check the port configuration AFTER downloading the new software image
 
-        sanity_flow_.assert_configuration_port(DUT1, "Gi 0/4", "Hybrid", "10", "untagged", "5.0.2-r4", DUT1.model)
+        sanity_flow_.assert_configuration_port(DUT1, port="Gi 0/4", port_mode="Hybrid", pvid="10", acceptable_frame_type="untagged", img_to_be_checked=params["image_version_to_be_checked"]["image_6"],
+                                               model=DUT1.model)
+
+        # Remove the port configuration and save
+
+        sanity_flow_.remove_port_configuration(DUT1, port="Gi 0/4")
+        sanity_flow_.save_configuration(DUT1, protocol=params["protocol"]["telnet"])
+
+        # Check the port configuration
+
+        sanity_flow_.assert_configuration_port(DUT1, port="Gi 0/4", port_mode="Hybrid", pvid="1",acceptable_frame_type="all",
+                                               img_to_be_checked=params["image_version_to_be_checked"]["image_6"],model=DUT1.model)
 
     def test_func_14(self):
 
@@ -260,15 +297,18 @@ class TestSanitySuite3:
 
         # Check that the new software version is downloaded successfully
 
-        sanity_flow_.assert_download_image(DUT2, "ssh", "tftp", "10.2.109.24", "5.0.2-r4","/AGZamfir/Andrei-2010.conf")
+        sanity_flow_.assert_download_image(DUT2, protocol=params["protocol"]["ssh"], mode=params["mode"]["tftp"],
+                                           server_ip=params["server_ip"], img=params["image_version"]["image_6"],
+                                           path=params["path"]["DUT2"]["tftp"])
 
         # Make connection to the DUT, Reload it and check the new software version is loading successfully
 
-        sanity_flow_.reload_DUT(DUT2, "ssh")
+        sanity_flow_.reload_DUT(DUT2, protocol=params["protocol"]["ssh"])
 
         # Check the new software version and model name of the DUT
 
-        sanity_flow_.check_software_version_and_model(DUT2, "5.0.2-r4", DUT2.model)
+        sanity_flow_.check_software_version_and_model(DUT2, img_to_be_checked=params["image_version_to_be_checked"]["image_6"], model=DUT2.model)
+
 
     def test_func_15(self):
 
@@ -277,15 +317,18 @@ class TestSanitySuite3:
 
         # Check that the new software version is downloaded successfully
 
-        sanity_flow_.assert_download_image(DUT2, "ssh", "sftp", "10.2.109.24", "5.0.1-r4", "/AGZamfir/sftp_Andrei-2010.conf", "cambium", "cambium123")
+        sanity_flow_.assert_download_image(DUT2, protocol=params["protocol"]["ssh"], mode=params["mode"]["sftp"],
+                                           server_ip=params["server_ip"], img=params["image_version"]["image_5"],
+                                           path=params["path"]["DUT2"]["sftp"], user=params["user"],
+                                           password=params["password"])
 
         # Make connection to the DUT, Reload it and check the new software version is loading successfully
 
-        sanity_flow_.reload_DUT(DUT2, "ssh")
+        sanity_flow_.reload_DUT(DUT2, protocol=params["protocol"]["ssh"])
 
         # Check the new software version and model name of the DUT
 
-        sanity_flow_.check_software_version_and_model(DUT2, "5.0.1-r4", DUT2.model)
+        sanity_flow_.check_software_version_and_model(DUT2, img_to_be_checked=params["image_version_to_be_checked"]["image_5"], model=DUT2.model)
 
     # def test_func_16(self):
     #
@@ -301,35 +344,37 @@ class TestSanitySuite3:
 
         # Getting back to the last image so we can do the save/retrieve confing
 
-        print("###### Test_func_17 ######")
-        print("########## Check you can download a software image on DUT using TFTP using SSH - EX2010-P #############")
-
         # Check that the new software version is downloaded successfully
 
-        sanity_flow_.assert_download_image(DUT2, "ssh", "tftp", "10.2.109.24", "5.0.2-r4", "/AGZamfir/Andrei-2010.conf")
+        sanity_flow_.assert_download_image(DUT2, protocol=params["protocol"]["ssh"], mode=params["mode"]["tftp"],
+                                           server_ip=params["server_ip"], img=params["image_version"]["image_6"],
+                                           path=params["path"]["DUT2"]["tftp"])
 
         # Make connection to the DUT, Reload it and check the new software version is loading successfully
 
-        sanity_flow_.reload_DUT(DUT2, "ssh")
+        sanity_flow_.reload_DUT(DUT2, protocol=params["protocol"]["ssh"])
 
         # Check the new software version and model name of the DUT
 
-        sanity_flow_.check_software_version_and_model(DUT2, "5.0.2-r4", DUT2.model)
+        sanity_flow_.check_software_version_and_model(DUT2, img_to_be_checked=params["image_version_to_be_checked"][
+            "image_6"], model=DUT2.model)
+
     def test_func_18(self):
 
         print("###### Test_func_18 ######")
         print("########## Check you can save/retrieve the startup-config on a remote server using TFTP using SSH - EX2010-P #############")
 
-        sanity_flow_.assert_copy_startup_config(DUT2, "ssh", "tftp", "10.2.109.24", "2000",
-                                                "/AGZamfir/Andrei-2010.conf")
+        sanity_flow_.assert_copy_startup_config(DUT2, protocol=params["protocol"]["ssh"], mode=params["mode"]["tftp"],
+                                                server_ip=params["server_ip"], vlan="2000", path=params["path"]["DUT2"]["tftp"])
 
     def test_func_19(self):
 
         print("###### Test_func_19 ######")
         print("########## Check you can save/retrieve the startup-config on a remote server using SFTP using SSH - EX2010-P #############")
 
-        sanity_flow_.assert_copy_startup_config(DUT2, "ssh", "sftp", "10.2.109.24", "2000",
-                                                "/AGZamfir/sftp_Andrei-2010.conf", "cambium", "cambium123")
+        sanity_flow_.assert_copy_startup_config(DUT2, protocol=params["protocol"]["ssh"], mode=params["mode"]["sftp"],
+                                                server_ip=params["server_ip"],vlan="2000", path=params["path"]["DUT2"]["sftp"], user=params["user"],
+                                                password=params["password"])
 
     def test_func_20(self):
 
@@ -338,16 +383,18 @@ class TestSanitySuite3:
 
         # Check that the new software version is downloaded successfully
 
-        sanity_flow_.assert_download_image(DUT2, "telnet", "tftp", "10.2.109.24", "5.0.1-r4",
-                                           "/AGZamfir/Andrei-2010.conf")
+        sanity_flow_.assert_download_image(DUT2, protocol=params["protocol"]["telnet"], mode=params["mode"]["tftp"],
+                                           server_ip=params["server_ip"], img=params["image_version"]["image_5"],
+                                           path=params["path"]["DUT2"]["tftp"])
 
         # Make connection to the DUT, Reload it and check the new software version is loading successfully
 
-        sanity_flow_.reload_DUT(DUT2, "telnet")
+        sanity_flow_.reload_DUT(DUT2, protocol=params["protocol"]["telnet"])
 
         # Check the new software version and model name of the DUT
 
-        sanity_flow_.check_software_version_and_model(DUT2, "5.0.1-r4", DUT2.model)
+        sanity_flow_.check_software_version_and_model(DUT2, img_to_be_checked=params["image_version_to_be_checked"]["image_5"], model=DUT2.model)
+
 
     def test_func_21(self):
 
@@ -356,16 +403,18 @@ class TestSanitySuite3:
 
         # Check that the new software version is downloaded successfully
 
-        sanity_flow_.assert_download_image(DUT2, "telnet", "sftp", "10.2.109.24", "5.0.2-r4", "/AGZamfir/Andrei-2010.conf",
-                                           "cambium", "cambium123")
+        sanity_flow_.assert_download_image(DUT2, protocol=params["protocol"]["telnet"], mode=params["mode"]["sftp"],
+                                           server_ip=params["server_ip"], img=params["image_version"]["image_6"],
+                                           path=params["path"]["DUT2"]["sftp"], user=params["user"],
+                                           password=params["password"])
 
         # Make connection to the DUT, Reload it and check the new software version is loading successfully
 
-        sanity_flow_.reload_DUT(DUT2, "telnet")
+        sanity_flow_.reload_DUT(DUT2, protocol=params["protocol"]["telnet"])
 
         # Check the new software version and model name of the DUT
 
-        sanity_flow_.check_software_version_and_model(DUT2, "5.0.2-r4", DUT2.model)
+        sanity_flow_.check_software_version_and_model(DUT2, img_to_be_checked=params["image_version_to_be_checked"]["image_6"], model=DUT2.model)
 
     # def test_func_22(self):
     #
@@ -381,16 +430,16 @@ class TestSanitySuite3:
         print("###### Test_func_23 ######")
         print("########## Check you can save/retrieve the startup-config on a remote server using TFTP using Telnet - EX2010-P #############")
 
-        sanity_flow_.assert_copy_startup_config(DUT2, "telnet", "tftp", "10.2.109.24", "2000",
-                                                "/AGZamfir/Andrei-2010.conf")
+        sanity_flow_.assert_copy_startup_config(DUT2, protocol=params["protocol"]["telnet"],mode=params["mode"]["tftp"],
+                                                server_ip=params["server_ip"],vlan="2000", path=params["path"]["DUT2"]["tftp"])
 
     def test_func_24(self):
 
         print("###### Test_func_24 ######")
         print("########## Check you can save/retrieve the startup-config on a remote server using SFTP using Telnet - EX2010-P #############")
 
-        sanity_flow_.assert_copy_startup_config(DUT2, "telnet", "sftp", "10.2.109.24", "2000",
-                                                "/AGZamfir/sftp_Andrei-2010.conf", "cambium", "cambium123")
+        sanity_flow_.assert_copy_startup_config(DUT2, protocol=params["protocol"]["telnet"],mode=params["mode"]["sftp"], server_ip=params["server_ip"],
+                                                vlan="2000", path=params["path"]["DUT2"]["sftp"], user=params["user"],password=params["password"])
 
     def test_func_25(self):
 
@@ -399,24 +448,48 @@ class TestSanitySuite3:
 
         # Make the configuration for the port
 
-        sanity_flow_.port_configuration(DUT2, "Gi 0/4", "Trunk", "15", "tagged")
+        sanity_flow_.port_configuration(DUT2, port="Gi 0/4", port_mode="Trunk", pvid="15",
+                                        acceptable_frame_type="tagged")
 
         # Check the port configuration BEFORE downloading the new software image
 
-        sanity_flow_.assert_configuration_port(DUT2, "Gi 0/4", "Trunk", "15", "tagged", "5.0.2-r4", DUT2.model)
+        sanity_flow_.assert_configuration_port(DUT2, port="Gi 0/4", port_mode="Trunk", pvid="15",
+                                               acceptable_frame_type="tagged",
+                                               img_to_be_checked=params["image_version_to_be_checked"]["image_6"],
+                                               model=DUT2.model)
 
         # Save the configuration and download the new image
 
-        sanity_flow_.save_configuration(DUT2, "ssh")
-        sanity_flow_.assert_download_image(DUT2, "ssh", "tftp", "10.2.109.24", "5.0.1-r4", "/AGZamfir/Andrei-2010.conf")
+        sanity_flow_.save_configuration(DUT2, protocol=params["protocol"]["ssh"])
+        sanity_flow_.assert_download_image(DUT2, protocol=params["protocol"]["ssh"], mode=params["mode"]["tftp"],
+                                           server_ip=params["server_ip"], img=params["image_version"]["image_5"],
+                                           path=params["path"]["DUT2"]["tftp"], platform=params["platform"],
+                                           img_compression=params["image_compression"], user=params["user"],
+                                           password=params["password"])
 
         # Reload the DUT
 
-        sanity_flow_.reload_DUT(DUT2, "ssh")
+        sanity_flow_.reload_DUT(DUT2, protocol=params["protocol"]["ssh"])
 
         # Check the port configuration AFTER downloading the new software image
 
-        sanity_flow_.assert_configuration_port(DUT2, "Gi 0/4", "Trunk", "15", "tagged", "5.0.1-r4", DUT2.model)
+        sanity_flow_.assert_configuration_port(DUT2, port="Gi 0/4", port_mode="Trunk", pvid="15",
+                                               acceptable_frame_type="tagged",
+                                               img_to_be_checked=params["image_version_to_be_checked"]["image_5"],
+                                               model=DUT2.model)
+
+        # Remove the port configuration and save
+
+        sanity_flow_.remove_port_configuration(DUT2, port="Gi 0/4")
+        sanity_flow_.save_configuration(DUT2, protocol=params["protocol"]["ssh"])
+
+        # Check the port configuration
+
+        sanity_flow_.assert_configuration_port(DUT2, port="Gi 0/4", port_mode="Hybrid", pvid="1",
+                                               acceptable_frame_type="all",
+                                               img_to_be_checked=params["image_version_to_be_checked"]["image_5"],
+                                               model=DUT2.model)
+
 
     def test_func_26(self):
 
@@ -425,25 +498,48 @@ class TestSanitySuite3:
 
         # Make the configuration for the port
 
-        sanity_flow_.port_configuration(DUT2, "Gi 0/4", "Hybrid", "10", "untagged")
+        sanity_flow_.port_configuration(DUT2, port="Gi 0/4", port_mode="Hybrid", pvid="10",
+                                        acceptable_frame_type="untagged")
 
         # Check the port configuration BEFORE downloading the new software image
 
-        sanity_flow_.assert_configuration_port(DUT2, "Gi 0/4", "Hybrid", "10", "untagged", "5.0.1-r4", DUT2.model)
+        sanity_flow_.assert_configuration_port(DUT2, port="Gi 0/4", port_mode="Hybrid", pvid="10",
+                                               acceptable_frame_type="untagged",
+                                               img_to_be_checked=params["image_version_to_be_checked"]["image_5"],
+                                               model=DUT2.model)
 
         # Save the configuration and download the new image
 
-        sanity_flow_.save_configuration(DUT2, "telnet")
-        sanity_flow_.assert_download_image(DUT2, "telnet", "tftp", "10.2.109.24", "5.0.2-r4",
-                                           "/AGZamfir/Andrei-2010.conf")
+        sanity_flow_.save_configuration(DUT2, protocol=params["protocol"]["telnet"])
+        sanity_flow_.assert_download_image(DUT2, protocol=params["protocol"]["telnet"], mode=params["mode"]["tftp"],
+                                           server_ip=params["server_ip"], img=params["image_version"]["image_6"],
+                                           path=params["path"]["DUT2"]["tftp"], platform=params["platform"],
+                                           img_compression=params["image_compression"], user=params["user"],
+                                           password=params["password"])
 
         # Reload the DUT
 
-        sanity_flow_.reload_DUT(DUT2, "telnet")
+        sanity_flow_.reload_DUT(DUT2, protocol=params["protocol"]["telnet"])
 
         # Check the port configuration AFTER downloading the new software image
 
-        sanity_flow_.assert_configuration_port(DUT2, "Gi 0/4", "Hybrid", "10", "untagged", "5.0.2-r4", DUT2.model)
+        sanity_flow_.assert_configuration_port(DUT2, port="Gi 0/4", port_mode="Hybrid", pvid="10",
+                                               acceptable_frame_type="untagged",
+                                               img_to_be_checked=params["image_version_to_be_checked"]["image_6"],
+                                               model=DUT2.model)
+
+        # Remove the port configuration and save
+
+        sanity_flow_.remove_port_configuration(DUT2, port="Gi 0/4")
+        sanity_flow_.save_configuration(DUT2, protocol=params["protocol"]["telnet"])
+
+        # Check the port configuration
+
+        sanity_flow_.assert_configuration_port(DUT2, port="Gi 0/4", port_mode="Hybrid", pvid="1",
+                                               acceptable_frame_type="all",
+                                               img_to_be_checked=params["image_version_to_be_checked"]["image_6"],
+                                               model=DUT2.model)
+
 
     def test_func_27(self):
 
@@ -452,15 +548,19 @@ class TestSanitySuite3:
 
         # Check that the new software version is downloaded successfully
 
-        sanity_flow_.assert_download_image(DUT3, "ssh", "tftp", server_ip, image_to_update, "/AGZamfir/Andrei-3052.conf")
+        sanity_flow_.assert_download_image(DUT3, protocol=params["protocol"]["ssh"], mode=params["mode"]["tftp"],
+                                           server_ip=params["server_ip"], img=params["image_version"]["image_6"],
+                                           path=params["path"]["DUT3"]["tftp"])
 
         # Make connection to the DUT, Reload it and check the new software version is loading successfully
 
-        sanity_flow_.reload_DUT(DUT3, "ssh")
+        sanity_flow_.reload_DUT(DUT3, protocol=params["protocol"]["ssh"])
 
         # Check the new software version and model name of the DUT
 
-        sanity_flow_.check_software_version_and_model(DUT3, image_to_be_checked_1, DUT3.model)
+        sanity_flow_.check_software_version_and_model(DUT3, img_to_be_checked=params["image_version_to_be_checked"][
+            "image_6"], model=DUT3.model)
+
 
     def test_func_28(self):
 
@@ -469,16 +569,19 @@ class TestSanitySuite3:
 
         # Check that the new software version is downloaded successfully
 
-        sanity_flow_.assert_download_image(DUT3, "ssh", "sftp", server_ip, image_to_downgrade,
-                                           "/AGZamfir/sftp_Andrei-3052.conf", user=user, password=password)
+        sanity_flow_.assert_download_image(DUT3, protocol=params["protocol"]["ssh"], mode=params["mode"]["sftp"],
+                                           server_ip=params["server_ip"], img=params["image_version"]["image_5"],
+                                           path=params["path"]["DUT3"]["sftp"], user=params["user"],
+                                           password=params["password"])
 
         # Make connection to the DUT, Reload it and check the new software version is loading successfully
 
-        sanity_flow_.reload_DUT(DUT3, "ssh")
+        sanity_flow_.reload_DUT(DUT3, protocol=params["protocol"]["ssh"])
 
         # Check the new software version and model name of the DUT
 
-        sanity_flow_.check_software_version_and_model(DUT3, image_to_be_checked_2, DUT3.model)
+        sanity_flow_.check_software_version_and_model(DUT3, img_to_be_checked=params["image_version_to_be_checked"][
+            "image_5"], model=DUT3.model)
 
     # def test_func_29(self):
     #
@@ -508,6 +611,7 @@ class TestSanitySuite3:
         # Check the new software version and model name of the DUT
 
         sanity_flow_.check_software_version_and_model(DUT3, image_to_be_checked_1, DUT3.model)
+
     def test_func_31(self):
 
         print("###### Test_func_31 ######")
@@ -611,6 +715,16 @@ class TestSanitySuite3:
 
         sanity_flow_.assert_configuration_port(DUT3, "Gi 0/4", "Trunk", "15", "tagged", image_to_be_checked_2, DUT3.model)
 
+        # Remove the port configuration and save
+
+        sanity_flow_.remove_port_configuration(DUT3, "Gi 0/4")
+        sanity_flow_.save_configuration(DUT3, "ssh")
+
+        # Check the port configuration
+
+        sanity_flow_.assert_configuration_port(DUT3, "Gi 0/4", "Hybrid", "1", "all", image_to_be_checked_2,
+                                               DUT3.model)
+
     def test_func_39(self):
 
         print("###### Test_func_39 ######")
@@ -637,6 +751,17 @@ class TestSanitySuite3:
         # Check the port configuration AFTER downloading the new software image
 
         sanity_flow_.assert_configuration_port(DUT3, "Gi 0/4", "Hybrid", "10", "untagged", image_to_be_checked_1, DUT3.model)
+
+        # Remove the port configuration and save
+
+        sanity_flow_.remove_port_configuration(DUT3, "Gi 0/4")
+        sanity_flow_.save_configuration(DUT3, "telnet")
+
+        # Check the port configuration
+
+        sanity_flow_.assert_configuration_port(DUT3, "Gi 0/4", "Hybrid", "1", "all", image_to_be_checked_1,
+                                               DUT3.model)
+
 
     # def test_func_40(self):
     #

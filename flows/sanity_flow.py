@@ -7,7 +7,7 @@ from Management import dut_objects
 
 class SanityFlow:
 
-    def assert_download_image(self, DUT, protocol, mode, server_ip, img, path, platform= "EXTX", img_compression = "img", user=None, password=None, ):
+    def assert_download_image(self, DUT, protocol, mode, server_ip, img, path, platform= "EXTX", img_compression = "img", user=None, password=None):
 
         if protocol == "ssh":
 
@@ -34,7 +34,7 @@ class SanityFlow:
 
     def reload_DUT(self, DUT, protocol):
 
-        print(f"Reloading the DUT {DUT.ip_session}...")
+        print(f"Reloading the {DUT.hostname} switch with the ip address {DUT.ip_session}...")
 
         if protocol == "ssh":
 
@@ -56,7 +56,7 @@ class SanityFlow:
 
     def save_and_reload_DUT(self, DUT, protocol):
 
-        print(f"Reloading the DUT {DUT.ip_session}...")
+        print(f"Reloading the {DUT.hostname} switch with the ip address {DUT.ip_session}...")
 
         if protocol == "ssh":
 
@@ -80,7 +80,7 @@ class SanityFlow:
 
     def save_configuration(self, DUT, protocol):
 
-        print(f"Saving the configuration the DUT {DUT.ip_session}...")
+        print(f"Saving the configuration on the {DUT.hostname} with the ip address {DUT.ip_session}...")
 
         if protocol == "ssh":
 
@@ -136,6 +136,8 @@ class SanityFlow:
 
             # Retrieve the config, from the remote server, on the DUT
 
+            time.sleep(5)
+
             result = DUT.sanity.retrieve_config_from_server_ssh(mode=mode, server_ip=server_ip, path=path, user=user, password=password)
 
             # Check the file is downloaded successfully
@@ -170,13 +172,13 @@ class SanityFlow:
             DUT.tn.connect()
             DUT.tn.write_cmd(cmd="wr st")
             DUT.tn.close()
-            print("Successful asserting before reloading the DUT...")
+            print("The configuration has been saved to startup-config...")
 
             assert vl["VLAN ID"] == vlan
 
             # Retrieve the config, from the remote server, on the DUT
 
-            time.sleep(2)
+            time.sleep(5)
 
             result = DUT.sanity.retrieve_config_from_server_telnet(mode=mode, server_ip=server_ip, user=user, password=password, path=path)
 
@@ -212,6 +214,12 @@ class SanityFlow:
 
         DUT.int.add_port_configuration(port=port, mode=port_mode, pvid=pvid,
                                        acceptable_frame_type=acceptable_frame_type)
+
+    def remove_port_configuration(self, DUT, port):
+
+        # Remove port configurations
+
+        DUT.int.remove_port_configuration(port=port)
 
     def assert_configuration_port(self, DUT, port, port_mode, pvid, acceptable_frame_type, img_to_be_checked, model):
 

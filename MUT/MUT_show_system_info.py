@@ -30,3 +30,5 @@ sw1, mn1 = show_system_info()
 # sw1 = show_system_info()
 print(sw1)
 print(mn1)
+
+

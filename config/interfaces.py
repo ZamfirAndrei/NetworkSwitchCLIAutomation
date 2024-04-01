@@ -35,7 +35,22 @@ class Interface:
             self.session.send_cmd(cmd=f"sw acceptable-frame-type {acceptable_frame_type}")
             print(f"The acceptable-frame-type {acceptable_frame_type} has been configured on port {port}, on DUT {self.ip_session}")
 
-        self.session.send_cmd("exit")
+        self.session.send_cmd(cmd="exit")
+        output = self.session.read()
+        # print(output)
+
+        self.session.close()
+
+    def remove_port_configuration(self, port):
+
+        self.session.connect()
+        self.session.send_cmd(cmd="conf t")
+        self.session.send_cmd(cmd=f"int {port}")
+        self.session.send_cmd(cmd="shut; no sw; sw")
+
+        print(f"The configuration for the port {port} has been changed to default on DUT {self.ip_session}")
+
+        self.session.send_cmd(cmd="exit")
         output = self.session.read()
         # print(output)
 

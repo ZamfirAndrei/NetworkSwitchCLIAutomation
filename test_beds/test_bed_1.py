@@ -9,7 +9,7 @@ DUT1Ports = {'v1':  'extreme-ethernet 0/1',   'v1speed': "1000", 'v1value': 'Ex0
              'h2': 'gigabitethernet 0/22',   'h2speed': "1000", 'h2value': 'Gi0/22' }
 
 DUT1 = {
-            'ip': "10.2.109.206",
+            'ip': "10.2.109.198",
             'user': 'admin',
             'password': 'Admin1234!',
             'connectionObject': 'telnet',
@@ -30,7 +30,7 @@ DUT2Ports = {'h1':  'gigabitethernet 0/3',   'h1speed': "1000", 'h1value': 'Gi0/
              'v2':  'gigabitethernet 0/10',  'v2speed': "1000", 'v2value': 'Gi0/10' }
 
 DUT2 = {
-            'ip': "10.2.109.83",
+            'ip': "10.2.109.172",
             'user': 'admin',
             'password': 'Admin1234!',
             'connectionObject': 'telnet',
@@ -74,7 +74,7 @@ DUT6Ports = {'h1':  'extreme-ethernet 0/1',   'h1speed': "10000", 'h1value': 'Ex
              'v4': 'extreme-ethernet 0/12', 'v4speed': "10000", 'v4value': 'Ex0/12' }
 
 DUT6 = {
-            'ip': "10.2.109.173",
+            'ip': "10.2.109.110",
             'user': 'admin',
             'password': 'Admin1234!',
             'connectionObject': 'telnet',
@@ -100,6 +100,10 @@ DUT6 = {
 #     print(DUT3["ports"]["x1"])
 #     print(DUT3["ports"]["x1value"])
 #     print(DUT3["ip"])
+
+
+
+
 
 
 

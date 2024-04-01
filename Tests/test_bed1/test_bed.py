@@ -24,6 +24,8 @@ ip_session_6 = "10.2.109.173"
 DUT6 = dut_objects.DUT_Objects(ip_session=ip_session_6)
 
 
+
+
 class TestBed:
 
     def test_func_1(self):
@@ -107,3 +109,5 @@ class TestBed:
 
         soft_ver = DUT6.sanity.show_software_version_device()
         print(soft_ver)
+
+

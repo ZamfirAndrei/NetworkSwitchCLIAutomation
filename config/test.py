@@ -113,3 +113,35 @@ if "FULLL" in d["Tete"]:
     print("Yes")
 else:
     print("No")
+
+seq = "OXbiectul are culoareaX verdeX"
+
+def test_x(seq):
+
+    seq1 = seq.replace("X", "")
+    print(seq1)
+    return seq1
+
+def remove_x_from_seq(seq):
+
+    print(len(seq))
+    print(seq[0])
+    seq1 = ""
+    positions_of_x = list()
+
+    for lit in range(len(seq)):
+
+        if seq[lit] != "X":
+            # print(lit)
+            seq1 += seq[lit]
+
+        else:
+            positions_of_x.append(lit)
+
+    print(seq1)
+    print(positions_of_x)
+
+
+
+# test_x(seq)
+remove_x_from_seq(seq)

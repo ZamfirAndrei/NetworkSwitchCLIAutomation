@@ -276,7 +276,7 @@ class STP:
     def add_pvrst_bridge_priority(self, vlan=None, brg_priority=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
+        self.session.send_cmd("conf t")
         self.session.send_cmd(f"spanning-tree vlan {vlan} brg-priority {brg_priority}")
         print(f"The brg-priority for vlan {vlan} has been changed in {brg_priority} on DUT {self.ip_session}")
         # output = self.session.read()
@@ -308,9 +308,9 @@ class STP:
     def remove_pvrst_port_cost(self, vlan=None, port=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"int {port}\r\n")
-        self.session.send_cmd(f"no spanning-tree vlan {vlan} cost\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"int {port}")
+        self.session.send_cmd(f"no spanning-tree vlan {vlan} cost")
         self.session.send_cmd("!")
         print(f"The cost for {port} has been removed from DUT {self.ip_session}")
         # output = self.session.read()
@@ -369,7 +369,7 @@ class STP:
 
         if name is not None:
 
-            self.session.send_cmd(f"name {name}\r\n")
+            self.session.send_cmd(f"name {name}")
 
         if instance is not None and vlan is not None:
 
@@ -584,7 +584,7 @@ class STP:
 
         if instance is None:
 
-            self.session.send_cmd("show span mst\r\n")
+            self.session.send_cmd("show span mst")
             output = self.session.read()
             # print(output)
 
@@ -622,7 +622,7 @@ class STP:
 
         else:
 
-            self.session.send_cmd(f"show span mst {instance}\r\n")
+            self.session.send_cmd(f"show span mst {instance}")
             output = self.session.read()
             # print(output)
 
@@ -680,7 +680,7 @@ class STP:
         list_ports_instance = list()
 
         self.session.connect()
-        self.session.send_cmd(f"show span vlan {vlan}\r\n")
+        self.session.send_cmd(f"show span vlan {vlan}")
 
         output = self.session.read()
         # print(output)
@@ -724,7 +724,7 @@ class STP:
         return d_instance_vlan, dict_ports_instance_vlan, list_ports_instance
 
 
-ip_session = "10.2.109.238"
+# ip_session = "10.2.109.238"
 # obj = STP(ip_session=ip_session)
 # obj.add_rstp_bridge_priority(bridge_priority=0)
 # obj.remove_rstp_bridge_priority()
