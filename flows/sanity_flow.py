@@ -1,3 +1,4 @@
+import re
 import time
 import pytest
 
@@ -62,6 +63,18 @@ class SanityFlow:
 
             DUT.session.connect()
             DUT.session.send_cmd(cmd="wr st")
+            time.sleep(3)
+            output = DUT.session.read()
+            # print(output)
+
+            result = re.findall(r"OK", output)
+            # print(result)
+
+            if result[0] == "OK":
+                print(f"The configuration of {DUT.hostname} has been saved successfully in the startup-config")
+            else:
+                print(f"The configuration of {DUT.hostname} has not been saved successfully in the startup-config")
+
             DUT.session.send_cmd(cmd="reload --y")
             DUT.session.close()
             time.sleep(140)
@@ -70,6 +83,18 @@ class SanityFlow:
 
             DUT.tn.connect()
             DUT.tn.write_cmd(cmd="wr st")
+            time.sleep(3)
+            output = DUT.tn.read()
+            # print(output)
+
+            result = re.findall(r"OK", output)
+            # print(result)
+
+            if result[0] == "OK":
+                print(f"The configuration of {DUT.hostname} has been saved successfully in the startup-config")
+            else:
+                print(f"The configuration of {DUT.hostname} has not been saved successfully in the startup-config")
+
             DUT.tn.write_cmd(cmd="reload --y")
             DUT.tn.close()
             time.sleep(140)
@@ -86,11 +111,35 @@ class SanityFlow:
 
             DUT.session.connect()
             DUT.session.send_cmd(cmd="wr st")
+            time.sleep(3)
+            output = DUT.session.read()
+            # print(output)
+
+            result = re.findall(r"OK", output)
+            # print(result)
+
+            if result[0] == "OK":
+                print(f"The configuration of {DUT.hostname} has been saved successfully in the startup-config")
+            else:
+                print(f"The configuration of {DUT.hostname} has not been saved successfully in the startup-config")
+
 
         elif protocol == "telnet":
 
             DUT.tn.connect()
             DUT.tn.write_cmd(cmd="wr st")
+            time.sleep(3)
+            output = DUT.tn.read()
+            # print(output)
+
+            result = re.findall(r"OK", output)
+            # print(result)
+
+            if result[0] == "OK":
+                print(f"The configuration of {DUT.hostname} has been saved successfully in the startup-config")
+            else:
+                print(f"The configuration of {DUT.hostname} has not been saved successfully in the startup-config")
+
 
         else:
 

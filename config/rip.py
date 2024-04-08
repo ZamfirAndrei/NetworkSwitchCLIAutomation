@@ -17,8 +17,8 @@ class RIP:
     def enable_rip(self):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router rip\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router rip")
         print(f"The RIP process has been enabled for DUT {self.ip_session}")
         output = self.session.read()
         # print(output)
@@ -27,8 +27,8 @@ class RIP:
     def disable_rip(self):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("no router rip\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("no router rip")
         print(f"The RIP process has been disabled for DUT {self.ip_session}")
         output = self.session.read()
         # print(output)
@@ -37,9 +37,9 @@ class RIP:
     def advertise_network(self, ip_network=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router rip\r\n")
-        self.session.send_cmd(f"network {ip_network}\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router rip")
+        self.session.send_cmd(f"network {ip_network}")
         self.session.send_cmd("version 2")
         self.session.send_cmd("exit")
         print(f"The network {ip_network} has been advertise in rip")
@@ -50,11 +50,11 @@ class RIP:
     def advertise_networks(self, *args):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router rip\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router rip")
         for ip_network in args:
 
-            self.session.send_cmd(f"network {ip_network}\r\n")
+            self.session.send_cmd(f"network {ip_network}")
             self.session.send_cmd("version 2")
             print(f"The network {ip_network} has been advertise in rip on DUT {self.ip_session}")
         self.session.send_cmd("exit")
@@ -65,9 +65,9 @@ class RIP:
     def remove_network(self, ip_network=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router rip\r\n")
-        self.session.send_cmd(f"no network {ip_network}\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router rip")
+        self.session.send_cmd(f"no network {ip_network}")
         self.session.send_cmd("exit")
         print(f"The network {ip_network} has been removed from rip process on DUT {self.ip_session}")
         output = self.session.read()
@@ -77,10 +77,10 @@ class RIP:
     def remove_networks(self, *args):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router rip\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router rip")
         for ip_network in args:
-            self.session.send_cmd(f"no network {ip_network}\r\n")
+            self.session.send_cmd(f"no network {ip_network}")
             print(f"The network {ip_network} has been removed from rip process")
         self.session.send_cmd("exit")
         output = self.session.read()
@@ -90,16 +90,16 @@ class RIP:
     def add_passive_interface(self, vlan =None, interface=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router rip\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router rip")
 
         if vlan is None:
 
-            self.session.send_cmd(f"passive-interface {interface}\r\n")
+            self.session.send_cmd(f"passive-interface {interface}")
 
         else:
 
-            self.session.send_cmd(f"passive-interface vlan {vlan}\r\n")
+            self.session.send_cmd(f"passive-interface vlan {vlan}")
         self.session.send_cmd("exit")
         print(f"The passive-interface has been created on vlan {vlan} on DUT {self.ip_session}")
         # output = self.session.read()
@@ -109,16 +109,16 @@ class RIP:
     def remove_passive_interface(self, vlan=None, interface=None):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router rip\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router rip")
 
         if vlan is None:
 
-            self.session.send_cmd(f"no passive-interface {interface}\r\n")
+            self.session.send_cmd(f"no passive-interface {interface}")
 
         else:
 
-            self.session.send_cmd(f"no passive-interface vlan {vlan}\r\n")
+            self.session.send_cmd(f"no passive-interface vlan {vlan}")
         self.session.send_cmd("exit")
         print(f"The passive-interface {vlan} has been removed from DUT {self.ip_session}")
         # output = self.session.read()
@@ -128,9 +128,9 @@ class RIP:
     def redistribute_connected(self):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router rip\r\n")
-        self.session.send_cmd("redistribute connected\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router rip")
+        self.session.send_cmd("redistribute connected")
         self.session.send_cmd("exit")
         print(f"The connected networks have been redistributed into RIP process on DUT {self.ip_session}")
         # time.sleep(2)
@@ -141,9 +141,9 @@ class RIP:
     def redistribute_static(self):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router rip\r\n")
-        self.session.send_cmd("redistribute static\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router rip")
+        self.session.send_cmd("redistribute static")
         self.session.send_cmd("exit")
         print(f"The static routes have been redistributed into RIP process on DUT {self.ip_session}")
         # output = self.session.read()
@@ -153,9 +153,9 @@ class RIP:
     def redistribute_all(self):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router rip\r\n")
-        self.session.send_cmd("redistribute all\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router rip")
+        self.session.send_cmd("redistribute all")
         self.session.send_cmd("exit")
         print(f"All routes have been redistributed into RIP process on DUT {self.ip_session}")
         # output = self.session.read()
@@ -165,9 +165,9 @@ class RIP:
     def redistribute_ospf(self):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router rip\r\n")
-        self.session.send_cmd("redistribute ospf\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router rip")
+        self.session.send_cmd("redistribute ospf")
         self.session.send_cmd("exit")
         print(f"OSPF routes have been redistributed into RIP process on DUT {self.ip_session}")
         # output = self.session.read()
@@ -177,9 +177,9 @@ class RIP:
     def remove_redistribute_connected(self):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router rip\r\n")
-        self.session.send_cmd("no redistribute connected\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router rip")
+        self.session.send_cmd("no redistribute connected")
         self.session.send_cmd("exit")
         print(f"The connected networks have been removed from RIP process on DUT {self.ip_session}")
         # time.sleep(2)
@@ -191,9 +191,9 @@ class RIP:
     def remove_redistribute_static(self):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router rip\r\n")
-        self.session.send_cmd("no redistribute static\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router rip")
+        self.session.send_cmd("no redistribute static")
         self.session.send_cmd("exit")
         print(f"The static routes have been removed from RIP process on DUT {self.ip_session}")
         # output = self.session.read()
@@ -203,9 +203,9 @@ class RIP:
     def remove_redistribute_all(self):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router rip\r\n")
-        self.session.send_cmd("no redistribute all\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router rip")
+        self.session.send_cmd("no redistribute all")
         self.session.send_cmd("exit")
         print(f"All routes have been removed from RIP process on DUT {self.ip_session}")
         # output = self.session.read()
@@ -215,9 +215,9 @@ class RIP:
     def remove_redistribute_ospf(self):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router rip\r\n")
-        self.session.send_cmd("no redistribute ospf\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router rip")
+        self.session.send_cmd("no redistribute ospf")
         self.session.send_cmd("exit")
         print(f"OSPF routes have been removed from RIP process on DUT {self.ip_session}")
         # output = self.session.read()
@@ -227,9 +227,9 @@ class RIP:
     def default_metric(self, metric):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router rip\r\n")
-        self.session.send_cmd(f"default-metric {metric}\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router rip")
+        self.session.send_cmd(f"default-metric {metric}")
         self.session.send_cmd("exit")
         print(f"Default metric {metric} has been configured on DUT {self.ip_session}")
         # output = self.session.read()
@@ -239,9 +239,9 @@ class RIP:
     def remove_default_metric(self):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router rip\r\n")
-        self.session.send_cmd(f"no default-metric\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router rip")
+        self.session.send_cmd(f"no default-metric")
         self.session.send_cmd("exit")
         print(f"Default metric has been removed on DUT {self.ip_session}")
         # output = self.session.read()
@@ -251,9 +251,9 @@ class RIP:
     def add_distance(self, distance):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router rip\r\n")
-        self.session.send_cmd(f"distance {distance}\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router rip")
+        self.session.send_cmd(f"distance {distance}")
         self.session.send_cmd("exit")
         print(f"AD {distance} has been added")
         # output = self.session.read()
@@ -263,9 +263,9 @@ class RIP:
     def remove_distance(self):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router rip\r\n")
-        self.session.send_cmd(f"no distance\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router rip")
+        self.session.send_cmd(f"no distance")
         self.session.send_cmd("exit")
         print(f"The configured AD has been removed")
         # output = self.session.read()
@@ -275,9 +275,9 @@ class RIP:
     def auto_summary(self):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router rip\r\n")
-        self.session.send_cmd(f"auto-summary enable\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router rip")
+        self.session.send_cmd(f"auto-summary enable")
         self.session.send_cmd("exit")
         print(f"The auto-summary has been added")
         # output = self.session.read()
@@ -287,9 +287,9 @@ class RIP:
     def remove_auto_summary(self):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd("router rip\r\n")
-        self.session.send_cmd(f"auto-summary disable\r\n")
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("router rip")
+        self.session.send_cmd(f"auto-summary disable")
         self.session.send_cmd("exit")
         print(f"The auto-summary has been removed on dut {self.ip_session}")
         # output = self.session.read()
@@ -542,7 +542,7 @@ class RIP:
         list_of_via = list()
 
         self.session.connect()
-        self.session.send_cmd("show ip rip database\r\n")
+        self.session.send_cmd("show ip rip database")
         self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)

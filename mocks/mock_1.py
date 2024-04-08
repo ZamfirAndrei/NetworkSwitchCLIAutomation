@@ -35,7 +35,7 @@ paths = {
 
 images_fiber = {
 
-    "last_image_to_upgrade" : "6.0.0-e75",
+    "image_to_upgrade" : "6.0.0-e75",
     "image_to_downgrade" : "6.0.0-e74",
     "image_11" : "6.0.0-e75",
     "image_10" : "6.0.0-e74",
@@ -52,7 +52,7 @@ images_fiber = {
 
 images_legacy_EXTX = {
 
-    "last_image_to_upgrade": "5.0.2-r4",
+    "image_to_upgrade": "5.0.2-r4",
     "image_to_downgrade": "5.0.1-r4",
     "image_6" : "5.0.2-r4",
     "image_5" : "5.0.1-r4",

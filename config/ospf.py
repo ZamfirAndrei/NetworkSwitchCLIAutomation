@@ -41,7 +41,7 @@ class OSPF:
         self.session.connect()
         self.session.send_cmd("conf t")
         self.session.send_cmd("router ospf")
-        self.session.send_cmd(f"network {ip_network} area {area}\r\n")
+        self.session.send_cmd(f"network {ip_network} area {area}")
         self.session.send_cmd("exit")
         print(f"The network {ip_network} has been advertised in ospf in area {area} on DUT {self.ip_session}")
         output = self.session.read()
