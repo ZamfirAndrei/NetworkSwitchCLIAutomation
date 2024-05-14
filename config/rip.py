@@ -42,7 +42,7 @@ class RIP:
         self.session.send_cmd(f"network {ip_network}")
         self.session.send_cmd("version 2")
         self.session.send_cmd("exit")
-        print(f"The network {ip_network} has been advertise in rip")
+        print(f"The network {ip_network} has been advertise in rip on DUT {self.ip_session}")
         output = self.session.read()
         # print(output)
         self.session.close()
@@ -81,7 +81,7 @@ class RIP:
         self.session.send_cmd("router rip")
         for ip_network in args:
             self.session.send_cmd(f"no network {ip_network}")
-            print(f"The network {ip_network} has been removed from rip process")
+            print(f"The network {ip_network} has been removed from rip process on DUT {self.ip_session}")
         self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)
@@ -255,7 +255,7 @@ class RIP:
         self.session.send_cmd("router rip")
         self.session.send_cmd(f"distance {distance}")
         self.session.send_cmd("exit")
-        print(f"AD {distance} has been added")
+        print(f"AD {distance} has been added on DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
         self.session.close()
@@ -267,7 +267,7 @@ class RIP:
         self.session.send_cmd("router rip")
         self.session.send_cmd(f"no distance")
         self.session.send_cmd("exit")
-        print(f"The configured AD has been removed")
+        print(f"The configured AD has been removed from DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
         self.session.close()
@@ -279,7 +279,7 @@ class RIP:
         self.session.send_cmd("router rip")
         self.session.send_cmd(f"auto-summary enable")
         self.session.send_cmd("exit")
-        print(f"The auto-summary has been added")
+        print(f"The auto-summary has been added on DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
         self.session.close()
@@ -304,17 +304,17 @@ class RIP:
 
             self.session.send_cmd(f"int vlan {int_vlan}")
             self.session.send_cmd(f"default-information originate {metric}")
-            print(f"The default-information originate has been advertise on the interface vlan {int_vlan}")
+            print(f"The default-information originate has been advertise on the interface vlan {int_vlan} on DUT {self.ip_session}")
 
         elif interface is not None:
 
             self.session.send_cmd(f"int {interface}")
             self.session.send_cmd(f"default-information originate {metric}")
-            print(f"The default-information originate has been advertise on the interface {interface}")
+            print(f"The default-information originate has been advertise on the interface {interface} on DUT {self.ip_session}")
 
         else:
 
-            print("You have to specify an int_vlan/interface")
+            print(f"You have to specify an int_vlan/interface on DUT {self.ip_session}")
         self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)
@@ -330,17 +330,17 @@ class RIP:
 
             self.session.send_cmd(f"int vlan {int_vlan}")
             self.session.send_cmd(f"no default-information originate")
-            print(f"The default-information originate has been removed on the interface vlan {int_vlan}")
+            print(f"The default-information originate has been removed on the interface vlan {int_vlan} from DUT {self.ip_session}")
 
         elif interface is not None:
 
             self.session.send_cmd(f"int {interface}")
             self.session.send_cmd(f"no default-information originate")
-            print(f"The default-information originate has been removed on the interface {interface}")
+            print(f"The default-information originate has been removed on the interface {interface} from DUT {self.ip_session}")
 
         else:
 
-            print("You have to specify an int_vlan/interface")
+            print(f"You have to specify an int_vlan/interface on DUT {self.ip_session}")
         self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)
@@ -356,17 +356,17 @@ class RIP:
 
             self.session.send_cmd(f"int vlan {int_vlan}")
             self.session.send_cmd(f"ip rip default route install")
-            print(f"The ip rip default route install has been activated on the interface vlan {int_vlan}")
+            print(f"The ip rip default route install has been activated on the interface vlan {int_vlan} on DUT {self.ip_session}")
 
         elif interface is not None:
 
             self.session.send_cmd(f"int {interface}")
             self.session.send_cmd(f"ip rip default route install")
-            print(f"The ip rip default route install has been activated on the interface {interface}")
+            print(f"The ip rip default route install has been activated on the interface {interface} on DUT {self.ip_session}")
 
         else:
 
-            print("You have to specify an int_vlan/interface")
+            print(f"You have to specify an int_vlan/interface on DUT {self.ip_session}")
         self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)
@@ -382,17 +382,17 @@ class RIP:
 
             self.session.send_cmd(f"int vlan {int_vlan}")
             self.session.send_cmd(f"no ip rip default route install")
-            print(f"The ip rip default route install has been deactivated on the interface vlan {int_vlan}")
+            print(f"The ip rip default route install has been deactivated on the interface vlan {int_vlan} on DUT {self.ip_session}")
 
         elif interface is not None:
 
             self.session.send_cmd(f"int {interface}")
             self.session.send_cmd(f"no ip rip default route install")
-            print(f"The ip rip default route install has been deactivated on the interface {interface}")
+            print(f"The ip rip default route install has been deactivated on the interface {interface} on DUT {self.ip_session}")
 
         else:
 
-            print("You have to specify an int_vlan/interface")
+            print(f"You have to specify an int_vlan/interface on DUT {self.ip_session}")
         self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)
@@ -483,7 +483,7 @@ class RIP:
         self.session.send_cmd(cmd=f"int vlan {int_vlan}")
         self.session.send_cmd(cmd=f"no timers basic")
         self.session.send_cmd("exit")
-        print(f"The timers of int_vlan {int_vlan} have been removed to from DUT {self.ip_session}")
+        print(f"The timers of int_vlan {int_vlan} have been removed from DUT {self.ip_session}")
         output = self.session.read()
         # print(output)
 

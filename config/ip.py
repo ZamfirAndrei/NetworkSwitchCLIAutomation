@@ -180,9 +180,11 @@ class IP:
             self.session.send_cmd("conf t")
             self.session.send_cmd(f"int vlan {int_vlan}")
 
+
             if dhcp == "No":
 
                 self.session.send_cmd(f"ip add {ip} {mask}")
+                print(f"The int vlan {int_vlan} has now the ip {ip} and mask {mask} on DUT {self.ip_session}")
 
             else:
 
@@ -211,7 +213,7 @@ class IP:
             self.session.send_cmd(f"int vlan {int_vlan}")
             self.session.send_cmd(f"ip add {ip[0]} {ip[1]}")
             self.session.send_cmd("!")
-            print(f"The int vlan {int_vlan} has now the ip {ip[0]} and mask {ip[1]}")
+            print(f"The int vlan {int_vlan} has now the ip {ip[0]} and mask {ip[1]} on DUT {self.ip_session}")
 
         output = self.session.read()
         # print(output)
@@ -230,7 +232,7 @@ class IP:
             self.session.send_cmd("no ip add")
             output = self.session.read()
             # print(output)
-            print(f"The ip from int vlan {int_vlan} of DUT {self.ip_session} has been removed")
+            print(f"The ip from int vlan {int_vlan} of DUT {self.ip_session} has been removed from DUT {self.ip_session}")
 
         self.session.close()
 
@@ -247,7 +249,7 @@ class IP:
             self.session.send_cmd(f"shut")
             self.session.send_cmd("!")
             self.session.send_cmd(f"no int vlan {int_vlan}")
-            print(f"The int vlan {int_vlan} of DUT {self.ip_session} has been removed")
+            print(f"The int vlan {int_vlan} of DUT {self.ip_session} has been removed from DUT {self.ip_session}")
 
         output = self.session.read()
         # print(output)
@@ -261,7 +263,7 @@ class IP:
         self.session.send_cmd(f"int {interface}")
         self.session.send_cmd(f"ip add {ip} {mask}")
         self.session.send_cmd("!")
-        print(f"The interface {interface} has now the ip {ip} and mask {mask}")
+        print(f"The interface {interface} has now the ip {ip} and mask {mask} on DUT {self.ip_session}")
 
         output = self.session.read()
         # print(output)
@@ -278,7 +280,7 @@ class IP:
         self.session.send_cmd("no ip add")
         output = self.session.read()
         # print(output)
-        print(f"The ip of interface {interface} has been removed")
+        print(f"The ip of interface {interface} has been removed from DUT {self.ip_session}")
 
         self.session.close()
 

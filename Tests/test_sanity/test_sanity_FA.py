@@ -42,9 +42,9 @@ sanity_flow_ = sanity_flow.SanityFlow()
 
 class TestSanitySuiteFA:
 
-    def test_func_123(self):
+    # def test_func_123(self):
 
-    # print(paths)
+        # print(paths)
         # print(DUT6.model)
         # print(paths['DUT6']['tftp'])
         # print(paths['DUT6']['sftp'])
@@ -140,7 +140,7 @@ class TestSanitySuiteFA:
         sanity_flow_.assert_copy_startup_config(DUT6, protocol=params["protocol"]["ssh"], mode=params["mode"]["sftp"], server_ip=params["server_ip"], vlan="1000",
                                                 path=params["path"]["DUT6"]["sftp"], user=params["user"], password=params["password"])
 
-    @pytest.mark.skip(reason="Telnet not working")
+    # @pytest.mark.skip(reason="Telnet not working")
     def test_func_7(self):
 
         print("###### Test_func_7 ######")
@@ -150,7 +150,8 @@ class TestSanitySuiteFA:
 
         sanity_flow_.assert_download_image(DUT6, protocol=params["protocol"]["telnet"], mode=params["mode"]["tftp"],
                                            server_ip=params["server_ip"], img=params["image_version"]["image_to_downgrade"],
-                                           path=params["path"]["DUT6"]["tftp"])
+                                           path=params["path"]["DUT6"]["tftp"], platform=params["platform"] ,
+                                           img_compression=params["image_compression"])
 
         # Make connection to the DUT, Reload it and check the new software version is loading successfully
 
@@ -162,7 +163,7 @@ class TestSanitySuiteFA:
             "image_to_downgrade"], model=DUT6.model)
 
 
-    @pytest.mark.skip(reason="Telnet not working")
+    # @pytest.mark.skip(reason="Telnet not working")
     def test_func_8(self):
 
         print("###### Test_func_8 ######")
@@ -171,9 +172,9 @@ class TestSanitySuiteFA:
         # Check that the new software version is downloaded successfully
 
         sanity_flow_.assert_download_image(DUT6, protocol=params["protocol"]["telnet"], mode=params["mode"]["sftp"],
-                                           server_ip=params["server_ip"],
-                                           img=params["image_version"]["image_to_upgrade"], path=params["path"]["DUT6"]["sftp"],
-                                           user=params["user"], password=params["password"])
+                                           server_ip=params["server_ip"],  img=params["image_version"]["image_to_upgrade"],
+                                           path=params["path"]["DUT6"]["sftp"], user=params["user"], password=params["password"],
+                                           platform=params["platform"], img_compression=params["image_compression"])
 
         # Make connection to the DUT, Reload it and check the new software version is loading successfully
 
@@ -193,7 +194,7 @@ class TestSanitySuiteFA:
     #
     #     # DUT6.sanity.download_image_ssh(mode="scp",server_ip="10.2.109.24", img="5.0.1-r4",user="cambium",password="cambium123", path="/tftpboot")
 
-    @pytest.mark.skip(reason="Telnet not working")
+    # @pytest.mark.skip(reason="Telnet not working")
     def test_func_10(self):
 
         print("###### Test_func_10 ######")
@@ -203,7 +204,7 @@ class TestSanitySuiteFA:
                                                 mode=params["mode"]["tftp"], server_ip=params["server_ip"],
                                                 vlan="1000", path=params["path"]["DUT6"]["tftp"])
 
-    @pytest.mark.skip(reason="Telnet not working")
+    # @pytest.mark.skip(reason="Telnet not working")
     def test_func_11(self):
 
         print("###### Test_func_11 ######")
@@ -257,7 +258,7 @@ class TestSanitySuiteFA:
                                               model=DUT6.model)
 
 
-    @pytest.mark.skip(reason="Telnet not working")
+    # @pytest.mark.skip(reason="Telnet not working")
     def test_func_13(self):
 
         print("###### Test_func_13 ######")
@@ -265,14 +266,13 @@ class TestSanitySuiteFA:
 
         # Make the configuration for the port
 
-        sanity_flow_.port_configuration(DUT6, port="Gi 0/4", port_mode="Hybrid", pvid="10",
+        sanity_flow_.port_configuration(DUT6, port="Ex 0/4", port_mode="Hybrid", pvid="10",
                                         acceptable_frame_type="untagged")
 
         # Check the port configuration BEFORE downloading the new software image
 
-        sanity_flow_.assert_configuration_port(DUT6, port="Gi 0/4", port_mode="Hybrid", pvid="10",
-                                               acceptable_frame_type="untagged",
-                                               img_to_be_checked=params["image_version_to_be_checked"]["image_to_downgrade"],
+        sanity_flow_.assert_configuration_port(DUT6, port="Ex 0/4", port_mode="Hybrid", pvid="10",
+                                               acceptable_frame_type="untagged", img_to_be_checked=params["image_version_to_be_checked"]["image_to_downgrade"],
                                                model=DUT6.model)
 
         # Save the configuration and download the new image
@@ -290,19 +290,19 @@ class TestSanitySuiteFA:
 
         # Check the port configuration AFTER downloading the new software image
 
-        sanity_flow_.assert_configuration_port(DUT6, port="Gi 0/4", port_mode="Hybrid", pvid="10",
+        sanity_flow_.assert_configuration_port(DUT6, port="Ex 0/4", port_mode="Hybrid", pvid="10",
                                                acceptable_frame_type="untagged",
                                                img_to_be_checked=params["image_version_to_be_checked"]["image_to_upgrade"],
                                                model=DUT6.model)
 
         # Remove the port configuration and save
 
-        sanity_flow_.remove_port_configuration(DUT6, port="Gi 0/4")
+        sanity_flow_.remove_port_configuration(DUT6, port="Ex 0/4")
         sanity_flow_.save_configuration(DUT6, protocol=params["protocol"]["telnet"])
 
         # Check the port configuration
 
-        sanity_flow_.assert_configuration_port(DUT6, port="Gi 0/4", port_mode="Hybrid", pvid="1",
+        sanity_flow_.assert_configuration_port(DUT6, port="Ex 0/4", port_mode="Hybrid", pvid="1",
                                                acceptable_frame_type="all",
                                                img_to_be_checked=params["image_version_to_be_checked"]["image_to_upgrade"],
                                                model=DUT6.model)

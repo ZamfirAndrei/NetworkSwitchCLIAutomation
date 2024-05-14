@@ -1,6 +1,6 @@
 import time
 from Management import dut_objects
-from flows import rstpflow
+from flows import rstp_flow
 
 ip_session_1 = "10.2.109.206"
 ip_session_2 = "10.2.109.83"
@@ -14,7 +14,7 @@ DUT3 = dut_objects.DUT_Objects(ip_session=ip_session_3)
 DUT4 = dut_objects.DUT_Objects(ip_session=ip_session_4)
 DUT5 = dut_objects.DUT_Objects(ip_session=ip_session_5)
 
-rstp_flow = rstpflow.RSTPFlow()
+rstp_flow = rstp_flow.RSTPFlow()
 
 
 class TestRSTPSuite2:

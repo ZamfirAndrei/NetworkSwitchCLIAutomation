@@ -1,6 +1,6 @@
 import time
 from Management import dut_objects
-from flows import mstpflow
+from flows import mstp_flow
 
 ip_session_1 = "10.2.109.206"
 ip_session_2 = "10.2.109.83"
@@ -14,7 +14,7 @@ DUT3 = dut_objects.DUT_Objects(ip_session=ip_session_3)
 DUT4 = dut_objects.DUT_Objects(ip_session=ip_session_4)
 DUT5 = dut_objects.DUT_Objects(ip_session=ip_session_5)
 
-mstp_flow = mstpflow.MSTPFlow()
+mstp_flow = mstp_flow.MSTPFlow()
 
 
 class TestMSTPSuite1:

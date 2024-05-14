@@ -138,7 +138,7 @@ class TestRIPSuite1:
         print(dict_rip_routes_2)
         # print(dict_rip_routes_1["15.0.0.0"]["Learned From"])
 
-        # Check if the routes are learned and instaled in RIP routes
+        # Check if the routes are learned and installed in RIP routes
 
         assert "15.0.0.0" in dict_rip_routes_1.keys()
         assert "30.0.0.0" in dict_rip_routes_2.keys()
@@ -1806,7 +1806,7 @@ class TestRIPSuite1:
         DUT2.ospf.enable_ospf()
         DUT3.ospf.enable_ospf()
 
-        # You have to remove newtork and add it back because of the OSPF process that is not eliminated after disabling it
+        # You have to remove network and add it back because of the OSPF process that is not eliminated after disabling it
 
         DUT2.ospf.advertise_network(ip_network="12.0.0.1", area="0.0.0.0")
         DUT3.ospf.advertise_network(ip_network="12.0.0.2", area="0.0.0.0")

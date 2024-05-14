@@ -3,7 +3,7 @@ import pytest
 import pytest_html
 import sys
 
-from flows import erpsflow,rstpflow
+from flows import erps_flow,rstp_flow
 from config import vlan, interfaces, erps, fdb, stp
 from mocks import mock_erps
 from Management import ssh, dut_objects
@@ -43,8 +43,8 @@ DUT3 = dut_objects.DUT_Objects(ip_session=ip_session_3)
 
 # Flows
 
-erpsflow = erpsflow.ERPSFlow()
-rstpflow = rstpflow.RSTPFlow()
+erpsflow = erps_flow.ERPSFlow()
+rstpflow = rstp_flow.RSTPFlow()
 
 
 class TestERPSSuite1:

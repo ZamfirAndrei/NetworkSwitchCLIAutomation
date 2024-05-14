@@ -8,7 +8,7 @@ import sys
 from config import vlan, interfaces, erps, fdb, stp
 from Management import ssh, dut_objects
 from mocks import mock_erps
-from flows import rstpflow
+from flows import rstp_flow
 
 rstpflow = rstpflow.RSTPFlow()
 

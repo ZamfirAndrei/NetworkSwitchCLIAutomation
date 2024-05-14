@@ -35,8 +35,10 @@ paths = {
 
 images_fiber = {
 
-    "image_to_upgrade" : "6.0.0-e75",
-    "image_to_downgrade" : "6.0.0-e74",
+    "image_to_upgrade" : "6.0-b9",
+    "image_to_downgrade" : "6.0.0-e91",
+    "image_13" : "6.0-b9",
+    "image_12" : "6.0.0-e91",
     "image_11" : "6.0.0-e75",
     "image_10" : "6.0.0-e74",
     "image_9" : "6.0.0-e73",

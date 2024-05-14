@@ -1,5 +1,5 @@
 import re
-from Management import ssh, telnet
+from Management import ssh, telnet, dut_objects
 
 
 
