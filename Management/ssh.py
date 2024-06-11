@@ -38,7 +38,6 @@ class SSH:
     def send_cmd(self, cmd):
 
         self.shell.send(cmd + "\r\n")
-        # self.shell.send(cmd)
         # print(cmd)
         time.sleep(2)
 

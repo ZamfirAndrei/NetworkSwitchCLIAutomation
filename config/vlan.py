@@ -1,4 +1,6 @@
 import re
+import time
+
 from Management import ssh, telnet, dut_objects
 
 
@@ -206,6 +208,7 @@ class VLAN:
 
         if vlan is not None:
             self.session.send_cmd(f"show vlan id {vlan}")
+            time.sleep(5)
             output = self.session.read()
             match = re.findall(r"VLAN ID\s+:\s+(\d+)\S+Member Ports\s+:\s+([\w/,\s]+)[\S\s]+Untagged Ports\s+:\s+([\w/,\s]+)\S+"
                                r"PBA Ports\s+:\s+([\w/,\s]+)\S+Name\s+:([\s\w]+)\S+Status\s+:\s+(\w+)\S+"

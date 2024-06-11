@@ -44,7 +44,7 @@ class STP:
         self.session.connect()
         self.session.send_cmd("conf t ")
         self.session.send_cmd(f"spanning-tree mode {mode}")
-        print(f"The mode of the DUT {self.ip_session} has been changed to {mode}")
+        print(f"The STP mode of the DUT {self.ip_session} has been changed to {mode}")
         output = self.session.read()
         # print(output)
         self.session.close()
@@ -341,7 +341,7 @@ class STP:
         # print(output)
         self.session.close()
 
-    def add_prvst_root_primary_secondary(self, vlan, root):
+    def add_prvst_root(self, vlan, root):
 
         self.session.connect()
         self.session.send_cmd("conf t")
@@ -351,12 +351,12 @@ class STP:
         # print(output)
         self.session.close()
 
-    def remove_pvrst_root_primary_secondary(self, vlan):
+    def remove_pvrst_root(self, vlan):
 
         self.session.connect()
         self.session.send_cmd("conf t")
         self.session.send_cmd(f"no spanning-tree vlan {vlan} root")
-        print(f"The priority for vlan {vlan} has been changed to default")
+        print(f"The priority for vlan {vlan} has been changed to default on DUT {self.ip_session}")
         output = self.session.read()
         # print(output)
         self.session.close()
@@ -444,6 +444,19 @@ class STP:
         self.session.send_cmd(f"no spanning-tree mst {instance} port-priority")
         self.session.send_cmd("!")
         print(f"The port-priority for {port} on instance {instance} has been changed to default on DUT {self.ip_session}")
+        output = self.session.read()
+        # print(output)
+        self.session.close()
+
+    def add_mst_instance_with_vlan(self, vlan, instance):
+
+        self.session.connect()
+        self.session.send_cmd("conf t")
+        self.session.send_cmd("spanning-tree mst configuration")
+        self.session.send_cmd(f"instance {instance} vlan {vlan}")
+        print(f"The vlan {vlan} has been added to instance {instance} for DUT {self.ip_session}")
+
+        self.session.send_cmd("!")
         output = self.session.read()
         # print(output)
         self.session.close()

@@ -20,34 +20,8 @@ DUT3 = dut_objects.DUT_Objects_TestBed(dut3)
 
 sanity_flow_ = sanity_flow.SanityFlow()
 
-# image_to_update = "6.0.0-e73"
-# image_to_downgrade = "6.0.0-e73"
-#
-# image_to_be_checked_1 = "6.0.0-e74"
-# image_to_be_checked_2 = "6.0.0-e73"
-#
-# server_ip = "10.2.109.24"
-# user = "cambium"
-# password = "cambium123"
-#
-#
-# paths_dut6 = {
-#     "tftp": "/AGZamfir/3024F.conf",
-#     "sftp": "/AGZamfir/sftp_3024F.conf"
-# }
-#
-# paths = {
-#     "DUT6": paths_dut6
-# }
 
 class TestSanitySuiteFA:
-
-    # def test_func_123(self):
-
-        # print(paths)
-        # print(DUT6.model)
-        # print(paths['DUT6']['tftp'])
-        # print(paths['DUT6']['sftp'])
 
     def test_func_1(self):
 
@@ -63,7 +37,7 @@ class TestSanitySuiteFA:
 
         # Make connection to the DUT, Reload it and check the new software version is loading successfully
 
-        sanity_flow_.reload_DUT(DUT6, protocol=params["protocol"]["ssh"])
+        sanity_flow_.save_and_reload_DUT(DUT6, protocol=params["protocol"]["ssh"])
 
         # Check the new software version and model name of the DUT
 
@@ -92,15 +66,16 @@ class TestSanitySuiteFA:
         sanity_flow_.check_software_version_and_model(DUT6, img_to_be_checked=params["image_version_to_be_checked"]["image_to_downgrade"],
                                                       model=DUT6.model)
 
-    # def test_func_3(self):
-    #
-    #     print("###### Test_func_3 ######")
-    #     print("########## Check you can download a software image on DUT using SCP using SSH - FA #############")
-    #
-    #     # Need to find a way to avoid that press "Enter" in the password prompt
-    #
-    #     # DUT6.sanity.download_image_ssh(mode="scp",server_ip="10.2.109.24", img="5.0.1-r4",user="cambium",password="cambium123", path="/tftpboot")
-    #
+    @pytest.mark.skip(reason="scp not working")
+    def test_func_3(self):
+
+        print("###### Test_func_3 ######")
+        print("########## Check you can download a software image on DUT using SCP using SSH - FA #############")
+
+        # Need to find a way to avoid that press "Enter" in the password prompt
+
+        # DUT6.sanity.download_image_ssh(mode="scp",server_ip="10.2.109.24", img="5.0.1-r4",user="cambium",password="cambium123", path="/tftpboot")
+
     def test_func_4(self):
 
         # Getting back to the last image, so we can do the save/retrieve confing
@@ -185,14 +160,15 @@ class TestSanitySuiteFA:
         sanity_flow_.check_software_version_and_model(DUT6, img_to_be_checked=params["image_version_to_be_checked"][
             "image_to_upgrade"], model=DUT6.model)
 
-    # def test_func_9(self):
-    #
-    #     print("###### Test_func_9 ######")
-    #     print("########## Check you can download a software image on DUT using SCP using telnet - FA #############")
-    #
-    #     # Need to find a way to avoid that press "Enter" in the password prompt
-    #
-    #     # DUT6.sanity.download_image_ssh(mode="scp",server_ip="10.2.109.24", img="5.0.1-r4",user="cambium",password="cambium123", path="/tftpboot")
+    @pytest.mark.skip(reason="scp not working")
+    def test_func_9(self):
+
+        print("###### Test_func_9 ######")
+        print("########## Check you can download a software image on DUT using SCP using telnet - FA #############")
+
+        # Need to find a way to avoid that press "Enter" in the password prompt
+
+        # DUT6.sanity.download_image_ssh(mode="scp",server_ip="10.2.109.24", img="5.0.1-r4",user="cambium",password="cambium123", path="/tftpboot")
 
     # @pytest.mark.skip(reason="Telnet not working")
     def test_func_10(self):
@@ -257,6 +233,10 @@ class TestSanitySuiteFA:
         sanity_flow_.assert_configuration_port(DUT6, port="Ex 0/4", port_mode="Hybrid", pvid="1", acceptable_frame_type="all", img_to_be_checked=params["image_version_to_be_checked"]["image_to_downgrade"],
                                               model=DUT6.model)
 
+        # Remove the VLAN configured
+
+        DUT6.vl.remove_vlan(vlan="15")
+
 
     # @pytest.mark.skip(reason="Telnet not working")
     def test_func_13(self):
@@ -306,3 +286,7 @@ class TestSanitySuiteFA:
                                                acceptable_frame_type="all",
                                                img_to_be_checked=params["image_version_to_be_checked"]["image_to_upgrade"],
                                                model=DUT6.model)
+
+        # Remove the VLAN configured
+
+        DUT6.vl.remove_vlan(vlan="10")

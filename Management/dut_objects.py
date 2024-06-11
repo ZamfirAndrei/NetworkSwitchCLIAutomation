@@ -45,7 +45,8 @@ class DUT_Objects_TestBed:
         # self.port = parameters["ports"]["h1value"][:2] + " " + parameters["ports"]["h1value"][2:]
         self.ports = parameters["ports"]
         self.hostname = parameters["hostname"]
-        self.model = parameters['model']
+        self.model = parameters["model"]
+        self.mac_address = parameters["mac_address"]
 
         # Creating the objects
 

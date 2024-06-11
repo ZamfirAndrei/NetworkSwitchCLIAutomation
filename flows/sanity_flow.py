@@ -163,6 +163,14 @@ class SanityFlow:
 
         if protocol == "ssh":
 
+            # Save the configuration
+
+            DUT.session.connect()
+            DUT.session.send_cmd(cmd="wr st")
+            DUT.session.close()
+
+            print("The configuration has been saved")
+
             # Copy the startup-config on the Remove Server
 
             DUT.sanity.copy_running_config_ssh(mode=mode, server_ip=server_ip, user=user, password=password, path=path)
@@ -207,6 +215,14 @@ class SanityFlow:
             print("Successful asserting after reloading the DUT...")
 
         elif protocol == "telnet":
+
+            # Save the configuration
+
+            DUT.tn.connect()
+            DUT.tn.write_cmd(cmd="wr st")
+            DUT.tn.close()
+
+            print("The configuration has been saved")
 
             # Copy the startup-config on the Remove Server
 

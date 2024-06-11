@@ -76,7 +76,7 @@ DUT4Ports = {'h1':  'gigabitethernet 0/11',   'h1speed': "1000", 'h1value': 'Gi0
              'x1':  'gigabitethernet 0/1',  'x1speed': "1000", 'x1value': 'Gi0/1' }
 
 DUT4 = {
-            'ip': "10.2.109.118",
+            'ip': "10.2.109.87",
             'user': 'admin',
             'password': 'Admin1234!',
             'connectionObject': 'telnet',
@@ -96,10 +96,12 @@ DUT5Ports = {'h1':  'gigabitethernet 0/25',   'h1speed': "1000", 'h1value': 'Gi0
              'v3':  'gigabitethernet 0/4',    'v3speed': "1000", 'v3value': 'Gi0/10',
              'v4':  'extreme-ethernet 0/3',   'v4speed': "10000", 'v4value': 'Ex0/3',
              'v5':  'extreme-ethernet 0/4',   'v5speed': "10000", 'v5value': 'Ex0/4',
-             'x1':  'extreme-ethernet 0/2',   'x1speed': "1000)", 'x1value': 'Ex0/2' }
+             'x1':  'extreme-ethernet 0/2',   'x1speed': "1000)", 'x1value': 'Ex0/2',
+             'x2': 'gigabitethernet 0/48', 'x2speed': "1000)", '21value': 'Gi0/48'
+             }
 
 DUT5 = {
-            'ip': "10.2.109.241",
+            'ip': "10.2.109.233",
             'user': 'admin',
             'password': 'Admin1234!',
             'connectionObject': 'telnet',
@@ -122,7 +124,7 @@ DUT6Ports = {'h1':  'extreme-ethernet 0/1',   'h1speed': "10000", 'h1value': 'Ex
              'v4': 'extreme-ethernet 0/12', 'v4speed': "10000", 'v4value': 'Ex0/12' }
 
 DUT6 = {
-            'ip': "10.2.109.110",
+            'ip': "10.2.109.116",
             'user': 'admin',
             'password': 'Admin1234!',
             'connectionObject': 'telnet',

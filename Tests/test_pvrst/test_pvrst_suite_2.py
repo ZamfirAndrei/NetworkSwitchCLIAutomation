@@ -340,7 +340,7 @@ class TestPVRSTSuite2:
 
         # Change the root priority on DUT3 for VLAN 10
 
-        DUT3.stp.add_prvst_root_primary_secondary(vlan="10", root="primary")
+        DUT3.stp.add_prvst_root(vlan="10", root="primary")
 
         # Check the new Root Bridge for VLAN 10(the lowest priority in the topology - DUT3)
 
@@ -368,7 +368,7 @@ class TestPVRSTSuite2:
 
         # Remove the root priority for VLAN 10 and check that DUT1 is the root for VLAN 10
 
-        DUT3.stp.remove_pvrst_root_primary_secondary(vlan="10")
+        DUT3.stp.remove_pvrst_root(vlan="10")
 
         # Check the default Root Bridge for VLAN 10 (the lowest MAC in the topology - DUT1)
 
