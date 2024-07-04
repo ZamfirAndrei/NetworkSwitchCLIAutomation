@@ -90,34 +90,7 @@ class PVRSTFlow:
 
         return d_instance_vlan_dut, dict_of_ports_instance_vlan_dut, list_ports_instance_dut
 
-    # def assert_pvrst_root_bridges_3_DUTs(self, DUT1, brg_priority_1, DUT2,  brg_priority_2, DUT3, brg_priority_3, vlan):
-    #
-    #     d_instance_vlan_dut1, dict_ports_instance_vlan_dut1, list_ports_instance_dut1 = self.show_pvrst_spanning_tree(DUT1, vlan=vlan)
-    #     d_instance_vlan_dut2, dict_ports_instance_vlan_dut2, list_ports_instance_dut2 = self.show_pvrst_spanning_tree(DUT2, vlan=vlan)
-    #     d_instance_vlan_dut3, dict_ports_instance_vlan_dut3, list_ports_instance_dut3 = self.show_pvrst_spanning_tree(DUT3, vlan=vlan)
-    #
-    #     print(d_instance_vlan_dut1)
-    #     print(d_instance_vlan_dut2)
-    #     print(d_instance_vlan_dut3)
-    #
-    #     assert d_instance_vlan_dut1["Root ID Address"] == d_instance_vlan_dut2["Root ID Address"] == d_instance_vlan_dut3["Root ID Address"]
-    #     assert d_instance_vlan_dut1["Bridge ID Priority"] == brg_priority_1
-    #     assert d_instance_vlan_dut2["Bridge ID Priority"] == brg_priority_2
-    #     assert d_instance_vlan_dut3["Bridge ID Priority"] == brg_priority_3
-    #
-    #     print("Successfully asserting the PVRST Root Bridge")
 
-    # def assert_pvrst_root_bridges_2_DUTs(self, DUT1, d_instance_vlan_1, priority_1
-    #                             , DUT2, d_instance_vlan_2, priority_2):
-    #
-    #     print(d_instance_vlan_1)
-    #     print(d_instance_vlan_2)
-    #
-    #     assert d_instance_vlan_1["Root ID Address"] == d_instance_vlan_2["Root ID Address"]
-    #     assert d_instance_vlan_1["Root ID Priority"] == priority_1
-    #     assert d_instance_vlan_2["Root ID Priority"] == priority_2
-    #
-    #     print("Successfully asserting")
 
     def assert_pvrst_port(self, DUT, dict_of_ports_instance, port, role, port_priority=None, cost=None):
 
@@ -137,54 +110,6 @@ class PVRSTFlow:
 
             print(f"#### Successfully asserting for port {port} of DUT {DUT.hostname}")
 
-    # def assert_pvrst_ports_3_DUTs(self, DUT1, port1_dut1, port2_dut1, role1_dut1, role2_dut1, port_priority1_dut1, port_priority2_dut1, cost1_dut1, cost2_dut1,
-    #                      DUT2, port1_dut2, port2_dut2, role1_dut2, role2_dut2, port_priority1_dut2, port_priority2_dut2, cost1_dut2,  cost2_dut2,
-    #                      DUT3, port1_dut3, port2_dut3, role1_dut3, role2_dut3, port_priority1_dut3, port_priority2_dut3, cost1_dut3,  cost2_dut3, vlan):
-    #
-    #     d_instance_vlan_dut1, dict_ports_instance_vlan_dut1, list_ports_instance_dut1 = self.show_pvrst_spanning_tree(
-    #         DUT1, vlan=vlan)
-    #     d_instance_vlan_dut2, dict_ports_instance_vlan_dut2, list_ports_instance_dut2 = self.show_pvrst_spanning_tree(
-    #         DUT2, vlan=vlan)
-    #     d_instance_vlan_dut3, dict_ports_instance_vlan_dut3, list_ports_instance_dut3 = self.show_pvrst_spanning_tree(
-    #         DUT3, vlan=vlan)
-    #
-    #     print(dict_ports_instance_vlan_dut1)
-    #     print(dict_ports_instance_vlan_dut2)
-    #     print(dict_ports_instance_vlan_dut3)
-    #
-    #     # Asserting for DUT1 for both ports
-    #
-    #     self.assert_pvrst_port(DUT1, dict_ports_instance_vlan_dut1, port1_dut1, role1_dut1, port_priority1_dut1, cost1_dut1)
-    #     self.assert_pvrst_port(DUT1, dict_ports_instance_vlan_dut1, port2_dut1, role2_dut1, port_priority2_dut1, cost2_dut1)
-    #
-    #     print(f"######## Successfully asserting the PVRST Ports of DUT {DUT1.hostname} in instance {vlan}")
-    #
-    #     # Asserting for DUT2 for both ports
-    #
-    #     self.assert_pvrst_port(DUT2, dict_ports_instance_vlan_dut2, port1_dut2, role1_dut2, port_priority1_dut2, cost1_dut2)
-    #     self.assert_pvrst_port(DUT2, dict_ports_instance_vlan_dut2, port2_dut2, role2_dut2, port_priority2_dut2, cost2_dut2)
-    #
-    #     print(f"######## Successfully asserting the PVRST Ports of  DUT {DUT2.hostname} in instance {vlan}")
-    #
-    #     # Asserting for DUT3 for both ports
-    #
-    #     self.assert_pvrst_port(DUT3, dict_ports_instance_vlan_dut3, port1_dut3, role1_dut3, port_priority1_dut3, cost1_dut3)
-    #     self.assert_pvrst_port(DUT3, dict_ports_instance_vlan_dut3, port2_dut3, role2_dut3, port_priority2_dut3, cost2_dut3)
-    #
-    #     print(f"######## Successfully asserting the PVRST Ports of DUT {DUT3.hostname} in instance {vlan}")
-    #
-    # def assert_pvrst_ports_2_DUTs(self, DUT1, dict_ports_instance_vlan_1, port1_1, port2_1, role1_1, role2_1, port_priority1_1, cost1_1, port_priority2_1, cost2_1,
-    #                      DUT2, dict_ports_instance_vlan_2, port1_2, port2_2, role1_2, role2_2, port_priority1_2, cost1_2, port_priority2_2, cost2_2):
-    #
-    #     # Asserting for DUT1 for both ports
-    #
-    #     self.assert_pvrst_port(DUT1, dict_ports_instance_vlan_1, port1_1, role1_1, port_priority1_1, cost1_1)
-    #     self.assert_pvrst_port(DUT1, dict_ports_instance_vlan_1, port2_1, role2_1, port_priority2_1, cost2_1)
-    #
-    #     # Asserting for DUT2 for both ports
-    #
-    #     self.assert_pvrst_port(DUT2, dict_ports_instance_vlan_2, port1_2, role1_2, port_priority1_2, cost1_2)
-    #     self.assert_pvrst_port(DUT2, dict_ports_instance_vlan_2, port2_2, role2_2, port_priority2_2, cost2_2)
 
     def assert_pvrst_root_bridge_and_ports(self, DUT, port1_dut, role1_dut, port_priority1_dut,
                                cost1_dut, port2_dut, role2_dut, port_priority2_dut, cost2_dut, vlan, bridge_id, bridge_id_priority, root_id, root_priority):
@@ -197,7 +122,12 @@ class PVRSTFlow:
         # print(d_instance_vlan_dut)
         # print(dict_of_ports_instance_vlan_dut)
 
-        self.assert_pvrst_bridge_and_root_id(DUT, vlan=vlan, d_instance_vlan=d_instance_vlan_dut, bridge_id=bridge_id, bridge_id_priority=bridge_id_priority, root_id=root_id, root_priority=root_priority)
+        self.assert_pvrst_bridge_and_root_id(DUT, vlan=vlan,
+                                             d_instance_vlan=d_instance_vlan_dut,
+                                             bridge_id=bridge_id,
+                                             bridge_id_priority=bridge_id_priority,
+                                             root_id=root_id,
+                                             root_priority=root_priority)
 
         # Asserting for DUT for both ports
 

@@ -14,7 +14,7 @@ DUT1 = {
             'password': 'Admin1234!',
             'connectionObject': 'telnet',
             'terminal_ip': '10.2.109.9',
-            'terminal_port': 6026,
+            'terminal_port': '6026',
             'ports': DUT1Ports,
             'model': 'EX2028-P',
             'version': '5.0.2-r2',
@@ -30,12 +30,12 @@ DUT2Ports = {'h1':  'gigabitethernet 0/3',   'h1speed': "1000", 'h1value': 'Gi0/
              'v2':  'gigabitethernet 0/10',  'v2speed': "1000", 'v2value': 'Gi0/10' }
 
 DUT2 = {
-            'ip': "10.2.109.172",
+            'ip': "10.2.109.79",
             'user': 'admin',
             'password': 'Admin1234!',
             'connectionObject': 'telnet',
             'terminal_ip': '10.2.109.9',
-            'terminal_port': 6006,
+            'terminal_port': '6006',
             'ports': DUT2Ports,
             'model': 'EX2010-P',
             'version': '5.0.2-r2',
@@ -57,7 +57,7 @@ DUT3 = {
             'password': 'Admin1234!',
             'connectionObject': 'telnet',
             'terminal_ip': '10.2.109.9',
-            'terminal_port': 6010,
+            'terminal_port': '6010',
             'ports': DUT3Ports,
             'model': 'EX3052R-P',
             'version': '5.0.2-r2',
@@ -81,14 +81,14 @@ DUT4 = {
             'password': 'Admin1234!',
             'connectionObject': 'telnet',
             'terminal_ip': '10.2.109.9',
-            'terminal_port': 6010,
+            'terminal_port': '6010',
             'ports': DUT4Ports,
             'model': 'EX2028-P',
             'version': '5.0.2-r4',
             'hostname': 'new1',
             'mac_address': '58:c1:7a:ec:94:41' }
 
-# ===================================== DUT 4 declaration =====================================
+# ===================================== DUT 5 declaration =====================================
 
 DUT5Ports = {'h1':  'gigabitethernet 0/25',   'h1speed': "1000", 'h1value': 'Gi0/25',
              'v1':  'gigabitethernet 0/26',   'v1speed': "1000", 'v1value': 'Gi0/26',
@@ -97,16 +97,18 @@ DUT5Ports = {'h1':  'gigabitethernet 0/25',   'h1speed': "1000", 'h1value': 'Gi0
              'v4':  'extreme-ethernet 0/3',   'v4speed': "10000", 'v4value': 'Ex0/3',
              'v5':  'extreme-ethernet 0/4',   'v5speed': "10000", 'v5value': 'Ex0/4',
              'x1':  'extreme-ethernet 0/2',   'x1speed': "1000)", 'x1value': 'Ex0/2',
-             'x2': 'gigabitethernet 0/48', 'x2speed': "1000)", '21value': 'Gi0/48'
+             'x2': 'gigabitethernet 0/48', 'x2speed': "1000", 'x2value': 'Gi0/48',
+             'x3': 'gigabitethernet 0/1', 'x3speed': "1000", 'x3value': 'Gi0/1',
+             'x4': 'gigabitethernet 0/2', 'x4speed': "1000", 'x4value': 'Gi0/2'
              }
 
 DUT5 = {
-            'ip': "10.2.109.233",
+            'ip': "10.2.109.76",
             'user': 'admin',
             'password': 'Admin1234!',
             'connectionObject': 'telnet',
             'terminal_ip': '10.2.109.9',
-            'terminal_port': 6010,
+            'terminal_port': '6010',
             'ports': DUT5Ports,
             'model': 'EX2052',
             'version': '5.0.2-r4',
@@ -129,12 +131,60 @@ DUT6 = {
             'password': 'Admin1234!',
             'connectionObject': 'telnet',
             'terminal_ip': '10.2.109.9',
-            'terminal_port': 6025,
+            'terminal_port': '6025',
             'ports': DUT6Ports,
             'model': 'EX3024F',
             'version': '6.0.0-e44',
             'hostname': 'FA2',
             'mac_address': '30:cb:c7:ce:91:81' }
+
+# ===================================== DUT 7 declaration =====================================
+
+DUT7Ports = {'x1':  'gigabitethernet 0/1',   'x1speed': "1000)", 'x1value': 'Gi0/1',
+             'x2': 'gigabitethernet 0/2', 'x2speed': "1000)", 'x2value': 'Gi0/2',
+             'v1':  'gigabitethernet 0/6',   'v1speed': "1000", 'v1value': 'Gi0/6',
+             'h1':  'gigabitethernet 0/5',   'h3speed': "1000", 'h1value': 'Gi0/5',
+             'h2':  'gigabitethernet 0/7',   'h1speed': "1000", 'h2value': 'Gi0/7',
+             'h3':  'gigabitethernet 0/8',   'h2speed': "1000", 'h3value': 'Gi0/8',
+             }
+
+DUT7 = {
+            'ip': "10.2.109.233",
+            'user': 'admin',
+            'password': 'Admin1234!',
+            'connectionObject': 'telnet',
+            'terminal_ip': '10.2.109.9',
+            'terminal_port': '6012',
+            'ports': DUT7Ports,
+            'model': 'EX2010',
+            'version': '5.0.2-r4',
+            'hostname': 'cip10',
+            'mac_address': '00:01:01:b2:50:01'
+}
+
+# ===================================== DUT 8 declaration =====================================
+
+DUT8Ports = {'x1':  'gigabitethernet 0/11',   'x1speed': "1000)", 'x1value': 'Gi0/11',
+             'x2': 'gigabitethernet 0/12', 'x2speed': "1000)", 'x2value': 'Gi0/12',
+             'x3': 'gigabitethernet 0/13', 'x3speed': "1000)", 'x3value': 'Gi0/13',
+             'v1':  'gigabitethernet 0/1',   'v1speed': "1000", 'v1value': 'Gi0/1',
+             'h1':  'gigabitethernet 0/7',   'h1speed': "1000", 'h1value': 'Gi0/7',
+             'h2':  'gigabitethernet 0/8',   'h2speed': "1000", 'h2value': 'Gi0/8',
+             }
+
+DUT8 = {
+            'ip': "10.2.109.233",
+            'user': 'admin',
+            'password': 'Admin1234!',
+            'connectionObject': 'telnet',
+            'terminal_ip': '10.2.109.9',
+            'terminal_port': '6001',
+            'ports': DUT8Ports,
+            'model': 'EX2028-P',
+            'version': '5.0.2-r4',
+            'hostname': 'cip28',
+            'mac_address': '00:01:01:01:40:01'
+}
 
 
 # ===================================== DUT Test Flavia declaration =====================================

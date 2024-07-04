@@ -12,9 +12,6 @@ class STP:
 
         self.ip_session = ip_session
         self.session = ssh.SSH(ip_session)
-        # self.vlan_obj = vlan.VLAN(ip_session)
-        # self.ip_obj = ip.IP(ip_session)
-        # self.tn = telnet.Telnet(ip_session)
 
     def check_stp_mode(self):
 

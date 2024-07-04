@@ -23,7 +23,7 @@ class FDB:
         d1 = {}
         mac_addr = list()
         self.session.connect()
-        self.session.send_cmd("show mac-address-table\r\n")
+        self.session.send_cmd("show mac-address-table")
         output = self.session.read()
         # print(output)
         match = re.findall(r"(\d+)\s+(\w+:\w+:\w+:\w+:\w+:\w+)\s+(\w+)\s+([\w/]+)", output)
@@ -44,9 +44,8 @@ class FDB:
     def clear_mac_addr_table(self):
 
         self.session.connect()
-        self.session.send_cmd("clear mac-address-table dynamic\r\n")
-        # self.session.send_cmd("show mac-address-table\r\n")
-        # output = self.session
+        self.session.send_cmd("clear mac-address-table dynamic")
+        output = self.session
         # print(output)
         self.session.close()
 
@@ -61,7 +60,7 @@ class FDB:
         d1 = {}
         mac_addr = list()
         self.session.connect()
-        self.session.send_cmd(f"show mac-address-table vlan {vlan}\r\n")
+        self.session.send_cmd(f"show mac-address-table vlan {vlan}")
         output = self.session.read()
         # print(output)
         match = re.findall(r"(\d+)\s+(\w+:\w+:\w+:\w+:\w+:\w+)\s+(\w+)\s+([\w/]+)", output)
@@ -90,7 +89,7 @@ class FDB:
         d1 = {}
         mac_addr = list()
         self.session.connect()
-        self.session.send_cmd(f"show mac-address-table interface {interface}\r\n")
+        self.session.send_cmd(f"show mac-address-table interface {interface}")
         output = self.session.read()
         # print(output)
         match = re.findall(r"(\d+)\s+(\w+:\w+:\w+:\w+:\w+:\w+)\s+(\w+)\s+([\w/]+)", output)
@@ -119,7 +118,7 @@ class FDB:
         d1 = {}
         mac_addr = list()
         self.session.connect()
-        self.session.send_cmd("show mac-address-table static unicast\r\n")
+        self.session.send_cmd("show mac-address-table static unicast")
         output = self.session.read()
         # print(output)
         match = re.findall(r"(\d+)\s+(\w+:\w+:\w+:\w+:\w+:\w+)\s+(\w+)\s+!\s+([\w/]+)", output)
@@ -140,20 +139,18 @@ class FDB:
     def create_static_mac_addr(self, static_mac, vlan, interface):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"mac static unicast {static_mac}  vlan {vlan} interface {interface}\r\n")
-        # self.session.send_cmd("show mac-address-table\r\n")
-        # output = self.session
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"mac static unicast {static_mac} vlan {vlan} interface {interface}")
+        output = self.session
         # print(output)
         self.session.close()
 
     def remove_static_mac_addr(self, static_mac, vlan):
 
         self.session.connect()
-        self.session.send_cmd("conf t\r\n")
-        self.session.send_cmd(f"no mac static unicast {static_mac} vlan {vlan}\r\n")
-        # self.session.send_cmd("show mac-address-table\r\n")
-        # output = self.session
+        self.session.send_cmd("conf t")
+        self.session.send_cmd(f"no mac static unicast {static_mac} vlan {vlan}")
+        output = self.session
         # print(output)
         self.session.close()
 

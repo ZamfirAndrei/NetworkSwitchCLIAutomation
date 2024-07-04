@@ -14,7 +14,14 @@ class SanityFlow:
 
             # Check that the new software version is downloaded successfully
 
-            result = DUT.sanity.download_image_ssh(mode=mode, server_ip=server_ip, img=img, user=user, password=password, path=path, platform=platform, img_compression=img_compression)
+            result = DUT.sanity.download_image_ssh(mode=mode,
+                                                   server_ip=server_ip,
+                                                   img=img,
+                                                   user=user,
+                                                   password=password,
+                                                   path=path,
+                                                   platform=platform,
+                                                   img_compression=img_compression)
 
             assert result == "Image Download Successful"
             print("Successful asserting...")
@@ -23,7 +30,13 @@ class SanityFlow:
 
             # Check that the new software version is downloaded successfully
 
-            result = DUT.sanity.download_image_telnet(mode=mode, server_ip=server_ip, img=img, user=user, password=password, platform=platform, img_compression=img_compression)
+            result = DUT.sanity.download_image_telnet(mode=mode,
+                                                      server_ip=server_ip,
+                                                      img=img,
+                                                      user=user,
+                                                      password=password,
+                                                      platform=platform,
+                                                      img_compression=img_compression)
 
             assert result == "Image Download Successful"
             print("Successful asserting...")

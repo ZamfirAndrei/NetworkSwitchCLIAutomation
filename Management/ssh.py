@@ -1,10 +1,6 @@
 import paramiko
 import time
 
-#username = "admin"
-#password = "Admin1234!"
-
-
 class SSH:
 
 
