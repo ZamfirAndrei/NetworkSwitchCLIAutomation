@@ -19,6 +19,18 @@ paths_dut3 = {
     "sftp": "/AGZamfir/sftp_Andrei-3052.conf"
 }
 
+paths_dut4 = {
+
+    "tftp": "/AGZamfir/new1.conf",
+    "sftp": "/AGZamfir/sftp_new1.conf"
+}
+
+paths_dut5 = {
+
+    "tftp": "/AGZamfir/cip52.conf",
+    "sftp": "/AGZamfir/sftp_cip52.conf"
+}
+
 paths_dut6 = {
 
     "tftp": "/AGZamfir/3024F.conf",
@@ -30,13 +42,18 @@ paths = {
     "DUT1": paths_dut1,
     "DUT2": paths_dut2,
     "DUT3": paths_dut3,
+    "DUT4": paths_dut4,
+    "DUT5": paths_dut5,
     "DUT6": paths_dut6,
 }
 
 images_fiber = {
 
-    "image_to_upgrade" : "6.0-r2",
-    "image_to_downgrade" : "6.0-b9",
+    "image_to_upgrade" : "6.0-101",
+    "image_to_downgrade" : "6.0-r2",
+    "image_18" : "6.0-101",
+    "image_17" : "6.1.0-e445",
+    "image_16" : "6.1.0-e434",
     "image_15" : "6.0.1-r1",
     "image_14" : "6.0-r2",
     "image_13" : "6.0-b9",
@@ -56,8 +73,12 @@ images_fiber = {
 
 images_legacy_EXTX = {
 
-    "image_to_upgrade": "5.0.2-r4",
-    "image_to_downgrade": "5.0.1-r4",
+    "image_to_upgrade": "5.0.3-r4",
+    "image_to_downgrade": "5.0.3-r3",
+    "image_10" : "6.1.0-e451",
+    "image_9" : "5.0.3-r3",
+    "image_8" : "6.1.0-e445",
+    "image_7" : "6.1.0-e434",
     "image_6" : "5.0.2-r4",
     "image_5" : "5.0.1-r4",
     "image_4" : "5.0.1-r3",

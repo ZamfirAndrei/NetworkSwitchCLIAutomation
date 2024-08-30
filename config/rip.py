@@ -428,7 +428,7 @@ class RIP:
         self.session.send_cmd(cmd=f"int vlan {int_vlan}")
         self.session.send_cmd(cmd=f"no ip rip authentication")
         self.session.send_cmd("exit")
-        print(f"The RIP authentication have been removed from int_vlan {int_vlan} on DUT {self.ip_session}")
+        print(f"The RIP authentication has been removed from int_vlan {int_vlan} on DUT {self.ip_session}")
         output = self.session.read()
         # print(output)
 
@@ -443,7 +443,7 @@ class RIP:
 
         if key_chain is not None:
             self.session.send_cmd(cmd=f"ip rip authentication key-chain {key_chain}")
-            print(f"The mode {mode} and key-chain {key_chain} have been configured on int_vlan {int_vlan} on DUT {self.ip_session}")
+            print(f"The authentication mode {mode} and key-chain {key_chain} have been configured on int_vlan {int_vlan} on DUT {self.ip_session}")
         self.session.send_cmd("exit")
         output = self.session.read()
         # print(output)

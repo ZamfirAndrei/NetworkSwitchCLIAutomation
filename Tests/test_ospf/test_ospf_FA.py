@@ -284,7 +284,7 @@ class TestOSPFFASuite1:
         ospf_flow_.confirm_network_details_in_the_routing_table(DUT6, network="15.0.0.0", protocol="O")
         ospf_flow_.confirm_network_details_in_the_routing_table(DUT6, network="40.0.0.0", protocol="O")
 
-        # No shut the port on DUT1 and check that RIP routes are not missing
+        # No shut the port on DUT6 and check that OSPF routes are not missing
 
         DUT6.int.no_shut_interface(interface=DUT6.ports["x1"])
 

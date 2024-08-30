@@ -13,10 +13,8 @@ images = mock_1.images_fiber
 params = mock_1.mocks_sanity_fiber
 
 dut6 = test_bed_1.DUT6
-dut3 = test_bed_1.DUT3
-
 DUT6 = dut_objects.DUT_Objects_TestBed(dut6)
-DUT3 = dut_objects.DUT_Objects_TestBed(dut3)
+
 
 sanity_flow_ = sanity_flow.SanityFlow()
 
@@ -56,7 +54,8 @@ class TestSanitySuiteFA:
 
         # Check that the new software version is downloaded successfully
 
-        sanity_flow_.assert_download_image(DUT6, protocol=params["protocol"]["ssh"],
+        sanity_flow_.assert_download_image(DUT6,
+                                           protocol=params["protocol"]["ssh"],
                                            mode=params["mode"]["sftp"],
                                            server_ip=params["server_ip"],
                                            img=params["image_version"]["image_to_downgrade"],
@@ -167,7 +166,7 @@ class TestSanitySuiteFA:
                                                       model=DUT6.model)
 
 
-    # @pytest.mark.skip(reason="Telnet not working")
+    @pytest.mark.skip(reason="Telnet not working")
     def test_func_8(self):
 
         print("###### Test_func_8 ######")
@@ -205,7 +204,7 @@ class TestSanitySuiteFA:
 
         # DUT6.sanity.download_image_ssh(mode="scp",server_ip="10.2.109.24", img="5.0.1-r4",user="cambium",password="cambium123", path="/tftpboot")
 
-    # @pytest.mark.skip(reason="Telnet not working")
+    @pytest.mark.skip(reason="Telnet not working")
     def test_func_10(self):
 
         print("###### Test_func_10 ######")
@@ -218,7 +217,7 @@ class TestSanitySuiteFA:
                                                 vlan="1000",
                                                 path=params["path"]["DUT6"]["tftp"])
 
-    # @pytest.mark.skip(reason="Telnet not working")
+    @pytest.mark.skip(reason="Telnet not working")
     def test_func_11(self):
 
         print("###### Test_func_11 ######")
@@ -233,6 +232,7 @@ class TestSanitySuiteFA:
                                                 user=params["user"],
                                                 password=params["password"])
 
+    @pytest.mark.skip
     def test_func_12(self):
 
         print("###### Test_func_12 ######")

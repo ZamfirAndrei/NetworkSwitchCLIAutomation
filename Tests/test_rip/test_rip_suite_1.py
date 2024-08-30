@@ -17,72 +17,6 @@ DUT1 = dut_objects.DUT_Objects(ip_session=ip_session_1)
 DUT2 = dut_objects.DUT_Objects(ip_session=ip_session_2)
 DUT3 = dut_objects.DUT_Objects(ip_session=ip_session_3)
 
-# DUT 1 Objects
-# class SWconfig:
-#     _int = []
-#
-#     def __init__(self,, ip_session_1):
-#         int = interfaces.Interface(ip_session=ip_session_1)
-#         vl = vlan.VLAN(ip_session=ip_session_1)
-#         stp = STP(ip_session=ip_session_1)
-#         fdb = fdb.FDB(ip_session=ip_session_1)
-#         ip = ip.IP(ip_session=ip_session_1)
-#         rip = rip.RIP(ip_session=ip_session_1)
-#         ping = ping.PING(ip_session=ip_session_1)
-#         ospf = ospf.OSPF(ip_session=ip_session_1)
-#
-#     def SWconfig(self, ip_session_1):
-#         int = interfaces.Interface(ip_session=ip_session_1)
-#         vl = vlan.VLAN(ip_session=ip_session_1)
-#         stp = stp.STP(ip_session=ip_session_1)
-#         fdb = fdb.FDB(ip_session=ip_session_1)
-#         ip = ip.IP(ip_session=ip_session_1)
-#         rip = rip.RIP(ip_session=ip_session_1)
-#         ping = ping.PING(ip_session=ip_session_1)
-#         ospf = ospf.OSPF(ip_session=ip_session_1)
-
-    # def int(interface):
-    #     try:
-    #         return _int[interface]
-    #     except ex:
-    #         # return None
-#
-#
-# dut_1 = SWconfig(ip_session_1)
-
-# # DUT 1 Objects
-#
-# DUT1.int = interfaces.Interface(ip_session=ip_session_1)
-# DUT1.vl = vlan.VLAN(ip_session=ip_session_1)
-# DUT1.stp = stp.STP(ip_session=ip_session_1)
-# DUT1.fdb = fdb.FDB(ip_session=ip_session_1)
-# DUT1.ip = ip.IP(ip_session=ip_session_1)
-# DUT1.rip = rip.RIP(ip_session=ip_session_1)
-# DUT1.ping = ping.PING(ip_session=ip_session_1)
-# DUT1.ospf = ospf.OSPF(ip_session=ip_session_1)
-#
-# # DUT 2 Objects
-#
-# DUT2.int = interfaces.Interface(ip_session=ip_session_2)
-# DUT2.vl = vlan.VLAN(ip_session=ip_session_2)
-# DUT2.stp = stp.STP(ip_session=ip_session_2)
-# DUT2.fdb = fdb.FDB(ip_session=ip_session_2)
-# DUT2.ip = ip.IP(ip_session=ip_session_2)
-# DUT2.rip = rip.RIP(ip_session=ip_session_2)
-# DUT2.ping = ping.PING(ip_session=ip_session_2)
-# DUT2.ospf = ospf.OSPF(ip_session=ip_session_2)
-#
-# # DUT 3 Objects
-#
-# DUT3.int = interfaces.Interface(ip_session=ip_session_3)
-# DUT3.vl = vlan.VLAN(ip_session=ip_session_3)
-# DUT3.stp = stp.STP(ip_session=ip_session_3)
-# DUT3.fdb = fdb.FDB(ip_session=ip_session_3)
-# DUT3.ip = ip.IP(ip_session=ip_session_3)
-# DUT3.rip = rip.RIP(ip_session=ip_session_3)
-# DUT3.ping = ping.PING(ip_session=ip_session_3)
-# DUT3.ospf = ospf.OSPF(ip_session=ip_session_3)
-
 
 class TestRIPSuite1:
 
@@ -545,7 +479,7 @@ class TestRIPSuite1:
         DUT2.ospf.advertise_network(ip_network="15.0.0.1", area="0.0.0.0")
         DUT2.ospf.advertise_network(ip_network="20.0.0.1", area="0.0.0.0")
 
-        # Disabling no-autosummary on DUT2 so it will redistribute classless subnets
+        # Disabling no-auto summary on DUT2 so it will redistribute classless subnets
 
         DUT2.rip.remove_auto_summary()
 

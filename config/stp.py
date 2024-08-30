@@ -321,7 +321,7 @@ class STP:
         self.session.send_cmd(f"int {port}")
         self.session.send_cmd(f"spanning-tree vlan {vlan} port-priority {port_priority}")
         self.session.send_cmd("!")
-        print(f"The port-priority for {port} has been changed on DUT {self.ip_session}")
+        print(f"The port-priority for {port} has been changed to {port_priority} on DUT {self.ip_session}")
         # output = self.session.read()
         # print(output)
         self.session.close()

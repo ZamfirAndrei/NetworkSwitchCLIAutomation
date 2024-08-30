@@ -564,7 +564,7 @@ class TestOSPFSuite1:
         DUT1.ospf.advertise_networks(int_vlan20=["20.0.0.2", "0.0.0.0"])
         DUT2.ospf.advertise_networks(int_vlan15=["15.0.0.1", "0.0.0.0"], int_vlan20=["20.0.0.1", "0.0.0.0"])
 
-        # Configure the authentication on the int-vlan between the DUTs and configure the key. Check that the adjancency occurs
+        # Configure the authentication on the int-vlan between the DUTs and configure the key. Check that the adjacency occurs
 
         DUT1.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="simple",authentication_key="1234")
         DUT2.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="simple", authentication_key="1234")
@@ -681,7 +681,7 @@ class TestOSPFSuite1:
         DUT1.ospf.advertise_networks(int_vlan20=["20.0.0.2", "0.0.0.0"])
         DUT2.ospf.advertise_networks(int_vlan15=["15.0.0.1", "0.0.0.0"], int_vlan20=["20.0.0.1", "0.0.0.0"])
 
-        # Configure the authentication md5 on the int-vlan between the DUTs and configure the key. Check that the adjancency occurs
+        # Configure the authentication md5 on the int-vlan between the DUTs and configure the key. Check that the adjacency occurs
 
         DUT1.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="md5", authentication_key="1234", message_digest_key="1", message_digest="Yes")
         DUT2.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="md5", authentication_key="1234", message_digest_key="1", message_digest="Yes")
@@ -731,7 +731,7 @@ class TestOSPFSuite1:
         assert ip_session_2 in dict_of_ospf_neighbors.keys() and dict_of_ospf_neighbors[ip_session_2]["Neighbor-ID"] == ip_session_2
         assert "FULL" in dict_of_ospf_neighbors[ip_session_2]["State"]
 
-        # Remove the authentication and authentication-keys on both DUTs and check that there is adjancency and the routes are learned
+        # Remove the authentication and authentication-keys on both DUTs and check that there is adjacency and the routes are learned
 
         DUT1.ospf.remove_ip_ospf_authentication(int_vlan="20")
         DUT1.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
@@ -969,7 +969,7 @@ class TestOSPFSuite1:
         assert ip_session_2 in dict_of_ospf_neighbors.keys() and dict_of_ospf_neighbors[ip_session_2]["Neighbor-ID"] == ip_session_2
         assert "FULL" in dict_of_ospf_neighbors[ip_session_2]["State"]
 
-        # Remove the authentication and authentication-keys on both DUTs and check that there is adjancency and the routes are learned
+        # Remove the authentication and authentication-keys on both DUTs and check that there is adjacency and the routes are learned
 
         DUT1.ospf.remove_ip_ospf_authentication(int_vlan="20")
         DUT1.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
@@ -1038,7 +1038,7 @@ class TestOSPFSuite1:
         DUT1.ospf.advertise_networks(int_vlan20=["20.0.0.2", "0.0.0.0"])
         DUT2.ospf.advertise_networks(int_vlan15=["15.0.0.1", "0.0.0.0"], int_vlan20=["20.0.0.1", "0.0.0.0"])
 
-        # Configure the authentication sha-256 on the int-vlan between the DUTs and configure the key. Check that the adjancency occurs
+        # Configure the authentication sha-256 on the int-vlan between the DUTs and configure the key. Check that the adjacency occurs
 
         DUT1.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-256", authentication_key="1234", message_digest_key="1")
         DUT2.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-256", authentication_key="1234", message_digest_key="1")
@@ -1088,7 +1088,7 @@ class TestOSPFSuite1:
         assert ip_session_2 in dict_of_ospf_neighbors.keys() and dict_of_ospf_neighbors[ip_session_2]["Neighbor-ID"] == ip_session_2
         assert "FULL" in dict_of_ospf_neighbors[ip_session_2]["State"]
 
-        # Remove the authentication and authentication-keys on both DUTs and check that there is adjancency and the routes are learned
+        # Remove the authentication and authentication-keys on both DUTs and check that there is adjacency and the routes are learned
 
         DUT1.ospf.remove_ip_ospf_authentication(int_vlan="20")
         DUT1.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
@@ -1326,7 +1326,7 @@ class TestOSPFSuite1:
         assert ip_session_2 in dict_of_ospf_neighbors.keys() and dict_of_ospf_neighbors[ip_session_2]["Neighbor-ID"] == ip_session_2
         assert "FULL" in dict_of_ospf_neighbors[ip_session_2]["State"]
 
-        # Remove the authentication and authentication-keys on both DUTs and check that there is adjancency and the routes are learned
+        # Remove the authentication and authentication-keys on both DUTs and check that there is adjacency and the routes are learned
 
         DUT1.ospf.remove_ip_ospf_authentication(int_vlan="20")
         DUT1.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")

@@ -79,7 +79,7 @@ class TestRSTPSuite1FA:
         rstp_flow_.assert_rstp_ports(DUT6, DUT6.ports["v3value"], "Root", "128", "2000",
                                            DUT6.ports["x1value"], "Designated", "128", "2000")
 
-        # Remove the bridge-priority for VLAN 10 and check that DUT6
+        # Remove the bridge-priority for DUT4
 
         DUT4.stp.remove_rstp_bridge_priority()
 

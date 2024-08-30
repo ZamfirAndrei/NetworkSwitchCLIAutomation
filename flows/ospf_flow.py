@@ -71,7 +71,7 @@ class OSPFflow:
 
             DUT.ospf.advertise_network(ip_network=item[0],area=item[1])
 
-    def confirm_network_details_in_the_routing_table(self, DUT, network, protocol=None, AD=None, metric=None, metric_type=None):
+    def confirm_network_details_in_the_routing_table(self, DUT, network, protocol=None, AD=None, metric=None, metric_type=None, mask=None):
 
         # Check if the routes are learned and installed in OSPF routes
 
@@ -80,29 +80,34 @@ class OSPFflow:
         print(dict_of_networks)
 
         assert network in dict_of_networks.keys()
+        print(f"The network {network} is in the routing table of DUT {DUT.hostname}")
 
         if protocol is not None:
 
             if metric_type is not None:
 
-                # print("----- 1 ------")
-                # print(protocol + metric_type)
-                assert dict_of_networks[network]["Protocol"] == protocol + metric_type
+                assert dict_of_networks[network]['Protocol'] == protocol + metric_type
+                print(f"The network {network} has the protocol {dict_of_networks[network]['Protocol']}")
 
             else:
 
-                # print("----- 2 ------")
-                # print(protocol)
-                assert dict_of_networks[network]["Protocol"] == protocol
-
+                assert dict_of_networks[network]['Protocol'] == protocol
+                print(f"The network {network} has the Protocol {dict_of_networks[network]['Protocol']}")
 
         if AD is not None:
 
-            assert dict_of_networks[network]["AD"] == AD
+            assert dict_of_networks[network]['AD'] == AD
+            print(f"The network {network} has the AD {dict_of_networks[network]['AD']}")
 
         if metric is not None:
 
-            assert dict_of_networks[network]["Metric"] == metric
+            assert dict_of_networks[network]['Metric'] == metric
+            print(f"The network {network} has the Metric {dict_of_networks[network]['Metric']}")
+
+        if mask is not None:
+
+            assert dict_of_networks[network]['Mask'] == mask
+            print(f"The network {network} has the Mask {dict_of_networks[network]['Mask']}")
 
 
     def confirm_network_in_the_routing_table(self, DUT, network):
@@ -114,6 +119,7 @@ class OSPFflow:
         print(dict_of_networks)
 
         assert network in dict_of_networks.keys()
+        print(f"The network {network} is in the routing table of DUT {DUT.hostname}")
 
     def confirm_network_not_in_the_routing_table(self, DUT, network):
 
@@ -124,6 +130,27 @@ class OSPFflow:
         print(dict_of_networks)
 
         assert network not in dict_of_networks.keys()
+        print(f"The network {network} is not in the routing table of DUT {DUT.hostname}")
+
+    def confirm_ospf_neighbors(self, DUT, neighbor_id, state):
+
+        list_ospf_neighbors, dict_of_ospf_neighbors = DUT.ospf.show_ospf_neighbors()
+        print(dict_of_ospf_neighbors)
+
+        assert neighbor_id in dict_of_ospf_neighbors.keys() and dict_of_ospf_neighbors[neighbor_id]['Neighbor-ID'] == neighbor_id
+        assert state in dict_of_ospf_neighbors[neighbor_id]['State']
+
+        print(f"The adjacency state of neighbor {dict_of_ospf_neighbors[neighbor_id]['Neighbor-ID']} "
+              f"is {dict_of_ospf_neighbors[neighbor_id]['State']} ")
+
+    def confirm_neighbor_not_present(self, DUT, neighbor_id):
+
+        list_ospf_neighbors, dict_of_ospf_neighbors = DUT.ospf.show_ospf_neighbors()
+        print(dict_of_ospf_neighbors)
+
+        assert neighbor_id not in dict_of_ospf_neighbors.keys()
+
+        print(f"The adjacency state of neighbor {neighbor_id} is not present ")
 
     def disable_OSPF(self, DUT):
 
