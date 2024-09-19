@@ -777,7 +777,7 @@ class TestOSPFLegacy:
 
     def test_func_12(self):
 
-        print("###### Test_func_11 ######")
+        print("###### Test_func_12 ######")
         print("########## Verify OSPF  Authentication using SHA-512 algorithm  #############")
         print("###### 2 DUTs ######")
 
@@ -852,6 +852,121 @@ class TestOSPFLegacy:
 
         ospf_flow_.shut_interfaces(DUT1, DUT1.ports["v1"])
         ospf_flow_.shut_interfaces(DUT2, DUT2.ports["v1"], DUT2.ports["h4"])
+
+    def test_func_13(self):
+
+        print("###### Test_func_13 ######")
+        print("########## Verify if OSPF adjacency cannot be formed when Secret Key ID is different  #############")
+        print("###### 2 DUTs ######")
+
+        ospf_flow_.create_ip_interface_vlan_no_shut_port_and_add_ports_to_the_vlan(DUT1, port=DUT1.ports["v1"],vlan="20",
+                                                                                   ip="20.0.0.2", mask="255.255.255.0")
+
+        ospf_flow_.create_ip_interface_vlan_no_shut_port_and_add_ports_to_the_vlan(DUT2, port=DUT2.ports["v1"], vlan="20",
+                                                                                   ip="20.0.0.1", mask="255.255.255.0")
+        ospf_flow_.create_ip_interface_vlan_no_shut_port_and_add_ports_to_the_vlan(DUT2, port=DUT2.ports["h4"],vlan="15",
+                                                                                   ip="15.0.0.1", mask="255.255.255.0")
+
+        ospf_flow_.enable_and_advertise_networks(DUT1, int_vlan20=["20.0.0.2", "0.0.0.0"])
+        ospf_flow_.enable_and_advertise_networks(DUT2, int_vlan20=["20.0.0.1", "0.0.0.0"],
+                                                 int_vlan15=["15.0.0.1", "0.0.0.0"])
+
+        # Configure different authentication keys on the int-vlan between the DUTs and configure the key. Check that the
+        # adjacency does not occur
+
+        DUT1.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-384", authentication_key="1234",
+                                             message_digest_key="1")
+        DUT2.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-384", authentication_key="12345",
+                                             message_digest_key="1")
+
+        time.sleep(45)
+
+        ospf_flow_.confirm_network_not_in_the_routing_table(DUT1, network="15.0.0.0")
+        ospf_flow_.confirm_ospf_neighbors(DUT1, neighbor_id=DUT2.ip_session, state="DOWN")
+
+        # Change the key for DUT1 and check that there is adjacency and the routes are learned
+
+        DUT1.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
+        DUT1.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-384", authentication_key="12345",
+                                             message_digest_key="1")
+        time.sleep(45)
+
+        ospf_flow_.confirm_network_details_in_the_routing_table(DUT1, network="15.0.0.0", protocol="O")
+        ospf_flow_.confirm_ospf_neighbors(DUT1, neighbor_id=DUT2.ip_session, state="FULL")
+
+        # Remove the authentication and authentication-keys on both DUTs and check that there is adjacency and the routes are learned
+
+        DUT1.ospf.remove_ip_ospf_authentication(int_vlan="20")
+        DUT1.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
+
+        DUT2.ospf.remove_ip_ospf_authentication(int_vlan="20")
+        DUT2.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
+
+        time.sleep(45)
+
+        ospf_flow_.confirm_network_details_in_the_routing_table(DUT1, network="15.0.0.0", protocol="O")
+        ospf_flow_.confirm_ospf_neighbors(DUT1, neighbor_id=DUT2.ip_session, state="FULL")
+
+        print("########## Removing the config #############")
+
+        ospf_flow_.remove_networks(DUT1, int_vlan20=["20.0.0.2", "0.0.0.0"])
+        ospf_flow_.remove_networks(DUT2, int_vlan20=["20.0.0.1", "0.0.0.0"], int_vlan99=["15.0.0.1", "0.0.0.0"])
+
+        ospf_flow_.disable_OSPF(DUT1)
+        ospf_flow_.disable_OSPF(DUT2)
+
+        ospf_flow_.remove_vlans_and_interfaces_vlan(DUT1, "20")
+        ospf_flow_.remove_vlans_and_interfaces_vlan(DUT2, "20", "15")
+
+        ospf_flow_.shut_interfaces(DUT1, DUT1.ports["v1"])
+        ospf_flow_.shut_interfaces(DUT2, DUT2.ports["v1"], DUT2.ports["h4"])
+
+    def test_func_14(self):
+
+        print("###### Test_func_14 ######")
+        print("########## Verify if sha keys and md5 keys are not displayed in show running config  #############")
+        print("###### 1 DUTs ######")
+
+        ospf_flow_.create_ip_interface_vlan_no_shut_port_and_add_ports_to_the_vlan(DUT1, port=DUT1.ports["v1"],vlan="20",
+                                                                                   ip="20.0.0.2", mask="255.255.255.0")
+
+        ospf_flow_.no_shut_interfaces(DUT2, DUT2.ports["v1"])
+        ospf_flow_.enable_and_advertise_networks(DUT1, int_vlan20=["20.0.0.2", "0.0.0.0"])
+
+        # Configure a key for ospf authentication on DUT1
+
+        DUT1.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="sha-384", authentication_key="1234",
+                                             message_digest_key="1")
+        time.sleep(5)
+
+        ospf_flow_.check_authentication_key_in_running_config(DUT1, authentication="sha-384", authentication_key="1234",
+                                             message_digest_key="1")
+
+        # Configure another key for ospf authentication on DUT1
+
+        DUT1.ospf.remove_ip_ospf_authentication(int_vlan="20")
+        DUT1.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
+        DUT1.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="md5", authentication_key="12345",message_digest_key="1", message_digest="Yes")
+
+        time.sleep(5)
+
+        ospf_flow_.check_authentication_key_in_running_config(DUT1, authentication="md5", authentication_key="12345",message_digest_key="1")
+
+        # Remove the authentication and authentication-keys on both DUTs and check that there is adjacency and the routes are learned
+
+        DUT1.ospf.remove_ip_ospf_authentication(int_vlan="20")
+        DUT1.ospf.remove_ip_ospf_authentication_key(int_vlan="20", message_digest_key="1")
+
+        print("########## Removing the config #############")
+
+        ospf_flow_.remove_networks(DUT1, int_vlan20=["20.0.0.2", "0.0.0.0"])
+        ospf_flow_.disable_OSPF(DUT1)
+        ospf_flow_.remove_vlans_and_interfaces_vlan(DUT1, "20")
+
+        ospf_flow_.shut_interfaces(DUT1, DUT1.ports["v1"])
+        ospf_flow_.shut_interfaces(DUT2, DUT2.ports["v1"])
+
+
 
 
     def test_func_100(self):

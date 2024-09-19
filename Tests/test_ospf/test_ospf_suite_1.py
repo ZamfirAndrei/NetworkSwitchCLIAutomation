@@ -1490,7 +1490,7 @@ class TestOSPFSuite1:
 
         # Check the running config for md5 key
 
-        # DUT1.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="md5", authentication_key="12345",message_digest_key="1", message_digest="Yes")
+        DUT1.ospf.add_ip_ospf_authentication(int_vlan="20", authentication="md5", authentication_key="12345",message_digest_key="1", message_digest="Yes")
 
         dict_key, dict_of_keys = DUT1.ospf.show_run_ospf_key()
         print(dict_key, dict_of_keys)

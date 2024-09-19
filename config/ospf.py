@@ -747,7 +747,7 @@ class OSPF:
         # print(output)
 
         match = re.findall(r'ip ospf message-digest-key\s+(\d)+\s+([shamd5\S\d]+)([\s\w]+)', output)
-        print(match)
+        # print(match)
         # print(len(match[0][2]))
         # key_text = match[0][2]
 

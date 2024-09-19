@@ -141,7 +141,7 @@ class OSPFflow:
         assert state in dict_of_ospf_neighbors[neighbor_id]['State']
 
         print(f"The adjacency state of neighbor {dict_of_ospf_neighbors[neighbor_id]['Neighbor-ID']} "
-              f"is {dict_of_ospf_neighbors[neighbor_id]['State']} ")
+              f"is {dict_of_ospf_neighbors[neighbor_id]['State']} on DUT {DUT.hostname}")
 
     def confirm_neighbor_not_present(self, DUT, neighbor_id):
 
@@ -150,7 +150,7 @@ class OSPFflow:
 
         assert neighbor_id not in dict_of_ospf_neighbors.keys()
 
-        print(f"The adjacency state of neighbor {neighbor_id} is not present ")
+        print(f"The adjacency state of neighbor {neighbor_id} is not present on DUT {DUT.hostname}")
 
     def disable_OSPF(self, DUT):
 
@@ -178,3 +178,20 @@ class OSPFflow:
         for interface in args:
 
             DUT.int.shut_interfaces(interface)
+
+    def no_shut_interfaces(self, DUT, *args):
+
+        for interface in args:
+
+            DUT.int.no_shut_interfaces(interface)
+
+    def check_authentication_key_in_running_config(self, DUT, authentication, authentication_key, message_digest_key):
+
+        dict_key, dict_of_keys = DUT.ospf.show_run_ospf_key()
+        print(dict_of_keys)
+
+        assert dict_of_keys[f'key {message_digest_key}']['Authentication'] == authentication
+        assert authentication_key not in dict_of_keys[f'key {message_digest_key}']['key_Text']
+
+        print(f"The message_digest_key {message_digest_key} with authentication key {authentication_key}"
+              f" is not present in the running-config of DUT {DUT.hostname}")
